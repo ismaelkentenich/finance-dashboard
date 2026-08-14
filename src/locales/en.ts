@@ -91,4 +91,17 @@ export const en = {
     successMessage: "Transaction created successfully!",
     errorMessage: "Failed to save transaction. Please try again.",
   },
+  errors: {
+    dashboardTitle: "An error occurred in the Dashboard",
+    dashboardDescription:
+      "Unable to load financial data at this moment. Please check your connection.",
+    loadFailureTitle: "Failed to load dashboard",
+    reloadPage: "Reload Page",
+    retry: "Try again",
+  },
+  emptyStates: {
+    noTransactionsTitle: "No transactions found",
+    noTransactionsDescription: "No records found for the selected period or category.",
+    clearFilters: "Clear Filters",
+  },
 } as const;

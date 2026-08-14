@@ -5,11 +5,15 @@ import { DashboardFilters } from "@/components/dashboard/DashboardFilters";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { TransactionFormModal } from "@/components/dashboard/TransactionFormModal";
-import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useLocale } from "@/contexts/LocaleContext";
 import { useModal } from "@/contexts/ModalContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
+import { FilterX } from "lucide-react";
 import styles from "./page.module.css";
 
 function DashboardSkeleton() {
@@ -31,6 +35,7 @@ function DashboardSkeleton() {
 }
 
 export default function DashboardPage() {
+  const { t } = useLocale();
   const { isTransactionModalOpen, closeTransactionModal } = useModal();
   const { filters, setFilters, resetFilters, hasActiveFilters } = useTransactionFilters();
   const { data, isLoading, error, refetch } = useDashboardData(filters);
@@ -50,10 +55,30 @@ export default function DashboardPage() {
 
       {isLoading ? (
         <DashboardSkeleton />
-      ) : error || !data ? (
-        <Card data-testid="dashboard-error-state">
-          <p className={styles.errorMessage}>{error}</p>
-        </Card>
+      ) : error ? (
+        <ErrorBanner
+          title={t.errors.loadFailureTitle}
+          message={error}
+          onRetry={refetch}
+          retryLabel={t.errors.retry}
+          data-testid="dashboard-error-banner"
+        />
+      ) : !data || data.transactions.length === 0 ? (
+        <>
+          {data?.summary && <SummaryCards summary={data.summary} />}
+          <EmptyState
+            title={t.emptyStates.noTransactionsTitle}
+            description={t.emptyStates.noTransactionsDescription}
+            action={
+              hasActiveFilters ? (
+                <Button variant="secondary" size="sm" onClick={resetFilters}>
+                  <FilterX size={16} aria-hidden="true" />
+                  {t.emptyStates.clearFilters}
+                </Button>
+              ) : undefined
+            }
+          />
+        </>
       ) : (
         <>
           <SummaryCards summary={data.summary} />

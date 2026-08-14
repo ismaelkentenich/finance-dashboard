@@ -93,4 +93,18 @@ export const pt: TranslationSchema = {
     successMessage: "Transação criada com sucesso!",
     errorMessage: "Falha ao salvar a transação. Tente novamente.",
   },
+  errors: {
+    dashboardTitle: "Ocorreu um erro no Dashboard",
+    dashboardDescription:
+      "Não foi possível carregar os dados financeiros no momento. Tente restabelecer a conexão.",
+    loadFailureTitle: "Falha ao carregar o dashboard",
+    reloadPage: "Recarregar Página",
+    retry: "Tentar novamente",
+  },
+  emptyStates: {
+    noTransactionsTitle: "Nenhuma transação encontrada",
+    noTransactionsDescription:
+      "Não encontramos registros para o período ou categoria selecionados.",
+    clearFilters: "Limpar Filtros",
+  },
 };
