@@ -182,12 +182,13 @@
   --border-width-thick: 4px;
 
   /* ==========================================
-     ELEVATION SHADOWS
+     ELEVATION SHADOWS & FOCUS RINGS
      ========================================== */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-focus-primary: 0 0 0 2px var(--color-primary-green-alpha-25);
   --shadow-focus-error: 0 0 0 2px var(--color-status-error-alpha-25);
 
   /* ==========================================
@@ -247,4 +248,30 @@ input,
 select,
 textarea {
   font: inherit;
+}
+
+/* ==========================================
+   ACCESSIBILITY UTILITIES & MOTION PREFERENCES
+   ========================================== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
