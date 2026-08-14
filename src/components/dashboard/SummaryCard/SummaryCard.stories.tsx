@@ -15,7 +15,7 @@ export const BalanceCard: Story = {
   args: {
     title: "Saldo Atual",
     value: "R$ 7.001,80",
-    icon: Wallet,
+    icon: <Wallet size={16} aria-hidden="true" />,
     iconVariant: "balance",
     badge: { text: "+12.5%", variant: "success" },
     footerText: "vs mês anterior",
@@ -26,7 +26,7 @@ export const IncomeCard: Story = {
   args: {
     title: "Receitas Totais",
     value: "R$ 10.300,00",
-    icon: TrendingUp,
+    icon: <TrendingUp size={16} aria-hidden="true" />,
     iconVariant: "income",
     badge: { text: "+5.0%", variant: "success" },
     footerText: "vs mês anterior",
@@ -37,7 +37,7 @@ export const ExpenseCard: Story = {
   args: {
     title: "Despesas Totais",
     value: "R$ 3.298,20",
-    icon: TrendingDown,
+    icon: <TrendingDown size={16} aria-hidden="true" />,
     iconVariant: "expense",
     badge: { text: "-8.2%", variant: "success" },
     footerText: "vs mês anterior",
@@ -48,7 +48,7 @@ export const SavingsRateCardWithoutBadge: Story = {
   args: {
     title: "Taxa de Poupança",
     value: "68.0%",
-    icon: PiggyBank,
+    icon: <PiggyBank size={16} aria-hidden="true" />,
     iconVariant: "savings",
     footerText: "Do total de receitas no mês",
   },

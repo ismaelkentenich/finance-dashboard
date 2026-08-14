@@ -25,7 +25,7 @@ export function SummaryCards({
       id: "balance",
       title: t.summary.balance,
       value: formatCurrency(summary.currentBalance, locale),
-      icon: Wallet,
+      icon: <Wallet size={16} aria-hidden="true" />,
       iconVariant: "balance" as const,
       badge: {
         variant:
@@ -41,7 +41,7 @@ export function SummaryCards({
       id: "income",
       title: t.summary.income,
       value: formatCurrency(summary.totalIncome, locale),
-      icon: TrendingUp,
+      icon: <TrendingUp size={16} aria-hidden="true" />,
       iconVariant: "income" as const,
       badge: {
         variant:
@@ -57,7 +57,7 @@ export function SummaryCards({
       id: "expenses",
       title: t.summary.expenses,
       value: formatCurrency(summary.totalExpenses, locale),
-      icon: TrendingDown,
+      icon: <TrendingDown size={16} aria-hidden="true" />,
       iconVariant: "expense" as const,
       badge: {
         variant:
@@ -73,7 +73,7 @@ export function SummaryCards({
       id: "savings",
       title: t.summary.savingsRate,
       value: `${summary.savingsRate}%`,
-      icon: PiggyBank,
+      icon: <PiggyBank size={16} aria-hidden="true" />,
       iconVariant: "savings" as const,
       footerText: t.summary.ofTotalIncome,
     },

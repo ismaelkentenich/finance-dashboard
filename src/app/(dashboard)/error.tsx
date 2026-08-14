@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useLocale } from "@/contexts/LocaleContext";
+import { telemetryService } from "@/services/telemetry";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import { useEffect } from "react";
 import styles from "./error.module.css";
@@ -15,9 +16,12 @@ interface ErrorBoundaryProps {
 export default function DashboardErrorBoundary({ error, reset }: ErrorBoundaryProps) {
   const { t } = useLocale();
 
-  // TODO - Melhorar o tratamento de erros.
   useEffect(() => {
-    console.error("Unhandled Dashboard Error:", error);
+    // Sends unhandled runtime exceptions to telemetry logging
+    telemetryService.logError(error, {
+      boundary: "DashboardErrorBoundary",
+      digest: error.digest,
+    });
   }, [error]);
 
   return (

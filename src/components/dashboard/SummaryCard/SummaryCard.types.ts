@@ -1,5 +1,5 @@
 import type { BadgeVariant } from "@/components/ui/Badge/Badge.types";
-import type { ComponentType } from "react";
+import { ReactNode } from "react";
 
 export type SummaryCardIconVariant = "balance" | "income" | "expense" | "savings";
 
@@ -12,11 +12,7 @@ export interface SummaryCardBadgeProps {
 export interface SummaryCardProps {
   title: string;
   value: string;
-  icon: ComponentType<{
-    size?: number | string;
-    className?: string;
-    "aria-hidden"?: boolean | "true" | "false";
-  }>;
+  icon: ReactNode;
   iconVariant: SummaryCardIconVariant;
   badge?: SummaryCardBadgeProps;
   footerText: string;

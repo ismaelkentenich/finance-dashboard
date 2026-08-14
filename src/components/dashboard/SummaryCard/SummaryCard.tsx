@@ -13,7 +13,7 @@ const ICON_VARIANT_MAP: Record<SummaryCardIconVariant, string> = {
 export function SummaryCard({
   title,
   value,
-  icon: IconComponent,
+  icon,
   iconVariant,
   badge,
   footerText,
@@ -28,7 +28,7 @@ export function SummaryCard({
           data-testid="summary-card-icon-wrapper"
           className={`${styles.iconWrapper} ${ICON_VARIANT_MAP[iconVariant]}`}
         >
-          <IconComponent size={16} aria-hidden="true" />
+          {icon}
         </div>
       </CardHeader>
 
