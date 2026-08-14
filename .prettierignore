@@ -5,3 +5,4 @@ build
 coverage
 *.config.js
 *.config.mjs
+storybook-static
