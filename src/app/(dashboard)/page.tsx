@@ -14,6 +14,7 @@ import { useModal } from "@/contexts/ModalContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import { FilterX } from "lucide-react";
+import { Suspense } from "react";
 import styles from "./page.module.css";
 
 function DashboardSkeleton() {
@@ -34,7 +35,7 @@ function DashboardSkeleton() {
   );
 }
 
-export default function DashboardPage() {
+function DashboardContent() {
   const { t } = useLocale();
   const { isTransactionModalOpen, closeTransactionModal } = useModal();
   const { filters, setFilters, resetFilters, hasActiveFilters } = useTransactionFilters();
@@ -95,5 +96,13 @@ export default function DashboardPage() {
         onSuccess={() => refetch()}
       />
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<DashboardSkeleton />}>
+      <DashboardContent />
+    </Suspense>
   );
 }
