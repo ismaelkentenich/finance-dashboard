@@ -1,21 +1,24 @@
 import { ChevronDown } from "lucide-react";
-import { useId } from "react";
+import { forwardRef, useId } from "react";
 import styles from "./Select.module.css";
 import type { SelectProps } from "./Select.types";
 
-export function Select({
-  id,
-  label,
-  options,
-  children,
-  error,
-  helperText,
-  fullWidth = false,
-  className = "",
-  disabled,
-  "data-testid": testId = "select",
-  ...props
-}: SelectProps) {
+export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
+  {
+    id,
+    label,
+    options,
+    children,
+    error,
+    helperText,
+    fullWidth = false,
+    className = "",
+    disabled,
+    "data-testid": testId = "select",
+    ...props
+  },
+  ref
+) {
   const generatedId = useId();
   const selectId = id || generatedId;
   const errorId = `${selectId}-error`;
@@ -36,6 +39,7 @@ export function Select({
 
       <div className={styles.selectWrapper}>
         <select
+          ref={ref}
           id={selectId}
           data-testid={testId}
           disabled={disabled}
@@ -74,4 +78,4 @@ export function Select({
       )}
     </div>
   );
-}
+});

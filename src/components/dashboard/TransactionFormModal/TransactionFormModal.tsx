@@ -34,6 +34,7 @@ export function TransactionFormModal({
     formState: { errors, isSubmitting },
   } = useForm<CreateTransactionFormData>({
     resolver: zodResolver(createTransactionSchema),
+    shouldFocusError: true,
     defaultValues: {
       description: "",
       amount: undefined,
@@ -84,6 +85,7 @@ export function TransactionFormModal({
         onSubmit={handleSubmit(onSubmit)}
         className={styles.form}
         data-testid="transaction-form"
+        noValidate
       >
         {apiError && (
           <div className={styles.apiError} role="alert" data-testid="transaction-form-api-error">

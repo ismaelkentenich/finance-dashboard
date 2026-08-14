@@ -390,4 +390,45 @@ describe("TransactionFormModal Feature Component", () => {
       });
     });
   });
+
+  describe("TransactionFormModal Error Focus Management & A11y", () => {
+    it("automatically moves keyboard focus to the first invalid field upon validation failure", async () => {
+      const user = userEvent.setup();
+      renderTransactionModal();
+
+      const submitButton = screen.getByTestId("transaction-submit-button");
+      const descriptionInput = screen.getByTestId("transaction-description-input");
+
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(descriptionInput).toHaveFocus();
+
+        expect(descriptionInput).toHaveAttribute("aria-invalid", "true");
+
+        const errorMsg = screen.getByTestId("transaction-description-input-error");
+        expect(errorMsg).toBeInTheDocument();
+        expect(errorMsg).toHaveAttribute("role", "alert");
+        expect(descriptionInput).toHaveAttribute("aria-describedby", errorMsg.id);
+      });
+    });
+
+    it("moves focus to the amount input when description is valid but amount is missing/zero", async () => {
+      const user = userEvent.setup();
+      renderTransactionModal();
+
+      const descriptionInput = screen.getByTestId("transaction-description-input");
+      const amountInput = screen.getByTestId("transaction-amount-input");
+      const submitButton = screen.getByTestId("transaction-submit-button");
+
+      await user.type(descriptionInput, "Compra no Supermercado");
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(amountInput).toHaveFocus();
+        expect(amountInput).toHaveAttribute("aria-invalid", "true");
+        expect(descriptionInput).toHaveAttribute("aria-invalid", "false");
+      });
+    });
+  });
 });
