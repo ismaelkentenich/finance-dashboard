@@ -1,13 +1,6 @@
 import type { CSSProperties } from "react";
 import styles from "./Skeleton.module.css";
-
-interface SkeletonProps {
-  width?: string | number;
-  height?: string | number;
-  borderRadius?: string;
-  className?: string;
-  "data-testid"?: string;
-}
+import { SkeletonProps } from "./Skeleton.types";
 
 export function Skeleton({
   width = "100%",
