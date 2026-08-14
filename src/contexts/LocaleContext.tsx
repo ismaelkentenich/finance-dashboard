@@ -3,7 +3,7 @@
 import { en } from "@/locales/en";
 import { pt } from "@/locales/pt-br";
 import type { SupportedLocale, TranslationSchema } from "@/locales/types";
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 interface LocaleContextValue {
   locale: SupportedLocale;
@@ -20,6 +20,10 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<SupportedLocale>("pt-BR");
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const value: LocaleContextValue = {
     locale,
