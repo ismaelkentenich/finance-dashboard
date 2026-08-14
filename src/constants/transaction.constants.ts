@@ -15,3 +15,19 @@ export const CATEGORY_LABELS: Record<TransactionCategory, string> = {
   investment: "Investments",
   other: "Other",
 };
+
+export const ALL_CATEGORIES: TransactionCategory[] = [
+  "housing",
+  "food",
+  "transportation",
+  "utilities",
+  "entertainment",
+  "healthcare",
+  "education",
+  "shopping",
+  "services",
+  "salary",
+  "freelance",
+  "investment",
+  "other",
+];
