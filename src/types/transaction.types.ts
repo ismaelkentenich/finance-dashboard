@@ -1,19 +1,8 @@
+import { ALL_CATEGORIES } from "@/constants/transaction.constants";
+
 export type TransactionType = "income" | "expense";
 
-export type TransactionCategory =
-  | "housing"
-  | "food"
-  | "transportation"
-  | "utilities"
-  | "entertainment"
-  | "healthcare"
-  | "education"
-  | "shopping"
-  | "services"
-  | "salary"
-  | "freelance"
-  | "investment"
-  | "other";
+export type TransactionCategory = (typeof ALL_CATEGORIES)[number];
 
 export interface Transaction {
   id: string;
