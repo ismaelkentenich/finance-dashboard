@@ -1,4 +1,4 @@
-import type { PeriodFilter, Transaction } from "@/types/transaction.types";
+import type { PeriodFilter, Transaction } from "@/types";
 
 /**
  * Filters a list of transactions based on the selected period criteria

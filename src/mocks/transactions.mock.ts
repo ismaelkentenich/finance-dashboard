@@ -1,4 +1,4 @@
-import type { Transaction } from "@/types/transaction.types";
+import type { Transaction } from "@/types";
 
 export const INITIAL_MOCK_TRANSACTIONS: Transaction[] = [
   // Current Month (August 2026)

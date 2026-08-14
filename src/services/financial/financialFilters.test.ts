@@ -1,4 +1,4 @@
-import type { PeriodFilter, Transaction } from "@/types/transaction.types";
+import type { PeriodFilter, Transaction } from "@/types";
 import { describe, expect, it } from "vitest";
 import { filterTransactionsByPeriod } from "./financialFilters";
 

@@ -1,4 +1,4 @@
-import type { Transaction, TransactionCategory } from "@/types/transaction.types";
+import type { Transaction, TransactionCategory } from "@/types";
 import { describe, expect, it } from "vitest";
 import { calculateCategoryBreakdown, calculateFinancialSummary } from "./financialCalculations";
 

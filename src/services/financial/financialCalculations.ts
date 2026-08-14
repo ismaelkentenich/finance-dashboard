@@ -1,10 +1,5 @@
 import { CATEGORY_LABELS } from "@/constants/transaction.constants";
-import type {
-  CategorySummary,
-  FinancialSummary,
-  Transaction,
-  TransactionCategory,
-} from "@/types/transaction.types";
+import type { CategorySummary, FinancialSummary, Transaction, TransactionCategory } from "@/types";
 
 export function calculateFinancialSummary(
   transactions: Transaction[],

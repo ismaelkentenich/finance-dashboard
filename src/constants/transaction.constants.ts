@@ -1,4 +1,4 @@
-import { TransactionCategory } from "@/types/transaction.types";
+import { TransactionCategory } from "@/types";
 
 export const CATEGORY_LABELS: Record<TransactionCategory, string> = {
   housing: "Housing",

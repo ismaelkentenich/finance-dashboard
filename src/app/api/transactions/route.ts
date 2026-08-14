@@ -4,7 +4,7 @@ import {
   calculateFinancialSummary,
 } from "@/services/financial/financialCalculations";
 import { filterTransactionsByPeriod } from "@/services/financial/financialFilters";
-import type { PeriodFilter, Transaction } from "@/types/transaction.types";
+import type { PeriodFilter, Transaction } from "@/types";
 import { NextResponse, type NextRequest } from "next/server";
 
 // In-memory mutable store for the dev server session
