@@ -14,7 +14,12 @@ export function RecentTransactions({
   const { t } = useLocale();
 
   return (
-    <Card data-testid={testId} className={className} aria-labelledby="recent-transactions-title">
+    <Card
+      id="transactions"
+      data-testid={testId}
+      className={className}
+      aria-labelledby="recent-transactions-title"
+    >
       <h2 id="recent-transactions-title" className={styles.cardTitle}>
         {t.transactions.title}
       </h2>

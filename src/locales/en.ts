@@ -7,6 +7,8 @@ export const en = {
   header: {
     title: "Financial Overview",
     periodBadge: "August 2026",
+    switchToPortuguese: "Switch language to Portuguese",
+    switchToEnglish: "Switch language to English",
   },
   sidebar: {
     brandName: "FinFlow",

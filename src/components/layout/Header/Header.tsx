@@ -38,6 +38,7 @@ export function Header() {
             className={`${styles.localeButton} ${locale === "pt-BR" ? styles.localeButtonActive : ""}`}
             onClick={() => setLocale("pt-BR")}
             aria-pressed={locale === "pt-BR"}
+            aria-label={t.header.switchToPortuguese}
           >
             PT
           </button>
@@ -46,6 +47,7 @@ export function Header() {
             className={`${styles.localeButton} ${locale === "en-US" ? styles.localeButtonActive : ""}`}
             onClick={() => setLocale("en-US")}
             aria-pressed={locale === "en-US"}
+            aria-label={t.header.switchToEnglish}
           >
             EN
           </button>

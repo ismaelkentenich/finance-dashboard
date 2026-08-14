@@ -125,4 +125,17 @@ describe("RecentTransactions Component", () => {
       expect(within(rowExpense).getByText("Gym Membership")).toBeInTheDocument();
     });
   });
+
+  describe("RecentTransactions Anchor & Structure Navigation", () => {
+    it("has id='transactions' on the root container matching the Sidebar navigation anchor", () => {
+      render(
+        <LocaleProvider>
+          <RecentTransactions transactions={[]} />
+        </LocaleProvider>
+      );
+
+      const container = screen.getByTestId("recent-transactions");
+      expect(container).toHaveAttribute("id", "transactions");
+    });
+  });
 });
