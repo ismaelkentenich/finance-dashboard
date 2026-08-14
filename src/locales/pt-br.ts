@@ -1,4 +1,4 @@
-import { TranslationSchema } from "./types";
+import type { TranslationSchema } from "./types";
 
 export const pt: TranslationSchema = {
   common: {
@@ -16,6 +16,24 @@ export const pt: TranslationSchema = {
       transactions: "Transações",
     },
     userRole: "Conta Premium",
+  },
+  filters: {
+    periodLabel: "Período",
+    periods: {
+      "current-month": "Mês Atual",
+      "previous-month": "Mês Anterior",
+      "last-3-months": "Últimos 3 Meses",
+      custom: "Personalizado",
+    },
+    typeLabel: "Tipo",
+    types: {
+      all: "Todos os Tipos",
+      income: "Receitas",
+      expense: "Despesas",
+    },
+    categoryLabel: "Categoria",
+    allCategories: "Todas as Categorias",
+    clearFilters: "Limpar Filtros",
   },
   summary: {
     balance: "Saldo Atual",

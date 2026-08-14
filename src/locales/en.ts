@@ -15,6 +15,24 @@ export const en = {
     },
     userRole: "Premium Account",
   },
+  filters: {
+    periodLabel: "Period",
+    periods: {
+      "current-month": "Current Month",
+      "previous-month": "Previous Month",
+      "last-3-months": "Last 3 Months",
+      custom: "Custom Range",
+    },
+    typeLabel: "Type",
+    types: {
+      all: "All Types",
+      income: "Income",
+      expense: "Expenses",
+    },
+    categoryLabel: "Category",
+    allCategories: "All Categories",
+    clearFilters: "Reset Filters",
+  },
   summary: {
     balance: "Current Balance",
     income: "Total Income",
