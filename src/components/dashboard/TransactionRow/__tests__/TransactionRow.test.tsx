@@ -37,12 +37,11 @@ describe("TransactionRow Component", () => {
       expect(descCell).toHaveTextContent("Supermarket Purchase");
     });
 
-    it("renders mapped human-readable category label from locale dictionary in badge", () => {
+    it("renders mapped localized category label in badge", () => {
       const transaction = createMockTransaction({ category: "housing" });
       renderInTableWithLocale(<TransactionRow transaction={transaction} />);
 
       const badge = screen.getByTestId("category-badge");
-      // Mapped to pt-BR dictionary ("Moradia")
       expect(badge).toHaveTextContent("Moradia");
     });
   });
@@ -89,7 +88,7 @@ describe("TransactionRow Component", () => {
     });
   });
 
-  describe("custom test identifier support", () => {
+  describe("custom test identifier and className support", () => {
     it("renders custom data-testid on row element when supplied", () => {
       const transaction = createMockTransaction({ id: "tx-custom-99" });
       renderInTableWithLocale(
@@ -97,6 +96,16 @@ describe("TransactionRow Component", () => {
       );
 
       expect(screen.getByTestId("custom-row-item")).toBeInTheDocument();
+    });
+
+    it("appends custom className to the row element", () => {
+      const transaction = createMockTransaction();
+      renderInTableWithLocale(
+        <TransactionRow transaction={transaction} className="custom-highlight-row" />
+      );
+
+      const row = screen.getByTestId(`transaction-row-${transaction.id}`);
+      expect(row.className).toContain("custom-highlight-row");
     });
   });
 });

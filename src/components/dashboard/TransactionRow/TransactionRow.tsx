@@ -8,6 +8,7 @@ import type { TransactionRowProps } from "./TransactionRow.types";
 
 export function TransactionRow({
   transaction,
+  className = "",
   "data-testid": testId = `transaction-row-${transaction.id}`,
 }: TransactionRowProps) {
   const { t, locale } = useLocale();
@@ -17,7 +18,7 @@ export function TransactionRow({
   const formattedAmount = `${isIncome ? "+" : "-"} ${formatCurrency(transaction.amount, locale)}`;
 
   return (
-    <tr data-testid={testId} className={styles.row}>
+    <tr data-testid={testId} className={`${styles.row} ${className}`.trim()}>
       {/* Description Column */}
       <td
         data-testid="transaction-description"

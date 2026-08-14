@@ -7,9 +7,11 @@
 }
 
 .td {
-  padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
+  padding: var(--spacing-md) var(--spacing-md);
+  border-bottom: var(--border-width-thin, 1px) solid var(--border-color);
   color: var(--color-neutral-800);
+  font-size: var(--font-size-sm);
+  vertical-align: middle;
 }
 
 .descriptionCell {

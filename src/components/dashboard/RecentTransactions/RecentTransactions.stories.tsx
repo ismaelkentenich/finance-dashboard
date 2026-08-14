@@ -10,7 +10,7 @@ const meta: Meta<typeof RecentTransactions> = {
     docs: {
       description: {
         component:
-          "Container component presenting a semantic table of recent transactions with empty state handling and responsive horizontal scroll.",
+          "Container component presenting a semantic table of recent transactions with localized headers, empty state handling, and responsive horizontal scroll.",
       },
     },
   },
@@ -22,7 +22,7 @@ type Story = StoryObj<typeof RecentTransactions>;
 const sampleTransactions: Transaction[] = [
   {
     id: "tx-001",
-    description: "Main Salary",
+    description: "Salário Mensal",
     amount: 8500.0,
     type: "income",
     category: "salary",
@@ -31,7 +31,7 @@ const sampleTransactions: Transaction[] = [
   },
   {
     id: "tx-002",
-    description: "Apartment Rent",
+    description: "Aluguel Apartamento",
     amount: 2200.0,
     type: "expense",
     category: "housing",
@@ -40,7 +40,7 @@ const sampleTransactions: Transaction[] = [
   },
   {
     id: "tx-003",
-    description: "Supermarket Groceries",
+    description: "Supermercado Mensal",
     amount: 642.5,
     type: "expense",
     category: "food",
@@ -49,7 +49,7 @@ const sampleTransactions: Transaction[] = [
   },
   {
     id: "tx-004",
-    description: "Freelance Design Project",
+    description: "Projeto Freelance UI",
     amount: 1800.0,
     type: "income",
     category: "freelance",

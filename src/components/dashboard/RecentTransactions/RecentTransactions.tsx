@@ -8,12 +8,13 @@ import type { RecentTransactionsProps } from "./RecentTransactions.types";
 
 export function RecentTransactions({
   transactions,
+  className = "",
   "data-testid": testId = "recent-transactions",
 }: RecentTransactionsProps) {
   const { t } = useLocale();
 
   return (
-    <Card data-testid={testId} aria-labelledby="recent-transactions-title">
+    <Card data-testid={testId} className={className} aria-labelledby="recent-transactions-title">
       <h2 id="recent-transactions-title" className={styles.cardTitle}>
         {t.transactions.title}
       </h2>

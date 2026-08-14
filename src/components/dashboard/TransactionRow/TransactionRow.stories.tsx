@@ -10,7 +10,7 @@ const meta: Meta<typeof TransactionRow> = {
     docs: {
       description: {
         component:
-          "Individual transaction table row displaying description, formatted category badge, localized date, and color-coded financial amount.",
+          "Individual transaction table row displaying description, localized category badge, formatted date, and color-coded financial amount.",
       },
     },
   },
@@ -30,7 +30,7 @@ type Story = StoryObj<typeof TransactionRow>;
 
 const mockIncomeTransaction: Transaction = {
   id: "tx-income-1",
-  description: "Monthly Salary Deposit",
+  description: "Depósito de Salário",
   amount: 8500,
   type: "income",
   category: "salary",
@@ -40,7 +40,7 @@ const mockIncomeTransaction: Transaction = {
 
 const mockExpenseTransaction: Transaction = {
   id: "tx-expense-1",
-  description: "Apartment Monthly Rent",
+  description: "Aluguel Apartamento",
   amount: 2200,
   type: "expense",
   category: "housing",
@@ -69,7 +69,7 @@ export const MultipleRowsComparison: Story = {
         <TransactionRow
           transaction={{
             id: "tx-expense-2",
-            description: "Supermarket Groceries",
+            description: "Supermercado Mensal",
             amount: 642.5,
             type: "expense",
             category: "food",
