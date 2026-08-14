@@ -10,3 +10,9 @@ export interface TransactionFilterParams {
   endDate?: string;
   searchQuery?: string;
 }
+
+export interface TransactionFiltersState {
+  period: PeriodFilter;
+  type: "all" | TransactionType;
+  category: "all" | TransactionCategory;
+}
