@@ -1,7 +1,7 @@
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { transactionService } from "@/services/api/transactionService";
 import type { GetDashboardDataResponse, TransactionFiltersState } from "@/types";
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useDashboardData } from "../useDashboardData";
@@ -63,7 +63,9 @@ describe("useDashboardData Hook", () => {
     it("starts with isLoading as true, data as null and error as null", () => {
       vi.mocked(transactionService.getDashboardData).mockReturnValue(new Promise(() => {}));
 
-      const { result } = renderHook(() => useDashboardData(defaultParams), { wrapper });
+      const { result } = renderHook(() => useDashboardData(defaultParams), {
+        wrapper,
+      });
 
       expect(result.current.isLoading).toBe(true);
       expect(result.current.data).toBeNull();
@@ -73,7 +75,9 @@ describe("useDashboardData Hook", () => {
     it("populates data and sets isLoading to false on successful API response", async () => {
       vi.mocked(transactionService.getDashboardData).mockResolvedValueOnce(mockDashboardResponse);
 
-      const { result } = renderHook(() => useDashboardData(defaultParams), { wrapper });
+      const { result } = renderHook(() => useDashboardData(defaultParams), {
+        wrapper,
+      });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -96,7 +100,9 @@ describe("useDashboardData Hook", () => {
         new Error("Network Error")
       );
 
-      const { result } = renderHook(() => useDashboardData(defaultParams), { wrapper });
+      const { result } = renderHook(() => useDashboardData(defaultParams), {
+        wrapper,
+      });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
@@ -144,6 +150,30 @@ describe("useDashboardData Hook", () => {
       });
 
       expect(transactionService.getDashboardData).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("Imperative refetch trigger", () => {
+    it("triggers a new data fetch when invoking refetch function", async () => {
+      vi.mocked(transactionService.getDashboardData).mockResolvedValue(mockDashboardResponse);
+
+      const { result } = renderHook(() => useDashboardData(defaultParams), {
+        wrapper,
+      });
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      expect(transactionService.getDashboardData).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        result.current.refetch();
+      });
+
+      await waitFor(() => {
+        expect(transactionService.getDashboardData).toHaveBeenCalledTimes(2);
+      });
     });
   });
 

@@ -8,7 +8,7 @@ import type {
   TransactionCategory,
   TransactionType,
 } from "@/types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface UseDashboardDataParams {
   period: PeriodFilter;
@@ -21,6 +21,11 @@ export function useDashboardData({ period, type, category }: UseDashboardDataPar
   const [data, setData] = useState<GetDashboardDataResponse["data"] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshIndex, setRefreshIndex] = useState<number>(0);
+
+  const refetch = useCallback(() => {
+    setRefreshIndex((prev) => prev + 1);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -55,11 +60,12 @@ export function useDashboardData({ period, type, category }: UseDashboardDataPar
     return () => {
       isMounted = false;
     };
-  }, [period, type, category, t.common.noData]);
+  }, [period, type, category, refreshIndex, t.common.noData]);
 
   return {
     data,
     isLoading,
     error,
+    refetch,
   };
 }

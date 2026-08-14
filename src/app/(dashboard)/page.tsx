@@ -4,8 +4,10 @@ import { CategoryBreakdown } from "@/components/dashboard/CategoryBreakdown";
 import { DashboardFilters } from "@/components/dashboard/DashboardFilters";
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
+import { TransactionFormModal } from "@/components/dashboard/TransactionFormModal";
 import { Card } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useModal } from "@/contexts/ModalContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import styles from "./page.module.css";
@@ -29,9 +31,9 @@ function DashboardSkeleton() {
 }
 
 export default function DashboardPage() {
+  const { isTransactionModalOpen, closeTransactionModal } = useModal();
   const { filters, setFilters, resetFilters, hasActiveFilters } = useTransactionFilters();
-
-  const { data, isLoading, error } = useDashboardData(filters);
+  const { data, isLoading, error, refetch } = useDashboardData(filters);
 
   return (
     <div className={styles.dashboardContainer} data-testid="dashboard-view">
@@ -61,6 +63,12 @@ export default function DashboardPage() {
           </div>
         </>
       )}
+
+      <TransactionFormModal
+        isOpen={isTransactionModalOpen}
+        onClose={closeTransactionModal}
+        onSuccess={() => refetch()}
+      />
     </div>
   );
 }

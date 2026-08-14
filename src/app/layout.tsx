@@ -1,4 +1,5 @@
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { ModalProvider } from "@/contexts/ModalContext";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        <LocaleProvider>{children}</LocaleProvider>
+        <LocaleProvider>
+          <ModalProvider>{children}</ModalProvider>
+        </LocaleProvider>
       </body>
     </html>
   );
