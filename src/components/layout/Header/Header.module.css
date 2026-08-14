@@ -1,0 +1,30 @@
+.header {
+  height: 64px;
+  background-color: var(--color-neutral-50);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-neutral-900);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.periodBadge {
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-500);
+  font-weight: 500;
+  background-color: var(--color-neutral-100);
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--border-radius-sm);
+}
