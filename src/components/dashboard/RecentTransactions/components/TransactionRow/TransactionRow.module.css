@@ -1,0 +1,37 @@
+.row {
+  transition: background-color 0.15s ease-in-out;
+}
+
+.row:hover {
+  background-color: var(--color-neutral-100);
+}
+
+.td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--color-neutral-800);
+}
+
+.descriptionCell {
+  font-weight: 600;
+  color: var(--color-neutral-900);
+}
+
+.dateCell {
+  color: var(--color-neutral-500);
+  white-space: nowrap;
+}
+
+.amountCell {
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.incomeAmount {
+  color: var(--color-primary-green-200);
+}
+
+.expenseAmount {
+  color: var(--color-status-error-200);
+}
