@@ -77,6 +77,7 @@
   --color-overlay-backdrop: rgba(0, 0, 0, 0.45);
   --color-overlay-light-green-30: rgba(219, 249, 234, 0.3);
   --color-overlay-black-45: rgba(0, 0, 0, 0.45);
+  --color-white-alpha-30: rgba(255, 255, 255, 0.3);
   --color-transparent: #00000000;
   --border-color: var(--color-neutral-200);
 
