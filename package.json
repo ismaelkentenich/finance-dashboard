@@ -27,12 +27,20 @@
     ]
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.8.0",
     "lucide-react": "^1.31.0",
     "next": "16.3.1",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "react-hook-form": "^7.85.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "latest",
+    "@storybook/addon-a11y": "^10.5.8",
+    "@storybook/addon-docs": "^10.5.8",
+    "@storybook/addon-vitest": "^10.5.8",
+    "@storybook/nextjs-vite": "^10.5.8",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -40,26 +48,21 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.5",
+    "@vitest/browser-playwright": "4.1.10",
+    "@vitest/coverage-v8": "4.1.10",
     "eslint": "^9",
     "eslint-config-next": "16.3.1",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-storybook": "^10.5.8",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^16.4.0",
+    "playwright": "latest",
     "prettier": "^3.9.6",
+    "storybook": "^10.5.8",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.1.10",
-    "storybook": "^10.5.8",
-    "@storybook/nextjs-vite": "^10.5.8",
-    "@chromatic-com/storybook": "latest",
-    "@storybook/addon-vitest": "^10.5.8",
-    "@storybook/addon-a11y": "^10.5.8",
-    "@storybook/addon-docs": "^10.5.8",
     "vite": "latest",
-    "eslint-plugin-storybook": "^10.5.8",
-    "@vitest/browser-playwright": "4.1.10",
-    "@vitest/coverage-v8": "4.1.10",
-    "playwright": "latest"
+    "vitest": "^4.1.10"
   }
 }
