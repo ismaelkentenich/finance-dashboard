@@ -1,26 +1,153 @@
-@import "tailwindcss";
-
+/* ==========================================
+   DESIGN SYSTEM TOKENS & CSS VARIABLES
+   ========================================== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primary Green */
+  --color-primary-green-50: #dbf9ea;
+  --color-primary-green-100: #008f47;
+  --color-primary-green-200: #006633;
+  --color-primary-green-300: #003d1f;
+
+  /* Primary Green Alpha */
+  --color-primary-green-alpha-25: rgba(0, 152, 61, 0.25);
+
+  /* Secondary Green */
+  --color-secondary-green-100: #4bc445;
+  --color-secondary-green-200: #3aaa35;
+  --color-secondary-green-300: #2b7c27;
+
+  /* Blue */
+  --color-blue-50: #eef3fc;
+  --color-blue-200: #2f63c0;
+  --color-blue-400: #174290;
+  --color-blue-500: #123574;
+
+  /* Neutrals */
+  --color-neutral-50: #ffffff;
+  --color-neutral-100: #f2f2f2;
+  --color-neutral-200: #e6e6e6;
+  --color-neutral-300: #b3b3b3;
+  --color-neutral-350: #666666;
+  --color-neutral-500: #585858;
+  --color-neutral-700: #333333;
+  --color-neutral-800: #1a1a1a;
+  --color-neutral-900: #000000;
+
+  /* Status - Information */
+  --color-status-info-100: #d4e7fc;
+  --color-status-info-200: #2a89ef;
+  --color-status-info-300: #055bb8;
+
+  /* Status - Warning */
+  --color-status-warning-100: #ffeab4;
+  --color-status-warning-200: #ebbc46;
+  --color-status-warning-300: #b78302;
+
+  /* Status - Error */
+  --color-status-error-100: #ff8f8a;
+  --color-status-error-200: #de4841;
+  --color-status-error-300: #4b0401;
+
+  /* Status - Success */
+  --color-status-success-100: #75dca8;
+  --color-status-success-200: #008f47;
+  --color-status-success-300: #003f1f;
+
+  /* Accent Lights & Solids */
+  --color-accent-purple: #5530e8;
+  --color-accent-purple-light: #eae7ff;
+  --color-accent-pink: #e82ebf;
+  --color-accent-pink-light: #fad5f2;
+  --color-accent-red: #e61e32;
+  --color-accent-red-light: #fad2d6;
+  --color-accent-orange: #ff850a;
+  --color-accent-orange-light: #ffe7ce;
+  --color-accent-yellow: #f9ab10;
+  --color-accent-yellow-light: #feeecf;
+  --color-accent-green: #15be78;
+  --color-accent-green-light: #d0f2e4;
+  --color-accent-blue: #2a89ef;
+  --color-accent-blue-light: #d4e7fc;
+
+  /* Overlays & Alphas */
+  --color-overlay-backdrop: rgba(0, 0, 0, 0.45);
+  --color-overlay-light-green-30: rgba(219, 249, 234, 0.3);
+  --color-overlay-black-45: rgba(0, 0, 0, 0.45);
+  --color-transparent: #00000000;
+
+  /* Typography - Font Sizes */
+  --font-size-xxs: 8px;
+  --font-size-xxs2: 9px;
+  --font-size-xs: 10px;
+  --font-size-sm: 12px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-xxl: 20px;
+  --font-size-xxl2: 22px;
+  --font-size-xxxl: 24px;
+
+  /* Typography - Line Heights */
+  --line-height-xxs: 8px;
+  --line-height-xxs2: 9px;
+  --line-height-xs: 10px;
+  --line-height-sm: 12px;
+  --line-height-md: 14px;
+  --line-height-lg: 16px;
+  --line-height-xl: 18px;
+  --line-height-xxl: 20px;
+  --line-height-xxl2: 22px;
+  --line-height-xxxl: 24px;
+
+  /* Border Radii Tokens */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-full: 9999px;
+
+  /* Elevation Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+
+  /* Font Families */
+  --font-family-base:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+    sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ==========================================
+   MODERN CSS RESET
+   ========================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-base);
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-800);
+  line-height: var(--line-height-lg);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
