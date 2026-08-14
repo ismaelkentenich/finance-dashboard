@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Card, CardHeader, CardTitle } from "./Card";
+import { Card, CardHeader, CardTitle } from "../Card";
 
 describe("Card Component Family", () => {
   describe("Card (Root Container)", () => {
