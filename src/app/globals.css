@@ -50,6 +50,7 @@
   --color-status-error-100: #ff8f8a;
   --color-status-error-200: #de4841;
   --color-status-error-300: #4b0401;
+  --color-status-error-350: #991b1b;
   --color-status-error-alpha-25: rgba(222, 72, 65, 0.25);
 
   /* Status - Success */
