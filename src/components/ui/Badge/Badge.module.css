@@ -1,0 +1,30 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-sm);
+  font-weight: 600;
+  border-radius: var(--border-radius-full);
+}
+
+.badgeSuccess {
+  background-color: var(--color-primary-green-50);
+  color: var(--color-primary-green-200);
+}
+
+.badgeDanger {
+  background-color: var(--color-status-error-100);
+  color: var(--color-status-error-300);
+}
+
+.badgeNeutral {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-700);
+}
+
+.badgeInfo {
+  background-color: var(--color-status-info-100);
+  color: var(--color-status-info-300);
+}
