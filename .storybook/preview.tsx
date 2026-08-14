@@ -1,7 +1,58 @@
-import type { Preview } from "@storybook/react";
+import type { Decorator, Preview } from "@storybook/react";
+import React, { useEffect } from "react";
 import "../src/app/globals.css";
+import { LocaleProvider, useLocale } from "../src/contexts/LocaleContext";
+import type { SupportedLocale } from "../src/locales/types";
+
+function LocaleStorySync({
+  children,
+  currentLocale,
+}: {
+  children: React.ReactNode;
+  currentLocale: SupportedLocale;
+}) {
+  const { setLocale, locale } = useLocale();
+
+  useEffect(() => {
+    if (currentLocale && currentLocale !== locale) {
+      setLocale(currentLocale);
+    }
+  }, [currentLocale, locale, setLocale]);
+
+  return <>{children}</>;
+}
+
+const withLocaleProvider: Decorator = (Story, context) => {
+  const selectedLocale = (context.globals.locale as SupportedLocale) || "pt-BR";
+
+  return (
+    <LocaleProvider>
+      <LocaleStorySync currentLocale={selectedLocale}>
+        <Story {...context} />
+      </LocaleStorySync>
+    </LocaleProvider>
+  );
+};
 
 const preview: Preview = {
+  globalTypes: {
+    locale: {
+      name: "Locale",
+      description: "Internationalization locale for components",
+      defaultValue: "pt-BR",
+      toolbar: {
+        icon: "globe",
+        items: [
+          { value: "pt-BR", title: "Português (pt-BR)", right: "🇧🇷" },
+          { value: "en-US", title: "English (en-US)", right: "🇺🇸" },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
+
+  decorators: [withLocaleProvider],
+
   parameters: {
     controls: {
       matchers: {

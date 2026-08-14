@@ -1,0 +1,55 @@
+export const en = {
+  common: {
+    loading: "Loading financial data...",
+    noData: "No data available.",
+  },
+  header: {
+    title: "Financial Overview",
+    periodBadge: "August 2026",
+  },
+  sidebar: {
+    brandName: "FinFlow",
+    navigation: {
+      overview: "Overview",
+      transactions: "Transactions",
+    },
+    userRole: "Premium Account",
+  },
+  summary: {
+    balance: "Current Balance",
+    income: "Total Income",
+    expenses: "Total Expenses",
+    savingsRate: "Savings Rate",
+    vsPreviousMonth: "vs previous month",
+    ofTotalIncome: "Of total monthly income",
+  },
+  categories: {
+    title: "Expenses by Category",
+    empty: "No expense data for this period.",
+    labels: {
+      housing: "Housing",
+      food: "Food & Groceries",
+      transportation: "Transportation",
+      utilities: "Utilities & Bills",
+      entertainment: "Entertainment",
+      healthcare: "Healthcare",
+      education: "Education",
+      shopping: "Shopping",
+      services: "Services",
+      salary: "Salary",
+      freelance: "Freelance",
+      investment: "Investments",
+      other: "Other",
+    },
+  },
+  transactions: {
+    title: "Recent Transactions",
+    empty: "No transactions found for the selected period.",
+    table: {
+      description: "Description",
+      category: "Category",
+      date: "Date",
+      amount: "Amount",
+    },
+  },
+} as const;

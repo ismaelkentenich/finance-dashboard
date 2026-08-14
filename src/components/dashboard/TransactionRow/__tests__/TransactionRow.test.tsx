@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/contexts/LocaleContext";
 import type { Transaction } from "@/types";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
@@ -16,11 +17,13 @@ function createMockTransaction(overrides: Partial<Transaction> = {}): Transactio
   };
 }
 
-function renderInTable(ui: React.ReactElement) {
+function renderInTableWithLocale(ui: React.ReactElement) {
   return render(
-    <table>
-      <tbody>{ui}</tbody>
-    </table>
+    <LocaleProvider>
+      <table>
+        <tbody>{ui}</tbody>
+      </table>
+    </LocaleProvider>
   );
 }
 
@@ -28,25 +31,26 @@ describe("TransactionRow Component", () => {
   describe("description and category presentation", () => {
     it("renders transaction description inside the corresponding cell", () => {
       const transaction = createMockTransaction({ description: "Supermarket Purchase" });
-      renderInTable(<TransactionRow transaction={transaction} />);
+      renderInTableWithLocale(<TransactionRow transaction={transaction} />);
 
       const descCell = screen.getByTestId("transaction-description");
       expect(descCell).toHaveTextContent("Supermarket Purchase");
     });
 
-    it("renders mapped human-readable category label in badge", () => {
+    it("renders mapped human-readable category label from locale dictionary in badge", () => {
       const transaction = createMockTransaction({ category: "housing" });
-      renderInTable(<TransactionRow transaction={transaction} />);
+      renderInTableWithLocale(<TransactionRow transaction={transaction} />);
 
       const badge = screen.getByTestId("category-badge");
-      expect(badge).toHaveTextContent("Housing");
+      // Mapped to pt-BR dictionary ("Moradia")
+      expect(badge).toHaveTextContent("Moradia");
     });
   });
 
   describe("date column formatting", () => {
     it("formats ISO date string into localized pt-BR presentation", () => {
       const transaction = createMockTransaction({ date: "2026-08-05" });
-      renderInTable(<TransactionRow transaction={transaction} />);
+      renderInTableWithLocale(<TransactionRow transaction={transaction} />);
 
       const dateCell = screen.getByTestId("transaction-date");
       expect(dateCell.textContent?.toLowerCase()).toContain("05");
@@ -62,7 +66,7 @@ describe("TransactionRow Component", () => {
         amount: 8500,
       });
 
-      renderInTable(<TransactionRow transaction={transaction} />);
+      renderInTableWithLocale(<TransactionRow transaction={transaction} />);
 
       const amountCell = screen.getByTestId("transaction-amount");
       expect(amountCell.textContent).toMatch(/\+\s*R\$\s*8\.500,00/);
@@ -76,7 +80,7 @@ describe("TransactionRow Component", () => {
         amount: 2200,
       });
 
-      renderInTable(<TransactionRow transaction={transaction} />);
+      renderInTableWithLocale(<TransactionRow transaction={transaction} />);
 
       const amountCell = screen.getByTestId("transaction-amount");
       expect(amountCell.textContent).toMatch(/-\s*R\$\s*2\.200,00/);
@@ -88,7 +92,9 @@ describe("TransactionRow Component", () => {
   describe("custom test identifier support", () => {
     it("renders custom data-testid on row element when supplied", () => {
       const transaction = createMockTransaction({ id: "tx-custom-99" });
-      renderInTable(<TransactionRow transaction={transaction} data-testid="custom-row-item" />);
+      renderInTableWithLocale(
+        <TransactionRow transaction={transaction} data-testid="custom-row-item" />
+      );
 
       expect(screen.getByTestId("custom-row-item")).toBeInTheDocument();
     });

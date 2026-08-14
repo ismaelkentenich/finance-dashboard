@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/contexts/LocaleContext";
 import type { Transaction } from "@/types";
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
@@ -16,26 +17,32 @@ function createTransaction(overrides: Partial<Transaction> = {}): Transaction {
   };
 }
 
+function renderWithLocale(ui: React.ReactElement) {
+  return render(<LocaleProvider>{ui}</LocaleProvider>);
+}
+
 describe("RecentTransactions Component", () => {
   describe("header and accessible structure", () => {
-    it("renders the component title inside a level 2 heading", () => {
-      render(<RecentTransactions transactions={[]} />);
+    it("renders the component title inside a level 2 heading matching locale", () => {
+      renderWithLocale(<RecentTransactions transactions={[]} />);
 
       const heading = screen.getByRole("heading", {
         level: 2,
-        name: "Recent Transactions",
+        name: "Transações Recentes",
       });
       expect(heading).toBeInTheDocument();
     });
 
     it("applies the default data-testid on the root container", () => {
-      render(<RecentTransactions transactions={[]} />);
+      renderWithLocale(<RecentTransactions transactions={[]} />);
 
       expect(screen.getByTestId("recent-transactions")).toBeInTheDocument();
     });
 
     it("overrides default test identifier when data-testid is explicitly supplied", () => {
-      render(<RecentTransactions transactions={[]} data-testid="custom-recent-transactions" />);
+      renderWithLocale(
+        <RecentTransactions transactions={[]} data-testid="custom-recent-transactions" />
+      );
 
       expect(screen.getByTestId("custom-recent-transactions")).toBeInTheDocument();
       expect(screen.queryByTestId("recent-transactions")).not.toBeInTheDocument();
@@ -43,16 +50,18 @@ describe("RecentTransactions Component", () => {
   });
 
   describe("empty state presentation", () => {
-    it("displays the empty message when transactions array is empty", () => {
-      render(<RecentTransactions transactions={[]} />);
+    it("displays the localized empty message when transactions array is empty", () => {
+      renderWithLocale(<RecentTransactions transactions={[]} />);
 
       const emptyMessage = screen.getByTestId("empty-transactions-message");
       expect(emptyMessage).toBeInTheDocument();
-      expect(emptyMessage).toHaveTextContent("No transactions found for the selected period.");
+      expect(emptyMessage).toHaveTextContent(
+        "Nenhuma transação encontrada para o período selecionado."
+      );
     });
 
     it("does not render the table element when transactions list is empty", () => {
-      render(<RecentTransactions transactions={[]} />);
+      renderWithLocale(<RecentTransactions transactions={[]} />);
 
       expect(screen.queryByRole("table")).not.toBeInTheDocument();
       expect(screen.queryByTestId("transactions-table")).not.toBeInTheDocument();
@@ -60,19 +69,19 @@ describe("RecentTransactions Component", () => {
   });
 
   describe("table header rendering", () => {
-    it("renders all four expected column headers in order", () => {
+    it("renders all four expected localized column headers in order", () => {
       const transactions = [createTransaction()];
-      render(<RecentTransactions transactions={transactions} />);
+      renderWithLocale(<RecentTransactions transactions={transactions} />);
 
       const table = screen.getByTestId("transactions-table");
       expect(table).toBeInTheDocument();
 
       const headers = screen.getAllByRole("columnheader");
       expect(headers).toHaveLength(4);
-      expect(headers[0]).toHaveTextContent("Description");
-      expect(headers[1]).toHaveTextContent("Category");
-      expect(headers[2]).toHaveTextContent("Date");
-      expect(headers[3]).toHaveTextContent("Amount");
+      expect(headers[0]).toHaveTextContent("Descrição");
+      expect(headers[1]).toHaveTextContent("Categoria");
+      expect(headers[2]).toHaveTextContent("Data");
+      expect(headers[3]).toHaveTextContent("Valor");
     });
   });
 
@@ -84,7 +93,7 @@ describe("RecentTransactions Component", () => {
         createTransaction({ id: "tx-3", description: "Supermarket" }),
       ];
 
-      render(<RecentTransactions transactions={mockList} />);
+      renderWithLocale(<RecentTransactions transactions={mockList} />);
 
       const tableBody = screen.getAllByRole("row");
       expect(tableBody).toHaveLength(4);
@@ -96,7 +105,7 @@ describe("RecentTransactions Component", () => {
 
     it("does not display the empty state message when transactions are present", () => {
       const transactions = [createTransaction()];
-      render(<RecentTransactions transactions={transactions} />);
+      renderWithLocale(<RecentTransactions transactions={transactions} />);
 
       expect(screen.queryByTestId("empty-transactions-message")).not.toBeInTheDocument();
     });
@@ -107,7 +116,7 @@ describe("RecentTransactions Component", () => {
         createTransaction({ id: "tx-expense", description: "Gym Membership" }),
       ];
 
-      render(<RecentTransactions transactions={mockList} />);
+      renderWithLocale(<RecentTransactions transactions={mockList} />);
 
       const rowIncome = screen.getByTestId("transaction-row-tx-income");
       const rowExpense = screen.getByTestId("transaction-row-tx-expense");

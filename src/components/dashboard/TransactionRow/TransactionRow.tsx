@@ -1,5 +1,7 @@
+"use client";
+
 import { Badge } from "@/components/ui/Badge";
-import { CATEGORY_LABELS } from "@/constants/transaction.constants";
+import { useLocale } from "@/contexts/LocaleContext";
 import { formatCurrency, formatDate } from "@/utils/formatters";
 import styles from "./TransactionRow.module.css";
 import type { TransactionRowProps } from "./TransactionRow.types";
@@ -8,9 +10,11 @@ export function TransactionRow({
   transaction,
   "data-testid": testId = `transaction-row-${transaction.id}`,
 }: TransactionRowProps) {
+  const { t, locale } = useLocale();
   const isIncome = transaction.type === "income";
-  const categoryLabel = CATEGORY_LABELS[transaction.category] || transaction.category;
-  const formattedAmount = `${isIncome ? "+" : "-"} ${formatCurrency(transaction.amount)}`;
+
+  const categoryLabel = t.categories.labels[transaction.category] || transaction.category;
+  const formattedAmount = `${isIncome ? "+" : "-"} ${formatCurrency(transaction.amount, locale)}`;
 
   return (
     <tr data-testid={testId} className={styles.row}>
@@ -31,7 +35,7 @@ export function TransactionRow({
 
       {/* Date Column */}
       <td data-testid="transaction-date" className={`${styles.td} ${styles.dateCell}`}>
-        {formatDate(transaction.date)}
+        {formatDate(transaction.date, locale)}
       </td>
 
       {/* Amount Column */}

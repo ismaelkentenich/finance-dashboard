@@ -1,3 +1,4 @@
+import { LocaleProvider } from "@/contexts/LocaleContext";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -12,8 +13,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="pt-BR">
+      <body>
+        <LocaleProvider>{children}</LocaleProvider>
+      </body>
     </html>
   );
 }

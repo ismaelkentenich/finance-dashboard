@@ -1,5 +1,8 @@
+"use client";
+
 import { Card } from "@/components/ui/Card";
-import { TransactionRow } from "./components/TransactionRow";
+import { useLocale } from "@/contexts/LocaleContext";
+import { TransactionRow } from "../TransactionRow";
 import styles from "./RecentTransactions.module.css";
 import type { RecentTransactionsProps } from "./RecentTransactions.types";
 
@@ -7,25 +10,29 @@ export function RecentTransactions({
   transactions,
   "data-testid": testId = "recent-transactions",
 }: RecentTransactionsProps) {
+  const { t } = useLocale();
+
   return (
     <Card data-testid={testId} aria-labelledby="recent-transactions-title">
       <h2 id="recent-transactions-title" className={styles.cardTitle}>
-        Recent Transactions
+        {t.transactions.title}
       </h2>
 
       {transactions.length === 0 ? (
         <p data-testid="empty-transactions-message" className={styles.emptyText}>
-          No transactions found for the selected period.
+          {t.transactions.empty}
         </p>
       ) : (
         <div className={styles.tableWrapper}>
           <table className={styles.table} data-testid="transactions-table">
             <thead>
               <tr>
-                <th className={styles.th}>Description</th>
-                <th className={styles.th}>Category</th>
-                <th className={styles.th}>Date</th>
-                <th className={`${styles.th} ${styles.alignRight}`}>Amount</th>
+                <th className={styles.th}>{t.transactions.table.description}</th>
+                <th className={styles.th}>{t.transactions.table.category}</th>
+                <th className={styles.th}>{t.transactions.table.date}</th>
+                <th className={`${styles.th} ${styles.alignRight}`}>
+                  {t.transactions.table.amount}
+                </th>
               </tr>
             </thead>
             <tbody>
