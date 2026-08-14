@@ -41,6 +41,8 @@ export const en = {
     savingsRate: "Savings Rate",
     vsPreviousMonth: "vs previous month",
     ofTotalIncome: "Of total monthly income",
+    increaseVsPreviousMonth: "Increase of {value} vs previous month",
+    decreaseVsPreviousMonth: "Decrease of {value} vs previous month",
   },
   categories: {
     title: "Expenses by Category",

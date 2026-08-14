@@ -16,6 +16,7 @@ export function TransactionRow({
 
   const categoryLabel = t.categories.labels[transaction.category] || transaction.category;
   const formattedAmount = `${isIncome ? "+" : "-"} ${formatCurrency(transaction.amount, locale)}`;
+  const accessibleTypeLabel = isIncome ? t.filters.types.income : t.filters.types.expense;
 
   return (
     <tr data-testid={testId} className={`${styles.row} ${className}`.trim()}>
@@ -46,6 +47,7 @@ export function TransactionRow({
           isIncome ? styles.incomeAmount : styles.expenseAmount
         }`}
       >
+        <span className="sr-only">{accessibleTypeLabel}: </span>
         {formattedAmount}
       </td>
     </tr>

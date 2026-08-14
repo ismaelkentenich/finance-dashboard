@@ -13,6 +13,13 @@ export function SummaryCards({
 }: SummaryCardsProps) {
   const { t, locale } = useLocale();
 
+  const formatVariationAriaLabel = (variation: number) => {
+    const formatted = formatPercentage(variation);
+    const template =
+      variation >= 0 ? t.summary.increaseVsPreviousMonth : t.summary.decreaseVsPreviousMonth;
+    return template.replace("{value}", formatted);
+  };
+
   const cardsData = [
     {
       id: "balance",
@@ -26,6 +33,7 @@ export function SummaryCards({
             ? ("success" as const)
             : ("danger" as const),
         text: formatPercentage(summary.periodComparison.balanceVariation),
+        ariaLabel: formatVariationAriaLabel(summary.periodComparison.balanceVariation),
       },
       footerText: t.summary.vsPreviousMonth,
     },
@@ -41,6 +49,7 @@ export function SummaryCards({
             ? ("success" as const)
             : ("danger" as const),
         text: formatPercentage(summary.periodComparison.incomeVariation),
+        ariaLabel: formatVariationAriaLabel(summary.periodComparison.incomeVariation),
       },
       footerText: t.summary.vsPreviousMonth,
     },
@@ -56,6 +65,7 @@ export function SummaryCards({
             ? ("success" as const)
             : ("danger" as const),
         text: formatPercentage(summary.periodComparison.expensesVariation),
+        ariaLabel: formatVariationAriaLabel(summary.periodComparison.expensesVariation),
       },
       footerText: t.summary.vsPreviousMonth,
     },

@@ -43,6 +43,8 @@ export const pt: TranslationSchema = {
     savingsRate: "Taxa de Poupança",
     vsPreviousMonth: "vs mês anterior",
     ofTotalIncome: "Do total de receitas no mês",
+    increaseVsPreviousMonth: "Aumento de {value} em relação ao mês anterior",
+    decreaseVsPreviousMonth: "Redução de {value} em relação ao mês anterior",
   },
   categories: {
     title: "Despesas por Categoria",

@@ -38,7 +38,11 @@ export function SummaryCard({
 
       <div className={styles.footerInfo}>
         {badge && (
-          <Badge variant={badge.variant} data-testid="summary-card-badge">
+          <Badge
+            variant={badge.variant}
+            aria-label={badge.ariaLabel}
+            data-testid="summary-card-badge"
+          >
             {badge.text}
           </Badge>
         )}

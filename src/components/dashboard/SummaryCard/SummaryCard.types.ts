@@ -6,6 +6,7 @@ export type SummaryCardIconVariant = "balance" | "income" | "expense" | "savings
 export interface SummaryCardBadgeProps {
   text: string;
   variant: BadgeVariant;
+  ariaLabel?: string;
 }
 
 export interface SummaryCardProps {
