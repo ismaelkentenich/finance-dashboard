@@ -70,4 +70,25 @@ export const en = {
       amount: "Amount",
     },
   },
+  transactionModal: {
+    triggerButton: "New Transaction",
+    title: "Add New Transaction",
+    description: "Fill in the details below to record a financial transaction.",
+    fields: {
+      descriptionLabel: "Description",
+      descriptionPlaceholder: "e.g. Supermarket Groceries",
+      amountLabel: "Amount ($)",
+      amountPlaceholder: "0.00",
+      typeLabel: "Transaction Type",
+      categoryLabel: "Category",
+      dateLabel: "Date",
+    },
+    buttons: {
+      cancel: "Cancel",
+      submit: "Save Transaction",
+      submitting: "Saving...",
+    },
+    successMessage: "Transaction created successfully!",
+    errorMessage: "Failed to save transaction. Please try again.",
+  },
 } as const;

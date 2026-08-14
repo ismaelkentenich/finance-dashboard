@@ -72,4 +72,25 @@ export const pt: TranslationSchema = {
       amount: "Valor",
     },
   },
+  transactionModal: {
+    triggerButton: "Nova Transação",
+    title: "Adicionar Nova Transação",
+    description: "Preencha os dados abaixo para registrar uma movimentação financeira.",
+    fields: {
+      descriptionLabel: "Descrição",
+      descriptionPlaceholder: "Ex: Compras no Supermercado",
+      amountLabel: "Valor (R$)",
+      amountPlaceholder: "0.00",
+      typeLabel: "Tipo de Movimentação",
+      categoryLabel: "Categoria",
+      dateLabel: "Data",
+    },
+    buttons: {
+      cancel: "Cancelar",
+      submit: "Salvar Transação",
+      submitting: "Salvando...",
+    },
+    successMessage: "Transação criada com sucesso!",
+    errorMessage: "Falha ao salvar a transação. Tente novamente.",
+  },
 };
