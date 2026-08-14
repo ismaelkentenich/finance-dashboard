@@ -1,7 +1,10 @@
 "use client";
 
+import { useLocale } from "@/contexts/LocaleContext";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import { X } from "lucide-react";
-import { useEffect, useId } from "react";
+import { useId } from "react";
 import styles from "./Modal.module.css";
 import type { ModalProps } from "./Modal.types";
 
@@ -14,27 +17,15 @@ export function Modal({
   className = "",
   "data-testid": testId = "modal",
 }: ModalProps) {
+  const { t } = useLocale();
   const titleId = useId();
   const descriptionId = useId();
 
-  // Closes on ESC and blocks background page scrolling
-  useEffect(() => {
-    if (!isOpen) return;
-
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        onClose();
-      }
-    }
-
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = "unset";
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isOpen, onClose]);
+  useScrollLock(isOpen);
+  const modalRef = useFocusTrap<HTMLDivElement>({
+    isOpen,
+    onEscape: onClose,
+  });
 
   if (!isOpen) return null;
 
@@ -47,6 +38,7 @@ export function Modal({
       }}
     >
       <div
+        ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
@@ -74,7 +66,7 @@ export function Modal({
             type="button"
             className={styles.closeButton}
             onClick={onClose}
-            aria-label="Close dialog"
+            aria-label={t.common.closeDialog}
             data-testid={`${testId}-close-button`}
           >
             <X size={20} aria-hidden="true" />

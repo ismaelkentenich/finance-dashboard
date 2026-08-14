@@ -124,6 +124,7 @@ describe("TransactionFormModal Feature Component", () => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
       expect(screen.queryByTestId("transaction-form-modal")).not.toBeInTheDocument();
     });
+
     it("initializes form with default expense type, default food category, and current date", () => {
       renderTransactionModal();
 
@@ -166,7 +167,7 @@ describe("TransactionFormModal Feature Component", () => {
       const handleClose = vi.fn();
       renderTransactionModal({ onClose: handleClose });
 
-      const closeIconButton = screen.getByRole("button", { name: /close dialog/i });
+      const closeIconButton = screen.getByTestId("transaction-form-modal-close-button");
       await user.click(closeIconButton);
 
       expect(handleClose).toHaveBeenCalledTimes(1);

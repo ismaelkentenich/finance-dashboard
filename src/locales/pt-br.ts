@@ -4,6 +4,7 @@ export const pt: TranslationSchema = {
   common: {
     loading: "Carregando dados financeiros...",
     noData: "Nenhum dado disponível.",
+    closeDialog: "Fechar diálogo",
   },
   header: {
     title: "Visão Geral Financeira",

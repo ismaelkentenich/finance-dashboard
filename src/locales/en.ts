@@ -2,6 +2,7 @@ export const en = {
   common: {
     loading: "Loading financial data...",
     noData: "No data available.",
+    closeDialog: "Close Dialog",
   },
   header: {
     title: "Financial Overview",
