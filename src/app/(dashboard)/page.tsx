@@ -2,6 +2,7 @@
 
 import { CategoryBreakdown } from "@/components/dashboard/CategoryBreakdown";
 import { DashboardFilters } from "@/components/dashboard/DashboardFilters";
+import { FinancialChart } from "@/components/dashboard/FinancialChart";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { TransactionFormModal } from "@/components/dashboard/TransactionFormModal";
 import { TransactionsTable } from "@/components/dashboard/TransactionsTable";
@@ -28,6 +29,8 @@ function DashboardSkeleton() {
         <Skeleton height="140px" borderRadius="var(--border-radius-lg)" />
       </div>
 
+      <Skeleton height="320px" borderRadius="var(--border-radius-lg)" />
+
       <div className={styles.contentGrid} aria-hidden="true">
         <Skeleton height="380px" borderRadius="var(--border-radius-lg)" />
         <Skeleton height="380px" borderRadius="var(--border-radius-lg)" />
@@ -45,6 +48,7 @@ function DashboardContent() {
 
   const hasAnyWidgetVisible =
     overviewSettings.showSummaryCards ||
+    overviewSettings.showFinancialChart ||
     overviewSettings.showCategoryBreakdown ||
     overviewSettings.showRecentTransactions;
 
@@ -92,6 +96,10 @@ function DashboardContent() {
       ) : (
         <>
           {overviewSettings.showSummaryCards && <SummaryCards summary={data.summary} />}
+
+          {overviewSettings.showFinancialChart && (
+            <FinancialChart transactions={data.transactions} categories={data.categories} />
+          )}
 
           {(overviewSettings.showRecentTransactions || overviewSettings.showCategoryBreakdown) && (
             <div className={styles.contentGrid}>

@@ -20,6 +20,7 @@ export default function SettingsPage() {
 
       <Card className={styles.settingsCard}>
         <div className={styles.optionsList}>
+          {/* Summary Cards */}
           <label className={styles.optionItem}>
             <div className={styles.optionInfo}>
               <span className={styles.optionTitle}>{t.settings.cards.summary.title}</span>
@@ -36,6 +37,22 @@ export default function SettingsPage() {
             />
           </label>
 
+          {/* Financial Chart Toggle */}
+          <label className={styles.optionItem}>
+            <div className={styles.optionInfo}>
+              <span className={styles.optionTitle}>{t.settings.cards.chart.title}</span>
+              <span className={styles.optionDescription}>{t.settings.cards.chart.description}</span>
+            </div>
+            <input
+              type="checkbox"
+              className={styles.checkbox}
+              checked={overviewSettings.showFinancialChart}
+              onChange={(e) => updateOverviewSettings({ showFinancialChart: e.target.checked })}
+              data-testid="toggle-financial-chart"
+            />
+          </label>
+
+          {/* Category Breakdown */}
           <label className={styles.optionItem}>
             <div className={styles.optionInfo}>
               <span className={styles.optionTitle}>{t.settings.cards.categories.title}</span>
@@ -52,6 +69,7 @@ export default function SettingsPage() {
             />
           </label>
 
+          {/* Recent Transactions */}
           <label className={styles.optionItem}>
             <div className={styles.optionInfo}>
               <span className={styles.optionTitle}>{t.settings.cards.transactions.title}</span>
