@@ -27,7 +27,7 @@ describe("SummaryCards Metric Badges A11y and Screen Reader Context", () => {
     const balanceCard = screen.getByTestId("summary-card-balance");
     const badge = balanceCard.querySelector('[data-testid="summary-card-badge"]');
 
-    expect(badge).toHaveAttribute("aria-label", "Aumento de +12.5% em relação ao mês anterior");
+    expect(badge).toHaveAttribute("aria-label", "Aumento de +12.5% em relação ao período anterior");
   });
 
   it("provides informative aria-label on negative expense variation badge", () => {
@@ -40,6 +40,6 @@ describe("SummaryCards Metric Badges A11y and Screen Reader Context", () => {
     const expenseCard = screen.getByTestId("summary-card-expenses");
     const badge = expenseCard.querySelector('[data-testid="summary-card-badge"]');
 
-    expect(badge).toHaveAttribute("aria-label", "Redução de -8.2% em relação ao mês anterior");
+    expect(badge).toHaveAttribute("aria-label", "Redução de -8.2% em relação ao período anterior");
   });
 });

@@ -7,6 +7,7 @@ import {
 } from "@/services/financial/financialCalculations";
 import {
   applyTransactionFilters,
+  filterTransactionsByEquivalentPreviousPeriod,
   filterTransactionsByPeriod,
 } from "@/services/financial/financialFilters";
 import type { PeriodFilter, Transaction, TransactionCategory, TransactionType } from "@/types";
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
   const currentPeriodTxs = filterTransactionsByPeriod(allTransactions, period);
   const filtered = applyTransactionFilters(currentPeriodTxs, filterOptions);
 
-  const previousPeriodTxs = filterTransactionsByPeriod(allTransactions, "previous-month");
+  const previousPeriodTxs = filterTransactionsByEquivalentPreviousPeriod(allTransactions, period);
   const previousPeriodFiltered = applyTransactionFilters(previousPeriodTxs, filterOptions);
 
   const summary = calculateFinancialSummary(filtered, previousPeriodFiltered);
