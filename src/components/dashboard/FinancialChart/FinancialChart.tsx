@@ -165,6 +165,20 @@ export function FinancialChart({
               data-testid="financial-area-chart"
             />
           )
+        ) : preferences.chartType === "bar" ? (
+          <BarChart
+            data={timeSeriesData}
+            xAxisKey="label"
+            series={[
+              {
+                dataKey: "balance",
+                name: t.charts.balance,
+                color: "var(--color-blue-200)",
+              },
+            ]}
+            valueFormatter={valueFormatter}
+            data-testid="financial-bar-chart"
+          />
         ) : (
           <AreaChart
             data={timeSeriesData}

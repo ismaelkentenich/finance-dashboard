@@ -21,7 +21,7 @@ function renderFinancialChart(props = {}) {
 
 describe("FinancialChart Feature Component", () => {
   describe("header and accessibility", () => {
-    it("renders localized title and filter select controls", () => {
+    it("renders localized title and select filters", () => {
       renderFinancialChart();
 
       expect(
@@ -33,7 +33,7 @@ describe("FinancialChart Feature Component", () => {
   });
 
   describe("empty state presentation", () => {
-    it("displays localized empty state message when no data is available", () => {
+    it("displays localized empty state message when datasets are empty", () => {
       renderFinancialChart({ transactions: [], categories: [] });
 
       expect(screen.getByTestId("chart-empty-state")).toBeInTheDocument();
@@ -54,7 +54,7 @@ describe("FinancialChart Feature Component", () => {
       expect(screen.getByTestId("financial-pie-chart")).toBeInTheDocument();
     });
 
-    it("switches between bar and area visualizations on type select change", async () => {
+    it("switches between bar and area visualizations on type change", async () => {
       const user = userEvent.setup();
       renderFinancialChart();
 
@@ -66,12 +66,17 @@ describe("FinancialChart Feature Component", () => {
       expect(screen.getByTestId("financial-area-chart")).toBeInTheDocument();
     });
 
-    it("renders balance trend area chart when balance metric is selected", async () => {
+    it("renders balance trend in BarChart by default and switches to AreaChart when selected", async () => {
       const user = userEvent.setup();
       renderFinancialChart();
 
       const metricSelect = screen.getByTestId("chart-metric-select");
       await user.selectOptions(metricSelect, "balance_trend");
+
+      expect(screen.getByTestId("financial-bar-chart")).toBeInTheDocument();
+
+      const typeSelect = screen.getByTestId("chart-type-select");
+      await user.selectOptions(typeSelect, "area");
 
       expect(screen.getByTestId("financial-area-chart")).toBeInTheDocument();
     });
