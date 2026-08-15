@@ -1,16 +1,8 @@
 "use client";
 
-import {
-  DEFAULT_TRANSACTION_FILTERS,
-  VALID_PERIODS,
-  VALID_TRANSACTION_TYPES,
-} from "@/constants/filter.constants";
-import type {
-  PeriodFilter,
-  TransactionCategory,
-  TransactionFiltersState,
-  TransactionType,
-} from "@/types";
+import { DEFAULT_TRANSACTION_FILTERS } from "@/constants/filter.constants";
+import type { TransactionFiltersState } from "@/types";
+import { isValidCategory, isValidPeriod, isValidTransactionType } from "@/utils/filter";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
@@ -20,23 +12,14 @@ export function useTransactionFilters() {
   const searchParams = useSearchParams();
 
   const filters: TransactionFiltersState = useMemo(() => {
-    const periodParam = searchParams.get("period") as PeriodFilter | null;
-    const typeParam = searchParams.get("type") as ("all" | TransactionType) | null;
-    const categoryParam = searchParams.get("category") as ("all" | TransactionCategory) | null;
+    const rawPeriod = searchParams.get("period");
+    const rawType = searchParams.get("type");
+    const rawCategory = searchParams.get("category");
 
     return {
-      period:
-        periodParam && VALID_PERIODS.includes(periodParam)
-          ? periodParam
-          : DEFAULT_TRANSACTION_FILTERS.period,
-      type:
-        typeParam && VALID_TRANSACTION_TYPES.includes(typeParam)
-          ? typeParam
-          : DEFAULT_TRANSACTION_FILTERS.type,
-      category:
-        categoryParam && categoryParam !== "all"
-          ? categoryParam
-          : DEFAULT_TRANSACTION_FILTERS.category,
+      period: isValidPeriod(rawPeriod) ? rawPeriod : DEFAULT_TRANSACTION_FILTERS.period,
+      type: isValidTransactionType(rawType) ? rawType : DEFAULT_TRANSACTION_FILTERS.type,
+      category: isValidCategory(rawCategory) ? rawCategory : DEFAULT_TRANSACTION_FILTERS.category,
     };
   }, [searchParams]);
 
