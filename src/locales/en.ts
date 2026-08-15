@@ -147,6 +147,10 @@ export const en = {
         title: "Summary Cards",
         description: "Display current balance, total income, expenses, and savings rate.",
       },
+      chart: {
+        title: "Chart Analytics",
+        description: "Display customizable charts for income, expenses, and balance trends.",
+      },
       categories: {
         title: "Expenses by Category",
         description: "Display expense distribution and percentage breakdown.",
@@ -156,5 +160,24 @@ export const en = {
         description: "Display the list of most recent transactions in the period.",
       },
     },
+  },
+  charts: {
+    title: "Chart Analytics",
+    typeLabel: "Chart Type",
+    metricLabel: "Data View",
+    types: {
+      bar: "Bar Chart",
+      area: "Area / Line",
+      pie: "Donut / Categories",
+    },
+    metrics: {
+      income_vs_expense: "Income vs Expenses",
+      balance_trend: "Balance Trend",
+      category_breakdown: "Expenses by Category",
+    },
+    income: "Income",
+    expense: "Expense",
+    balance: "Balance",
+    empty: "Not enough data to display the chart for this period.",
   },
 } as const;

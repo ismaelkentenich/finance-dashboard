@@ -150,6 +150,10 @@ export const pt: TranslationSchema = {
         title: "Cartões de Resumo",
         description: "Exibe saldo atual, receitas, despesas e taxa de poupança.",
       },
+      chart: {
+        title: "Análise Gráfica",
+        description: "Exibe os gráficos personalizáveis de receitas, despesas e evolução.",
+      },
       categories: {
         title: "Despesas por Categoria",
         description: "Exibe o gráfico e percentual de gastos por categoria.",
@@ -159,5 +163,24 @@ export const pt: TranslationSchema = {
         description: "Exibe a tabela com as últimas movimentações do período.",
       },
     },
+  },
+  charts: {
+    title: "Análise Gráfica",
+    typeLabel: "Tipo de Gráfico",
+    metricLabel: "Visão dos Dados",
+    types: {
+      bar: "Barras",
+      area: "Área / Linha",
+      pie: "Donut / Categorias",
+    },
+    metrics: {
+      income_vs_expense: "Receitas vs Despesas",
+      balance_trend: "Evolução do Saldo",
+      category_breakdown: "Gastos por Categoria",
+    },
+    income: "Receita",
+    expense: "Despesa",
+    balance: "Saldo",
+    empty: "Sem dados suficientes para gerar o gráfico no período selecionado.",
   },
 };
