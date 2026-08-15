@@ -1,13 +1,34 @@
 import "@testing-library/jest-dom/vitest";
-import { expect } from "vitest";
-import type { AxeMatchers } from "vitest-axe/matchers";
+import { cleanup } from "@testing-library/react";
+import { afterEach, expect, vi } from "vitest";
 import * as matchers from "vitest-axe/matchers";
 
 expect.extend(matchers);
 
-declare module "vitest" {
-  /* eslint-disable @typescript-eslint/no-empty-object-type, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
-  interface Assertion<T = any> extends AxeMatchers {}
-  interface AsymmetricMatchersContaining extends AxeMatchers {}
-  /* eslint-enable @typescript-eslint/no-empty-object-type, @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any */
-}
+// Automatic DOM cleanup between tests
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
+
+// Mock for ResizeObserver (required for components with layouts and charts)
+global.ResizeObserver = class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+
+// Mock for window.matchMedia (required for media queries and themes)
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: vi.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
