@@ -86,7 +86,7 @@ function DashboardContent() {
           <div className={styles.contentGrid}>
             <RecentTransactions
               transactions={data.transactions}
-              title={t.transactions?.title}
+              title={t.transactions?.recentTransactions}
               id="recent-transactions"
             />
             <CategoryBreakdown categories={data.categories} />

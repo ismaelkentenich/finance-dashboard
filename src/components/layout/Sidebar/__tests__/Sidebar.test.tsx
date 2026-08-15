@@ -1,26 +1,57 @@
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Sidebar } from "../Sidebar";
+
+let currentPathname = "/";
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => currentPathname,
+}));
 
 function renderWithLocale(ui: React.ReactElement) {
   return render(<LocaleProvider>{ui}</LocaleProvider>);
 }
 
 describe("Sidebar Component", () => {
+  beforeEach(() => {
+    currentPathname = "/";
+  });
+
   it("renders main branding with localized text", () => {
     renderWithLocale(<Sidebar />);
     expect(screen.getByText("FinFlow")).toBeInTheDocument();
   });
 
-  it("renders navigation links for overview and transactions", () => {
+  it("renders navigation links for overview and transactions with correct routes", () => {
     renderWithLocale(<Sidebar />);
     expect(screen.getByRole("link", { name: /Visão Geral/i })).toHaveAttribute("href", "/");
     expect(screen.getByRole("link", { name: /Transações/i })).toHaveAttribute(
       "href",
-      "#transactions"
+      "/transactions"
     );
+  });
+
+  it("highlights active page based on pathname", () => {
+    currentPathname = "/";
+    const { rerender } = renderWithLocale(<Sidebar />);
+
+    const overviewLink = screen.getByRole("link", { name: /Visão Geral/i });
+    const transactionsLink = screen.getByRole("link", { name: /Transações/i });
+
+    expect(overviewLink).toHaveAttribute("aria-current", "page");
+    expect(transactionsLink).not.toHaveAttribute("aria-current");
+
+    currentPathname = "/transactions";
+    rerender(
+      <LocaleProvider>
+        <Sidebar />
+      </LocaleProvider>
+    );
+
+    expect(overviewLink).not.toHaveAttribute("aria-current");
+    expect(transactionsLink).toHaveAttribute("aria-current", "page");
   });
 
   it("renders user information in the sidebar footer", () => {
@@ -29,25 +60,14 @@ describe("Sidebar Component", () => {
     expect(screen.getByText("Conta Premium")).toBeInTheDocument();
   });
 
-  it("renders navigation links correctly", () => {
-    render(
-      <LocaleProvider>
-        <Sidebar />
-      </LocaleProvider>
-    );
-
+  it("renders navigation landmarks and accessible names", () => {
+    renderWithLocale(<Sidebar />);
     expect(screen.getByRole("complementary", { name: "Main Navigation" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /visão geral/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /transações/i })).toBeInTheDocument();
   });
 
   it("calls onClose when close button is clicked in mobile mode", () => {
     const handleClose = vi.fn();
-    render(
-      <LocaleProvider>
-        <Sidebar isOpen onClose={handleClose} />
-      </LocaleProvider>
-    );
+    renderWithLocale(<Sidebar isOpen onClose={handleClose} />);
 
     const closeButton = screen.getByTestId("sidebar-close-button");
     fireEvent.click(closeButton);
@@ -57,11 +77,7 @@ describe("Sidebar Component", () => {
 
   it("calls onClose when backdrop is clicked", () => {
     const handleClose = vi.fn();
-    render(
-      <LocaleProvider>
-        <Sidebar isOpen onClose={handleClose} />
-      </LocaleProvider>
-    );
+    renderWithLocale(<Sidebar isOpen onClose={handleClose} />);
 
     const backdrop = screen.getByTestId("sidebar-backdrop");
     fireEvent.click(backdrop);
@@ -71,11 +87,7 @@ describe("Sidebar Component", () => {
 
   it("calls onClose when navigation links are clicked", () => {
     const handleClose = vi.fn();
-    render(
-      <LocaleProvider>
-        <Sidebar isOpen onClose={handleClose} />
-      </LocaleProvider>
-    );
+    renderWithLocale(<Sidebar isOpen onClose={handleClose} />);
 
     const overviewLink = screen.getByRole("link", { name: /visão geral/i });
     fireEvent.click(overviewLink);

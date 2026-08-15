@@ -70,7 +70,9 @@ export const pt: TranslationSchema = {
     },
   },
   transactions: {
-    title: "Transações Recentes",
+    title: "Transações",
+    recentTransactions: "Transações Recentes",
+    allTransactions: "Todas as Transações",
     empty: "Nenhuma transação encontrada para o período selecionado.",
     table: {
       description: "Descrição",
@@ -78,6 +80,9 @@ export const pt: TranslationSchema = {
       date: "Data",
       amount: "Valor",
     },
+    totalCount: "{count} transações encontradas",
+    pageSubtitle: "Visualize, filtre e gerencie seu histórico financeiro completo.",
+    searchDescription: "Buscar por descrição...",
   },
   recentTransactions: {
     title: "Transações Recentes",
@@ -134,11 +139,5 @@ export const pt: TranslationSchema = {
     dateRequired: "Selecione uma data válida.",
     dateFormat: "Formato de data inválido (AAAA-MM-DD).",
     dateInvalid: "Data inválida.",
-  },
-  transactionsPage: {
-    title: "Todas as Transações",
-    subtitle: "Visualize, filtre e gerencie seu histórico financeiro completo.",
-    searchPlaceholder: "Buscar por descrição...",
-    totalCount: "{count} transações encontradas",
   },
 };

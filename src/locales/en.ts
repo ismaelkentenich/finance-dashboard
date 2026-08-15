@@ -68,7 +68,9 @@ export const en = {
     },
   },
   transactions: {
-    title: "Recent Transactions",
+    title: "Transactions",
+    recentTransactions: "Recent Transactions",
+    allTransactions: "All Transactions",
     empty: "No transactions found for the selected period.",
     table: {
       description: "Description",
@@ -76,6 +78,9 @@ export const en = {
       date: "Date",
       amount: "Amount",
     },
+    totalCount: "{count} transactions found",
+    pageSubtitle: "View, filter, and manage your complete financial history.",
+    searchDescription: "Search by description...",
   },
   recentTransactions: {
     title: "Recent Transactions",
@@ -131,11 +136,5 @@ export const en = {
     dateRequired: "Please select a valid date.",
     dateFormat: "Invalid date format (YYYY-MM-DD).",
     dateInvalid: "Invalid date.",
-  },
-  transactionsPage: {
-    title: "All Transactions",
-    subtitle: "View, filter, and manage your complete financial history.",
-    searchPlaceholder: "Search by description...",
-    totalCount: "{count} transactions found",
   },
 } as const;

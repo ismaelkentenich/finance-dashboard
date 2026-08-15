@@ -5,6 +5,7 @@ import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { ArrowLeftRight, LayoutDashboard, X } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import styles from "./Sidebar.module.css";
 import type { SidebarProps } from "./Sidebar.types";
 
@@ -14,6 +15,7 @@ export function Sidebar({
   "data-testid": testId = "sidebar",
 }: SidebarProps) {
   const { t } = useLocale();
+  const pathname = usePathname();
 
   useScrollLock(isOpen);
   const sidebarRef = useFocusTrap<HTMLElement>({
@@ -68,8 +70,8 @@ export function Sidebar({
               <li>
                 <Link
                   href="/"
-                  className={`${styles.navLink} ${styles.navLinkActive}`}
-                  aria-current="page"
+                  className={`${styles.navLink} ${pathname === "/" ? styles.navLinkActive : ""}`}
+                  aria-current={pathname === "/" ? "page" : undefined}
                   onClick={() => onClose?.()}
                 >
                   <LayoutDashboard size={18} aria-hidden="true" />
@@ -77,7 +79,12 @@ export function Sidebar({
                 </Link>
               </li>
               <li>
-                <Link href="#transactions" className={styles.navLink} onClick={() => onClose?.()}>
+                <Link
+                  href="/transactions"
+                  className={`${styles.navLink} ${pathname.startsWith("/transactions") ? styles.navLinkActive : ""}`}
+                  aria-current={pathname.startsWith("/transactions") ? "page" : undefined}
+                  onClick={() => onClose?.()}
+                >
                   <ArrowLeftRight size={18} aria-hidden="true" />
                   {t.sidebar.navigation.transactions}
                 </Link>

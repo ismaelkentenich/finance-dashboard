@@ -23,8 +23,18 @@ function renderWithLocale(ui: React.ReactElement) {
 
 describe("RecentTransactions Component", () => {
   describe("header and accessible structure", () => {
-    it("renders the component title inside a level 2 heading matching locale", () => {
+    it("renders the default component title inside a level 2 heading matching locale", () => {
       renderWithLocale(<RecentTransactions transactions={[]} />);
+
+      const heading = screen.getByRole("heading", {
+        level: 2,
+        name: "Transações",
+      });
+      expect(heading).toBeInTheDocument();
+    });
+
+    it("renders custom title when title prop is provided", () => {
+      renderWithLocale(<RecentTransactions transactions={[]} title="Transações Recentes" />);
 
       const heading = screen.getByRole("heading", {
         level: 2,
@@ -127,7 +137,7 @@ describe("RecentTransactions Component", () => {
   });
 
   describe("RecentTransactions Anchor & Structure Navigation", () => {
-    it("has id='transactions' on the root container matching the Sidebar navigation anchor", () => {
+    it("has id='transactions' on the root container by default", () => {
       render(
         <LocaleProvider>
           <RecentTransactions transactions={[]} />
@@ -136,6 +146,17 @@ describe("RecentTransactions Component", () => {
 
       const container = screen.getByTestId("recent-transactions");
       expect(container).toHaveAttribute("id", "transactions");
+    });
+
+    it("applies custom id prop when passed", () => {
+      render(
+        <LocaleProvider>
+          <RecentTransactions transactions={[]} id="custom-anchor" />
+        </LocaleProvider>
+      );
+
+      const container = screen.getByTestId("recent-transactions");
+      expect(container).toHaveAttribute("id", "custom-anchor");
     });
   });
 });
