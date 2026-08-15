@@ -8,7 +8,8 @@ import { ALL_CATEGORIES } from "@/constants/transaction.constants";
 import { useLocale } from "@/contexts/LocaleContext";
 import { DASHBOARD_QUERY_KEY } from "@/hooks/useDashboardData";
 import {
-  getCreateTransactionSchema,
+  createTransactionSchema,
+  getTranslatedValidationMessage,
   type CreateTransactionFormData,
 } from "@/schemas/transaction.schema";
 import { transactionService } from "@/services/api/transactionService";
@@ -83,8 +84,6 @@ export function TransactionFormModal({
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
   const firstFieldRef = useRef<HTMLInputElement | null>(null);
 
-  const validationSchema = useMemo(() => getCreateTransactionSchema(t), [t]);
-
   /**
    * Select options are the single source of truth for the available values
    * and their ordering.
@@ -113,7 +112,7 @@ export function TransactionFormModal({
     setFocus,
     formState: { errors: formErrors, isSubmitting: isFormSubmitting },
   } = useForm<CreateTransactionFormData>({
-    resolver: zodResolver(validationSchema),
+    resolver: zodResolver(createTransactionSchema),
     shouldFocusError: true,
     defaultValues: {
       description: "",
@@ -188,7 +187,7 @@ export function TransactionFormModal({
         <Input
           label={t.transactionModal.fields.descriptionLabel}
           placeholder={t.transactionModal.fields.descriptionPlaceholder}
-          error={formErrors.description?.message}
+          error={getTranslatedValidationMessage(formErrors.description?.message, t)}
           disabled={isPending}
           data-testid="transaction-description-input"
           {...descriptionRegister}
@@ -205,7 +204,7 @@ export function TransactionFormModal({
             step="0.01"
             label={t.transactionModal.fields.amountLabel}
             placeholder={t.transactionModal.fields.amountPlaceholder}
-            error={formErrors.amount?.message}
+            error={getTranslatedValidationMessage(formErrors.amount?.message, t)}
             disabled={isPending}
             data-testid="transaction-amount-input"
             {...register("amount", { valueAsNumber: true })}
@@ -214,7 +213,7 @@ export function TransactionFormModal({
           <Input
             type="date"
             label={t.transactionModal.fields.dateLabel}
-            error={formErrors.date?.message}
+            error={getTranslatedValidationMessage(formErrors.date?.message, t)}
             disabled={isPending}
             data-testid="transaction-date-input"
             {...register("date")}
@@ -226,7 +225,7 @@ export function TransactionFormModal({
           <Select
             label={t.transactionModal.fields.typeLabel}
             options={typeOptions}
-            error={formErrors.type?.message}
+            error={getTranslatedValidationMessage(formErrors.type?.message, t)}
             disabled={isPending}
             data-testid="transaction-type-select"
             {...register("type")}
@@ -235,7 +234,7 @@ export function TransactionFormModal({
           <Select
             label={t.transactionModal.fields.categoryLabel}
             options={categoryOptions}
-            error={formErrors.category?.message}
+            error={getTranslatedValidationMessage(formErrors.category?.message, t)}
             disabled={isPending}
             data-testid="transaction-category-select"
             {...register("category")}

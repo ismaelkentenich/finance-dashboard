@@ -1,5 +1,4 @@
-import { pt } from "@/locales/pt-br";
-import { getCreateTransactionSchema } from "@/schemas/transaction.schema";
+import { createTransactionSchema } from "@/schemas/transaction.schema";
 import {
   calculateCategoryBreakdown,
   calculateFinancialSummary,
@@ -53,13 +52,12 @@ export async function POST(request: NextRequest) {
   try {
     const payload = await request.json();
 
-    const schema = getCreateTransactionSchema(pt);
-    const result = schema.safeParse(payload);
+    const result = createTransactionSchema.safeParse(payload);
 
     if (!result.success) {
       const issues = result.error.issues.map((issue) => ({
         field: issue.path.join("."),
-        message: issue.message,
+        code: issue.message,
       }));
 
       return NextResponse.json(
