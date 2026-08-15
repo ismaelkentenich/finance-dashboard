@@ -1,7 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ModalProvider, useModal } from "@/contexts/ModalContext";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -159,6 +159,37 @@ describe("Header Component", () => {
 
       expect(enButton).toHaveAttribute("aria-pressed", "true");
       expect(screen.getByText("Financial Overview")).toBeInTheDocument();
+    });
+
+    it("renders mobile menu button and triggers onToggleMenu", () => {
+      const handleToggle = vi.fn();
+      render(
+        <LocaleProvider>
+          <ModalProvider>
+            <Header onToggleMenu={handleToggle} isMenuOpen={false} />
+          </ModalProvider>
+        </LocaleProvider>
+      );
+
+      const toggleButton = screen.getByTestId("mobile-menu-toggle");
+      expect(toggleButton).toBeInTheDocument();
+      expect(toggleButton).toHaveAttribute("aria-expanded", "false");
+
+      fireEvent.click(toggleButton);
+      expect(handleToggle).toHaveBeenCalledTimes(1);
+    });
+
+    it("reflects open state in aria-expanded when isMenuOpen is true", () => {
+      render(
+        <LocaleProvider>
+          <ModalProvider>
+            <Header onToggleMenu={vi.fn()} isMenuOpen={true} />
+          </ModalProvider>
+        </LocaleProvider>
+      );
+
+      const toggleButton = screen.getByTestId("mobile-menu-toggle");
+      expect(toggleButton).toHaveAttribute("aria-expanded", "true");
     });
   });
 });

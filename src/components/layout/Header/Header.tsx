@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/Button";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useModal } from "@/contexts/ModalContext";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
-import { Plus } from "lucide-react";
+import { Menu, Plus } from "lucide-react";
 import styles from "./Header.module.css";
+import type { HeaderProps } from "./Header.types";
 
-export function Header() {
+export function Header({ onToggleMenu, isMenuOpen = false }: HeaderProps) {
   const { locale, setLocale, t } = useLocale();
   const { openTransactionModal } = useModal();
   const { filters } = useTransactionFilters();
@@ -17,7 +18,22 @@ export function Header() {
 
   return (
     <header className={styles.header}>
-      <h1 className={styles.title}>{t.header.title}</h1>
+      <div className={styles.brandGroup}>
+        {onToggleMenu && (
+          <button
+            type="button"
+            className={styles.menuButton}
+            onClick={onToggleMenu}
+            aria-label={isMenuOpen ? t.header.closeMenu : t.header.openMenu}
+            aria-expanded={isMenuOpen}
+            aria-controls="main-sidebar"
+            data-testid="mobile-menu-toggle"
+          >
+            <Menu size={20} aria-hidden="true" />
+          </button>
+        )}
+        <h1 className={styles.title}>{t.header.title}</h1>
+      </div>
 
       <div className={styles.actions}>
         <Button

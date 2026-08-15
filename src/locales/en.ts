@@ -6,6 +6,8 @@ export const en = {
   },
   header: {
     title: "Financial Overview",
+    openMenu: "Open navigation menu",
+    closeMenu: "Close navigation menu",
     switchToPortuguese: "Switch language to Portuguese",
     switchToEnglish: "Switch language to English",
   },
@@ -16,6 +18,7 @@ export const en = {
       transactions: "Transactions",
     },
     userRole: "Premium Account",
+    closeNav: "Close navigation",
   },
   filters: {
     periodLabel: "Period",

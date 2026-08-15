@@ -8,6 +8,8 @@ export const pt: TranslationSchema = {
   },
   header: {
     title: "Visão Geral Financeira",
+    openMenu: "Abrir menu de navegação",
+    closeMenu: "Fechar menu de navegação",
     switchToPortuguese: "Mudar idioma para Português",
     switchToEnglish: "Mudar idioma para Inglês",
   },
@@ -18,6 +20,7 @@ export const pt: TranslationSchema = {
       transactions: "Transações",
     },
     userRole: "Conta Premium",
+    closeNav: "Fechar navegação",
   },
   filters: {
     periodLabel: "Período",
