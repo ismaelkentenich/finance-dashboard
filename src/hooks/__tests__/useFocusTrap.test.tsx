@@ -1,110 +1,155 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { useRef, useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { useFocusTrap } from "../useFocusTrap";
 
-interface TestTrapHarnessProps {
+interface TestModalProps {
   isOpen: boolean;
   onEscape?: () => void;
+  hasButtons?: boolean;
+  initialFocusInput?: boolean;
 }
 
-function TestTrapHarness({ isOpen, onEscape }: TestTrapHarnessProps) {
-  const containerRef = useFocusTrap<HTMLDivElement>({ isOpen, onEscape });
+function TestDialog({
+  isOpen,
+  onEscape,
+  hasButtons = true,
+  initialFocusInput = false,
+}: TestModalProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const trapRef = useFocusTrap<HTMLDivElement>({
+    isOpen,
+    onEscape,
+    initialFocusRef: initialFocusInput ? inputRef : undefined,
+  });
 
   if (!isOpen) return null;
 
   return (
-    <div ref={containerRef} data-testid="trap-container">
-      <button type="button" data-testid="first-button">
-        First
-      </button>
-      <input data-testid="middle-input" placeholder="Middle" />
-      <button type="button" data-testid="last-button">
-        Last
-      </button>
+    <div ref={trapRef} role="dialog" aria-modal="true" data-testid="dialog-container">
+      {hasButtons ? (
+        <>
+          <button data-testid="button-first">First Action</button>
+          <input ref={inputRef} data-testid="input-middle" placeholder="Type here..." />
+          <button data-testid="button-last">Last Action</button>
+        </>
+      ) : (
+        <p data-testid="static-content">Information only</p>
+      )}
     </div>
   );
 }
 
-describe("useFocusTrap custom hook", () => {
-  describe("initial focus and restoration", () => {
-    it("moves focus to the first focusable element when opened", () => {
-      render(<TestTrapHarness isOpen={true} />);
+function WrapperHarness({ initialButtons = true }: { initialButtons?: boolean }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [removeOpener, setRemoveOpener] = useState(false);
 
-      const firstButton = screen.getByTestId("first-button");
-      expect(firstButton).toHaveFocus();
-    });
+  return (
+    <div>
+      {!removeOpener ? (
+        <button data-testid="open-dialog-btn" onClick={() => setIsOpen(true)}>
+          Open Dialog
+        </button>
+      ) : null}
+      <button data-testid="destroy-opener-btn" onClick={() => setRemoveOpener(true)}>
+        Destroy Opener
+      </button>
 
-    it("restores focus to previously active element on unmount/close", () => {
-      const { unmount } = render(
-        <div>
-          <button type="button" data-testid="trigger-btn">
-            Open
-          </button>
-          <TestTrapHarness isOpen={false} />
-        </div>
-      );
+      <TestDialog isOpen={isOpen} onEscape={() => setIsOpen(false)} hasButtons={initialButtons} />
+    </div>
+  );
+}
 
-      const triggerBtn = screen.getByTestId("trigger-btn");
-      triggerBtn.focus();
-      expect(triggerBtn).toHaveFocus();
+describe("useFocusTrap", () => {
+  it("open → focus inside: moves focus to first focusable element when opened", async () => {
+    render(<WrapperHarness />);
 
-      // Mount trap container with isOpen = true
-      const { unmount: unmountModal } = render(<TestTrapHarness isOpen={true} />);
-      expect(screen.getByTestId("first-button")).toHaveFocus();
+    const openBtn = screen.getByTestId("open-dialog-btn");
+    openBtn.focus();
+    expect(document.activeElement).toBe(openBtn);
 
-      // Unmount/close trap container
-      unmountModal();
-      expect(triggerBtn).toHaveFocus();
+    fireEvent.click(openBtn);
 
-      unmount();
-    });
+    const firstBtn = await screen.findByTestId("button-first");
+    expect(document.activeElement).toBe(firstBtn);
   });
 
-  describe("keyboard navigation loops", () => {
-    it("cycles focus from last element back to first on Tab press", async () => {
-      const user = userEvent.setup();
-      render(<TestTrapHarness isOpen={true} />);
+  it("Tab → trapped: cycles focus from last element back to first element", async () => {
+    render(<WrapperHarness />);
+    fireEvent.click(screen.getByTestId("open-dialog-btn"));
 
-      const firstBtn = screen.getByTestId("first-button");
-      const middleInput = screen.getByTestId("middle-input");
-      const lastBtn = screen.getByTestId("last-button");
+    const firstBtn = await screen.findByTestId("button-first");
+    const lastBtn = screen.getByTestId("button-last");
 
-      expect(firstBtn).toHaveFocus();
+    lastBtn.focus();
+    expect(document.activeElement).toBe(lastBtn);
 
-      // Tab -> middle
-      await user.tab();
-      expect(middleInput).toHaveFocus();
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(document.activeElement).toBe(firstBtn);
+  });
 
-      // Tab -> last
-      await user.tab();
-      expect(lastBtn).toHaveFocus();
+  it("Shift+Tab → trapped: cycles focus from first element back to last element", async () => {
+    render(<WrapperHarness />);
+    fireEvent.click(screen.getByTestId("open-dialog-btn"));
 
-      // Tab on last element -> wraps back to first element
-      await user.tab();
-      expect(firstBtn).toHaveFocus();
-    });
+    const firstBtn = await screen.findByTestId("button-first");
+    const lastBtn = screen.getByTestId("button-last");
 
-    it("cycles focus from first element back to last on Shift+Tab press", async () => {
-      const user = userEvent.setup();
-      render(<TestTrapHarness isOpen={true} />);
+    firstBtn.focus();
+    expect(document.activeElement).toBe(firstBtn);
 
-      const firstBtn = screen.getByTestId("first-button");
-      const lastBtn = screen.getByTestId("last-button");
+    fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+    expect(document.activeElement).toBe(lastBtn);
+  });
 
-      expect(firstBtn).toHaveFocus();
+  it("Escape → close: calls onEscape callback when Escape key is pressed", async () => {
+    const handleEscape = vi.fn();
+    render(<TestDialog isOpen={true} onEscape={handleEscape} />);
 
-      // Shift + Tab on first element -> wraps back to last element
-      await user.tab({ shift: true });
-      expect(lastBtn).toHaveFocus();
-    });
+    await screen.findByTestId("dialog-container");
+    fireEvent.keyDown(document, { key: "Escape" });
 
-    it("triggers onEscape callback when pressing Escape key", () => {
-      const handleEscape = vi.fn();
-      render(<TestTrapHarness isOpen={true} onEscape={handleEscape} />);
+    expect(handleEscape).toHaveBeenCalledTimes(1);
+  });
 
-      fireEvent.keyDown(window, { key: "Escape" });
-      expect(handleEscape).toHaveBeenCalledTimes(1);
-    });
+  it("close → restore focus: restores focus to previously active trigger element", async () => {
+    render(<WrapperHarness />);
+    const openBtn = screen.getByTestId("open-dialog-btn");
+    openBtn.focus();
+    fireEvent.click(openBtn);
+
+    await screen.findByTestId("dialog-container");
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    expect(screen.queryByTestId("dialog-container")).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(openBtn);
+  });
+
+  it("previous focus removed → safe fallback: safely handles focus restoration when trigger is unmounted", async () => {
+    render(<WrapperHarness />);
+    const openBtn = screen.getByTestId("open-dialog-btn");
+    openBtn.focus();
+    fireEvent.click(openBtn);
+
+    await screen.findByTestId("dialog-container");
+
+    // Simulate removing opener button from DOM while modal is open
+    fireEvent.click(screen.getByTestId("destroy-opener-btn"));
+
+    expect(() => {
+      fireEvent.keyDown(document, { key: "Escape" });
+    }).not.toThrow();
+  });
+
+  it("no focusable children → dialog still usable: focuses the dialog container itself and traps Tab", async () => {
+    render(<WrapperHarness initialButtons={false} />);
+    fireEvent.click(screen.getByTestId("open-dialog-btn"));
+
+    const container = await screen.findByTestId("dialog-container");
+    expect(document.activeElement).toBe(container);
+
+    // Pressing Tab should keep focus in container
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(document.activeElement).toBe(container);
   });
 });

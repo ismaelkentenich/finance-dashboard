@@ -15,6 +15,7 @@ export function Modal({
   description,
   children,
   className = "",
+  initialFocusRef,
   "data-testid": testId = "modal",
 }: ModalProps) {
   const { t } = useLocale();
@@ -25,6 +26,7 @@ export function Modal({
   const modalRef = useFocusTrap<HTMLDivElement>({
     isOpen,
     onEscape: onClose,
+    initialFocusRef,
   });
 
   if (!isOpen) return null;
@@ -41,6 +43,7 @@ export function Modal({
         ref={modalRef}
         role="dialog"
         aria-modal="true"
+        tabIndex={-1}
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
         data-testid={testId}

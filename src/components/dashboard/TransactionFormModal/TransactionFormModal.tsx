@@ -15,7 +15,7 @@ import { transactionService } from "@/services/api/transactionService";
 import type { TransactionCategory, TransactionType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useForm, type FieldErrors, type UseFormSetFocus } from "react-hook-form";
 import styles from "./TransactionFormModal.module.css";
 import type { TransactionFormModalProps } from "./TransactionFormModal.types";
@@ -81,6 +81,7 @@ export function TransactionFormModal({
   const { t } = useLocale();
   const queryClient = useSafeQueryClient();
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
+  const firstFieldRef = useRef<HTMLInputElement | null>(null);
 
   const validationSchema = useMemo(() => getCreateTransactionSchema(t), [t]);
 
@@ -122,6 +123,8 @@ export function TransactionFormModal({
       date: new Date().toISOString().split("T")[0],
     },
   });
+
+  const descriptionRegister = register("description");
 
   const createTransactionMutation = useMutation(
     {
@@ -166,6 +169,7 @@ export function TransactionFormModal({
       onClose={onClose}
       title={t.transactionModal.title}
       description={t.transactionModal.description}
+      initialFocusRef={firstFieldRef}
       data-testid={testId}
     >
       <form
@@ -187,7 +191,11 @@ export function TransactionFormModal({
           error={formErrors.description?.message}
           disabled={isPending}
           data-testid="transaction-description-input"
-          {...register("description")}
+          {...descriptionRegister}
+          ref={(node) => {
+            descriptionRegister.ref(node);
+            firstFieldRef.current = node;
+          }}
         />
 
         {/* Amount and Date Group */}
