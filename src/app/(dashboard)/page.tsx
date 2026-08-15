@@ -2,6 +2,7 @@
 
 import { CategoryBreakdown } from "@/components/dashboard/CategoryBreakdown";
 import { DashboardFilters } from "@/components/dashboard/DashboardFilters";
+import { DraggableWidget } from "@/components/dashboard/DraggableWidget";
 import { FinancialChart } from "@/components/dashboard/FinancialChart";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { TransactionFormModal } from "@/components/dashboard/TransactionFormModal";
@@ -15,8 +16,10 @@ import { useModal } from "@/contexts/ModalContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
+import type { WidgetId } from "@/types";
+import { Reorder } from "framer-motion";
 import { FilterX } from "lucide-react";
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import styles from "./page.module.css";
 
 function DashboardSkeleton() {
@@ -41,7 +44,7 @@ function DashboardSkeleton() {
 
 function DashboardContent() {
   const { t } = useLocale();
-  const { overviewSettings } = useSettings();
+  const { overviewSettings, reorderWidgets } = useSettings();
   const { isTransactionModalOpen, closeTransactionModal } = useModal();
   const { filters, setFilters, resetFilters, hasActiveFilters } = useTransactionFilters();
   const { data, isLoading, error, refetch } = useDashboardData(filters);
@@ -51,6 +54,37 @@ function DashboardContent() {
     overviewSettings.showFinancialChart ||
     overviewSettings.showCategoryBreakdown ||
     overviewSettings.showRecentTransactions;
+
+  const renderWidget = (widgetId: WidgetId): ReactNode => {
+    if (!data) return null;
+
+    switch (widgetId) {
+      case "summaryCards":
+        return overviewSettings.showSummaryCards ? <SummaryCards summary={data.summary} /> : null;
+
+      case "financialChart":
+        return overviewSettings.showFinancialChart ? (
+          <FinancialChart transactions={data.transactions} categories={data.categories} />
+        ) : null;
+
+      case "categoryBreakdown":
+        return overviewSettings.showCategoryBreakdown ? (
+          <CategoryBreakdown categories={data.categories} />
+        ) : null;
+
+      case "recentTransactions":
+        return overviewSettings.showRecentTransactions ? (
+          <TransactionsTable
+            transactions={data.transactions}
+            title={t.transactions?.recentTransactions}
+            id="recent-transactions"
+          />
+        ) : null;
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className={styles.dashboardContainer} data-testid="dashboard-view">
@@ -95,26 +129,24 @@ function DashboardContent() {
         </>
       ) : (
         <>
-          {overviewSettings.showSummaryCards && <SummaryCards summary={data.summary} />}
+          <Reorder.Group
+            axis="y"
+            values={overviewSettings.widgetOrder}
+            onReorder={reorderWidgets}
+            className={styles.dashboardContainer}
+            style={{ listStyle: "none", padding: 0, margin: 0 }}
+          >
+            {overviewSettings.widgetOrder.map((widgetId) => {
+              const content = renderWidget(widgetId);
+              if (!content) return null;
 
-          {overviewSettings.showFinancialChart && (
-            <FinancialChart transactions={data.transactions} categories={data.categories} />
-          )}
-
-          {(overviewSettings.showRecentTransactions || overviewSettings.showCategoryBreakdown) && (
-            <div className={styles.contentGrid}>
-              {overviewSettings.showRecentTransactions && (
-                <TransactionsTable
-                  transactions={data.transactions}
-                  title={t.transactions?.recentTransactions}
-                  id="recent-transactions"
-                />
-              )}
-              {overviewSettings.showCategoryBreakdown && (
-                <CategoryBreakdown categories={data.categories} />
-              )}
-            </div>
-          )}
+              return (
+                <DraggableWidget key={widgetId} value={widgetId}>
+                  {content}
+                </DraggableWidget>
+              );
+            })}
+          </Reorder.Group>
 
           {!hasAnyWidgetVisible && (
             <EmptyState

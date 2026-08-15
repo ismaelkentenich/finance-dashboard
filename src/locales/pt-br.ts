@@ -5,6 +5,7 @@ export const pt: TranslationSchema = {
     loading: "Carregando dados financeiros...",
     noData: "Nenhum dado disponível.",
     closeDialog: "Fechar diálogo",
+    dragLabel: "Arrastar para reordenar",
   },
   header: {
     title: "Visão Geral Financeira",

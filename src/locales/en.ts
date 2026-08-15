@@ -3,6 +3,7 @@ export const en = {
     loading: "Loading financial data...",
     noData: "No data available.",
     closeDialog: "Close Dialog",
+    dragLabel: "Drag to reorder",
   },
   header: {
     title: "Financial Overview",
