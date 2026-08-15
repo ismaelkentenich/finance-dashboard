@@ -1,6 +1,12 @@
 import { ALL_CATEGORIES } from "@/constants/transaction.constants";
 import type { TranslationSchema } from "@/locales/types";
+import type { TransactionCategory, TransactionType } from "@/types";
 import { z } from "zod";
+
+const TRANSACTION_TYPES: readonly [TransactionType, ...TransactionType[]] = ["income", "expense"];
+
+const TRANSACTION_CATEGORIES: readonly [TransactionCategory, ...TransactionCategory[]] =
+  ALL_CATEGORIES;
 
 export const getCreateTransactionSchema = (t: TranslationSchema) =>
   z
@@ -13,14 +19,13 @@ export const getCreateTransactionSchema = (t: TranslationSchema) =>
 
       amount: z
         .number({ message: t.validation.amountInvalid })
-        .finite({ message: t.validation.amountInvalid })
         .positive({ message: t.validation.amountPositive }),
 
-      type: z.enum(["income", "expense"] as const, {
+      type: z.enum(TRANSACTION_TYPES, {
         message: t.validation.typeRequired,
       }),
 
-      category: z.enum(ALL_CATEGORIES, {
+      category: z.enum(TRANSACTION_CATEGORIES, {
         message: t.validation.categoryRequired,
       }),
 

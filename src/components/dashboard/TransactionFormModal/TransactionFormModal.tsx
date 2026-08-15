@@ -89,7 +89,7 @@ export function TransactionFormModal({
    * Select options are the single source of truth for the available values
    * and their ordering.
    */
-  const categoryOptions = useMemo(
+  const categoryOptions = useMemo<{ value: TransactionCategory; label: string }[]>(
     () =>
       ALL_CATEGORIES.map((categoryKey) => ({
         value: categoryKey,
@@ -98,7 +98,7 @@ export function TransactionFormModal({
     [t]
   );
 
-  const typeOptions = useMemo(
+  const typeOptions = useMemo<{ value: TransactionType; label: string }[]>(
     () => [
       { value: "income", label: t.filters.types.income },
       { value: "expense", label: t.filters.types.expense },
@@ -118,8 +118,8 @@ export function TransactionFormModal({
     defaultValues: {
       description: "",
       amount: undefined,
-      type: typeOptions[0].value as TransactionType,
-      category: categoryOptions[0].value as TransactionCategory,
+      type: typeOptions[0].value,
+      category: categoryOptions[0].value,
       date: new Date().toISOString().split("T")[0],
     },
   });
@@ -131,9 +131,9 @@ export function TransactionFormModal({
       mutationFn: (formData: CreateTransactionFormData) =>
         transactionService.createTransaction({
           description: formData.description,
-          amount: Number(formData.amount),
-          type: formData.type as TransactionType,
-          category: formData.category as TransactionCategory,
+          amount: formData.amount,
+          type: formData.type,
+          category: formData.category,
           date: formData.date,
         }),
       onSuccess: async () => {
