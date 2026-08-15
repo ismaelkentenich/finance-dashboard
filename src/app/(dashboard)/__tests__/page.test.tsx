@@ -1,8 +1,8 @@
-import { LocaleProvider } from "@/contexts/LocaleContext";
-import { ModalProvider, useModal } from "@/contexts/ModalContext";
+import { useModal } from "@/contexts/ModalContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
-import { render, screen, within } from "@testing-library/react";
+import { customRender } from "@/test/utils";
+import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import DashboardPage from "../page";
@@ -37,13 +37,11 @@ function OpenModalTrigger() {
 }
 
 function renderDashboardPage() {
-  return render(
-    <LocaleProvider>
-      <ModalProvider>
-        <OpenModalTrigger />
-        <DashboardPage />
-      </ModalProvider>
-    </LocaleProvider>
+  return customRender(
+    <>
+      <OpenModalTrigger />
+      <DashboardPage />
+    </>
   );
 }
 

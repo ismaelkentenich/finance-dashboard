@@ -11,6 +11,7 @@ import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useModal } from "@/contexts/ModalContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import { FilterX } from "lucide-react";
@@ -37,9 +38,15 @@ function DashboardSkeleton() {
 
 function DashboardContent() {
   const { t } = useLocale();
+  const { overviewSettings } = useSettings();
   const { isTransactionModalOpen, closeTransactionModal } = useModal();
   const { filters, setFilters, resetFilters, hasActiveFilters } = useTransactionFilters();
   const { data, isLoading, error, refetch } = useDashboardData(filters);
+
+  const hasAnyWidgetVisible =
+    overviewSettings.showSummaryCards ||
+    overviewSettings.showCategoryBreakdown ||
+    overviewSettings.showRecentTransactions;
 
   return (
     <div className={styles.dashboardContainer} data-testid="dashboard-view">
@@ -66,7 +73,9 @@ function DashboardContent() {
         />
       ) : !data || data.transactions.length === 0 ? (
         <>
-          {data?.summary && <SummaryCards summary={data.summary} />}
+          {overviewSettings.showSummaryCards && data?.summary && (
+            <SummaryCards summary={data.summary} />
+          )}
           <EmptyState
             title={t.emptyStates.noTransactionsTitle}
             description={t.emptyStates.noTransactionsDescription}
@@ -82,15 +91,29 @@ function DashboardContent() {
         </>
       ) : (
         <>
-          <SummaryCards summary={data.summary} />
-          <div className={styles.contentGrid}>
-            <TransactionsTable
-              transactions={data.transactions}
-              title={t.transactions?.recentTransactions}
-              id="recent-transactions"
+          {overviewSettings.showSummaryCards && <SummaryCards summary={data.summary} />}
+
+          {(overviewSettings.showRecentTransactions || overviewSettings.showCategoryBreakdown) && (
+            <div className={styles.contentGrid}>
+              {overviewSettings.showRecentTransactions && (
+                <TransactionsTable
+                  transactions={data.transactions}
+                  title={t.transactions?.recentTransactions}
+                  id="recent-transactions"
+                />
+              )}
+              {overviewSettings.showCategoryBreakdown && (
+                <CategoryBreakdown categories={data.categories} />
+              )}
+            </div>
+          )}
+
+          {!hasAnyWidgetVisible && (
+            <EmptyState
+              title={t.emptyStates.noTransactionsTitle}
+              description={t.settings.subtitle}
             />
-            <CategoryBreakdown categories={data.categories} />
-          </div>
+          )}
         </>
       )}
 

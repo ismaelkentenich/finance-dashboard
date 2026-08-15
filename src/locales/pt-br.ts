@@ -18,6 +18,7 @@ export const pt: TranslationSchema = {
     navigation: {
       overview: "Visão Geral",
       transactions: "Transações",
+      settings: "Configurações",
     },
     userRole: "Conta Premium",
     closeNav: "Fechar navegação",
@@ -139,5 +140,24 @@ export const pt: TranslationSchema = {
     dateRequired: "Selecione uma data válida.",
     dateFormat: "Formato de data inválido (AAAA-MM-DD).",
     dateInvalid: "Data inválida.",
+  },
+  settings: {
+    title: "Personalizar Visão Geral",
+    subtitle: "Escolha quais seções e informações deseja visualizar na tela principal.",
+    restoreDefaults: "Restaurar Padrões",
+    cards: {
+      summary: {
+        title: "Cartões de Resumo",
+        description: "Exibe saldo atual, receitas, despesas e taxa de poupança.",
+      },
+      categories: {
+        title: "Despesas por Categoria",
+        description: "Exibe o gráfico e percentual de gastos por categoria.",
+      },
+      transactions: {
+        title: "Transações Recentes",
+        description: "Exibe a tabela com as últimas movimentações do período.",
+      },
+    },
   },
 };

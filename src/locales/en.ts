@@ -16,6 +16,7 @@ export const en = {
     navigation: {
       overview: "Overview",
       transactions: "Transactions",
+      settings: "Settings",
     },
     userRole: "Premium Account",
     closeNav: "Close navigation",
@@ -136,5 +137,24 @@ export const en = {
     dateRequired: "Please select a valid date.",
     dateFormat: "Invalid date format (YYYY-MM-DD).",
     dateInvalid: "Invalid date.",
+  },
+  settings: {
+    title: "Customize Overview",
+    subtitle: "Choose which sections and metrics you want to see on your main dashboard.",
+    restoreDefaults: "Restore Defaults",
+    cards: {
+      summary: {
+        title: "Summary Cards",
+        description: "Display current balance, total income, expenses, and savings rate.",
+      },
+      categories: {
+        title: "Expenses by Category",
+        description: "Display expense distribution and percentage breakdown.",
+      },
+      transactions: {
+        title: "Recent Transactions",
+        description: "Display the list of most recent transactions in the period.",
+      },
+    },
   },
 } as const;

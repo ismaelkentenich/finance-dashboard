@@ -2,6 +2,7 @@ import { WebVitalsReporter } from "@/components/analytics/WebVitalsReporter";
 import { DEFAULT_LOCALE, LOCALE_COOKIE_NAME } from "@/constants/locale.constants";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ModalProvider } from "@/contexts/ModalContext";
+import { SettingsProvider } from "@/contexts/SettingsContext";
 import type { SupportedLocale } from "@/locales/types";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { isValidLocale } from "@/utils/locale";
@@ -19,7 +20,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Read persistent locale cookie directly during SSR
   const cookieStore = await cookies();
   const cookieLocale = cookieStore.get(LOCALE_COOKIE_NAME)?.value;
   const initialLocale: SupportedLocale = isValidLocale(cookieLocale)
@@ -31,10 +31,12 @@ export default async function RootLayout({
       <body>
         <QueryProvider>
           <LocaleProvider initialLocale={initialLocale}>
-            <ModalProvider>
-              <WebVitalsReporter />
-              {children}
-            </ModalProvider>
+            <SettingsProvider>
+              <ModalProvider>
+                <WebVitalsReporter />
+                {children}
+              </ModalProvider>
+            </SettingsProvider>
           </LocaleProvider>
         </QueryProvider>
       </body>

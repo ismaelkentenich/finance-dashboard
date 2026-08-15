@@ -3,7 +3,7 @@
 import { useLocale } from "@/contexts/LocaleContext";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useScrollLock } from "@/hooks/useScrollLock";
-import { ArrowLeftRight, LayoutDashboard, X } from "lucide-react";
+import { ArrowLeftRight, LayoutDashboard, Settings, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./Sidebar.module.css";
@@ -87,6 +87,17 @@ export function Sidebar({
                 >
                   <ArrowLeftRight size={18} aria-hidden="true" />
                   {t.sidebar.navigation.transactions}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/settings"
+                  className={`${styles.navLink} ${pathname.startsWith("/settings") ? styles.navLinkActive : ""}`}
+                  aria-current={pathname.startsWith("/settings") ? "page" : undefined}
+                  onClick={() => onClose?.()}
+                >
+                  <Settings size={18} aria-hidden="true" />
+                  {t.sidebar.navigation.settings}
                 </Link>
               </li>
             </ul>

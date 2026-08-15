@@ -1,0 +1,84 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  width: var(--max-width-full, 100%);
+  max-width: var(--max-width-lg, 768px);
+}
+
+.headerRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xs);
+}
+
+.pageTitle {
+  font-size: var(--font-size-xxl);
+  font-weight: 700;
+  color: var(--color-neutral-900);
+}
+
+.pageSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-500);
+}
+
+.settingsCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.optionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--color-neutral-100);
+  border: var(--border-width-thin, 1px) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.optionItem:hover {
+  background-color: var(--color-neutral-200);
+}
+
+.optionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xs);
+}
+
+.optionTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-neutral-900);
+}
+
+.optionDescription {
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-500);
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--color-primary-green-100);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  border-top: var(--border-width-thin, 1px) solid var(--border-color);
+  padding-top: var(--spacing-md);
+}
