@@ -20,7 +20,7 @@ export function TransactionRow({
 
   return (
     <tr data-testid={testId} className={`${styles.row} ${className}`.trim()}>
-      {/* Description Column */}
+      {/* Description */}
       <td
         data-testid="transaction-description"
         className={`${styles.td} ${styles.descriptionCell}`}
@@ -28,19 +28,19 @@ export function TransactionRow({
         {transaction.description}
       </td>
 
-      {/* Category Column */}
-      <td data-testid="transaction-category" className={styles.td}>
+      {/* Category */}
+      <td data-testid="transaction-category" className={`${styles.td} ${styles.categoryCell}`}>
         <Badge variant="neutral" data-testid="category-badge">
           {categoryLabel}
         </Badge>
       </td>
 
-      {/* Date Column */}
+      {/* Date */}
       <td data-testid="transaction-date" className={`${styles.td} ${styles.dateCell}`}>
         {formatDate(transaction.date, locale)}
       </td>
 
-      {/* Amount Column */}
+      {/* Amount */}
       <td
         data-testid="transaction-amount"
         className={`${styles.td} ${styles.amountCell} ${

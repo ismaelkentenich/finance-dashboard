@@ -20,18 +20,30 @@
 .categoryHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
+  gap: var(--spacing-xs);
   font-size: var(--font-size-sm);
+  flex-wrap: wrap;
 }
 
 .categoryLabel {
   font-weight: 600;
   color: var(--color-neutral-800);
+  flex: 1;
+  min-width: 120px;
 }
 
 .categoryAmount {
   font-weight: 700;
   color: var(--color-neutral-900);
+  white-space: nowrap;
+  font-size: var(--font-size-xs);
+}
+
+@media (min-width: 640px) {
+  .categoryAmount {
+    font-size: var(--font-size-sm);
+  }
 }
 
 .emptyText {

@@ -31,7 +31,7 @@ export function RecentTransactions({
       ) : (
         <div className={styles.tableWrapper}>
           <table className={styles.table} data-testid="transactions-table">
-            <thead>
+            <thead className={styles.thead}>
               <tr>
                 <th className={styles.th}>{t.transactions.table.description}</th>
                 <th className={styles.th}>{t.transactions.table.category}</th>
