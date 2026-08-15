@@ -17,3 +17,8 @@ export interface TransactionFiltersState {
   type: "all" | TransactionType;
   category: "all" | TransactionCategory;
 }
+
+export interface FilterOptions {
+  type?: "all" | TransactionType | null;
+  category?: "all" | TransactionCategory | string | null;
+}

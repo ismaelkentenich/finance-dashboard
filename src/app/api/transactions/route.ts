@@ -3,8 +3,11 @@ import {
   calculateCategoryBreakdown,
   calculateFinancialSummary,
 } from "@/services/financial/financialCalculations";
-import { filterTransactionsByPeriod } from "@/services/financial/financialFilters";
-import type { PeriodFilter, Transaction } from "@/types";
+import {
+  applyTransactionFilters,
+  filterTransactionsByPeriod,
+} from "@/services/financial/financialFilters";
+import type { PeriodFilter, Transaction, TransactionCategory, TransactionType } from "@/types";
 import { NextResponse, type NextRequest } from "next/server";
 
 // In-memory mutable store for the dev server session
@@ -15,20 +18,16 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const period = (searchParams.get("period") as PeriodFilter) || "current-month";
-  const type = searchParams.get("type");
-  const category = searchParams.get("category");
+  const type = searchParams.get("type") as "all" | TransactionType | null;
+  const category = searchParams.get("category") as "all" | TransactionCategory | null;
 
-  let filtered = filterTransactionsByPeriod(transactionsStore, period);
+  const filterOptions = { type, category };
 
-  if (type && type !== "all") {
-    filtered = filtered.filter((tx) => tx.type === type);
-  }
+  const currentPeriodTxs = filterTransactionsByPeriod(transactionsStore, period);
+  const filtered = applyTransactionFilters(currentPeriodTxs, filterOptions);
 
-  if (category && category !== "all") {
-    filtered = filtered.filter((tx) => tx.category === category);
-  }
-
-  const previousPeriodFiltered = filterTransactionsByPeriod(transactionsStore, "previous-month");
+  const previousPeriodTxs = filterTransactionsByPeriod(transactionsStore, "previous-month");
+  const previousPeriodFiltered = applyTransactionFilters(previousPeriodTxs, filterOptions);
 
   const summary = calculateFinancialSummary(filtered, previousPeriodFiltered);
   const categories = calculateCategoryBreakdown(filtered);

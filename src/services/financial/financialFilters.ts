@@ -1,4 +1,23 @@
-import type { PeriodFilter, Transaction } from "@/types";
+import type { FilterOptions, PeriodFilter, Transaction } from "@/types";
+
+export function applyTransactionFilters(
+  transactions: Transaction[],
+  options: FilterOptions = {}
+): Transaction[] {
+  const { type, category } = options;
+
+  let result = transactions;
+
+  if (type && type !== "all") {
+    result = result.filter((tx) => tx.type === type);
+  }
+
+  if (category && category !== "all") {
+    result = result.filter((tx) => tx.category === category);
+  }
+
+  return result;
+}
 
 function getYearMonthParts(referenceDate: Date | string): { year: number; month: number } {
   if (typeof referenceDate === "string") {
