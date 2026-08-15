@@ -1,5 +1,4 @@
 import { pt } from "@/locales/pt-br";
-import { mockTransactionsStore } from "@/mocks/transactions.mock";
 import { getCreateTransactionSchema } from "@/schemas/transaction.schema";
 import {
   calculateCategoryBreakdown,
@@ -10,38 +9,44 @@ import {
   filterTransactionsByEquivalentPreviousPeriod,
   filterTransactionsByPeriod,
 } from "@/services/financial/financialFilters";
+import { getTransactionRepository } from "@/services/repository/transactionRepository";
 import type { PeriodFilter, Transaction, TransactionCategory, TransactionType } from "@/types";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const period = (searchParams.get("period") as PeriodFilter) || "current-month";
-  const type = searchParams.get("type") as "all" | TransactionType | null;
-  const category = searchParams.get("category") as "all" | TransactionCategory | null;
+  try {
+    const { searchParams } = new URL(request.url);
+    const period = (searchParams.get("period") as PeriodFilter) || "current-month";
+    const type = searchParams.get("type") as "all" | TransactionType | null;
+    const category = searchParams.get("category") as "all" | TransactionCategory | null;
 
-  const filterOptions = { type, category };
-  const allTransactions = mockTransactionsStore.getAll();
+    const filterOptions = { type, category };
+    const repository = getTransactionRepository();
+    const allTransactions = await repository.getAll();
 
-  const currentPeriodTxs = filterTransactionsByPeriod(allTransactions, period);
-  const filtered = applyTransactionFilters(currentPeriodTxs, filterOptions);
+    const currentPeriodTxs = filterTransactionsByPeriod(allTransactions, period);
+    const filtered = applyTransactionFilters(currentPeriodTxs, filterOptions);
 
-  const previousPeriodTxs = filterTransactionsByEquivalentPreviousPeriod(allTransactions, period);
-  const previousPeriodFiltered = applyTransactionFilters(previousPeriodTxs, filterOptions);
+    const previousPeriodTxs = filterTransactionsByEquivalentPreviousPeriod(allTransactions, period);
+    const previousPeriodFiltered = applyTransactionFilters(previousPeriodTxs, filterOptions);
 
-  const summary = calculateFinancialSummary(filtered, previousPeriodFiltered);
-  const categories = calculateCategoryBreakdown(filtered);
+    const summary = calculateFinancialSummary(filtered, previousPeriodFiltered);
+    const categories = calculateCategoryBreakdown(filtered);
 
-  return NextResponse.json({
-    data: {
-      transactions: filtered,
-      summary,
-      categories,
-    },
-    meta: {
-      totalCount: filtered.length,
-      period,
-    },
-  });
+    return NextResponse.json({
+      data: {
+        transactions: filtered,
+        summary,
+        categories,
+      },
+      meta: {
+        totalCount: filtered.length,
+        period,
+      },
+    });
+  } catch {
+    return NextResponse.json({ error: "Failed to load transactions." }, { status: 500 });
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -78,7 +83,8 @@ export async function POST(request: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    const savedTransaction = mockTransactionsStore.add(newTransaction);
+    const repository = getTransactionRepository();
+    const savedTransaction = await repository.add(newTransaction);
 
     return NextResponse.json({ data: savedTransaction }, { status: 201 });
   } catch {

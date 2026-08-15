@@ -124,22 +124,3 @@ export const INITIAL_MOCK_TRANSACTIONS: readonly Transaction[] = [
     createdAt: "2026-06-18T21:30:00.000Z",
   },
 ];
-
-class MockTransactionsStore {
-  private transactions: Transaction[] = [...INITIAL_MOCK_TRANSACTIONS];
-
-  public getAll(): Transaction[] {
-    return [...this.transactions];
-  }
-
-  public add(transaction: Transaction): Transaction {
-    this.transactions = [transaction, ...this.transactions];
-    return transaction;
-  }
-
-  public reset(): void {
-    this.transactions = [...INITIAL_MOCK_TRANSACTIONS];
-  }
-}
-
-export const mockTransactionsStore = new MockTransactionsStore();
