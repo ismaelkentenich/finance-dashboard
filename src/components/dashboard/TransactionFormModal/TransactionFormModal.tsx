@@ -7,14 +7,14 @@ import { Select } from "@/components/ui/Select";
 import { ALL_CATEGORIES } from "@/constants/transaction.constants";
 import { useLocale } from "@/contexts/LocaleContext";
 import {
-  createTransactionSchema,
+  getCreateTransactionSchema,
   type CreateTransactionFormData,
 } from "@/schemas/transaction.schema";
 import { transactionService } from "@/services/api/transactionService";
 import type { TransactionCategory, TransactionType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useMemo, useState } from "react";
+import { useForm, type FieldErrors } from "react-hook-form";
 import styles from "./TransactionFormModal.module.css";
 import type { TransactionFormModalProps } from "./TransactionFormModal.types";
 
@@ -27,13 +27,16 @@ export function TransactionFormModal({
   const { t } = useLocale();
   const [apiError, setApiError] = useState<string | null>(null);
 
+  const schema = useMemo(() => getCreateTransactionSchema(t), [t]);
+
   const {
     register,
     handleSubmit,
     reset,
+    setFocus,
     formState: { errors, isSubmitting },
   } = useForm<CreateTransactionFormData>({
-    resolver: zodResolver(createTransactionSchema),
+    resolver: zodResolver(schema),
     shouldFocusError: true,
     defaultValues: {
       description: "",
@@ -73,6 +76,13 @@ export function TransactionFormModal({
     }
   }
 
+  function onInvalid(formErrors: FieldErrors<CreateTransactionFormData>) {
+    const errorFields = Object.keys(formErrors) as (keyof CreateTransactionFormData)[];
+    if (errorFields.length > 0) {
+      setFocus(errorFields[0]);
+    }
+  }
+
   return (
     <Modal
       isOpen={isOpen}
@@ -82,7 +92,7 @@ export function TransactionFormModal({
       data-testid={testId}
     >
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit, onInvalid)}
         className={styles.form}
         data-testid="transaction-form"
         noValidate

@@ -112,4 +112,15 @@ export const pt: TranslationSchema = {
       "Não encontramos registros para o período ou categoria selecionados.",
     clearFilters: "Limpar Filtros",
   },
+  validation: {
+    descriptionMin: "A descrição deve ter pelo menos 3 caracteres.",
+    descriptionMax: "A descrição não pode exceder 60 caracteres.",
+    amountInvalid: "Insira um valor numérico válido.",
+    amountPositive: "O valor deve ser maior que zero.",
+    typeRequired: "Selecione o tipo de transação.",
+    categoryRequired: "Selecione uma categoria válida.",
+    dateRequired: "Selecione uma data válida.",
+    dateFormat: "Formato de data inválido (AAAA-MM-DD).",
+    dateInvalid: "Data inválida.",
+  },
 };

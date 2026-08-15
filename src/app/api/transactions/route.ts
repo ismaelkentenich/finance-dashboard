@@ -1,4 +1,6 @@
+import { pt } from "@/locales/pt-br";
 import { INITIAL_MOCK_TRANSACTIONS } from "@/mocks/transactions.mock";
+import { getCreateTransactionSchema } from "@/schemas/transaction.schema";
 import {
   calculateCategoryBreakdown,
   calculateFinancialSummary,
@@ -49,20 +51,33 @@ export async function POST(request: NextRequest) {
   try {
     const payload = await request.json();
 
-    if (!payload.description || !payload.amount || !payload.type || !payload.category) {
+    const schema = getCreateTransactionSchema(pt);
+    const result = schema.safeParse(payload);
+
+    if (!result.success) {
+      const issues = result.error.issues.map((issue) => ({
+        field: issue.path.join("."),
+        message: issue.message,
+      }));
+
       return NextResponse.json(
-        { error: "Invalid transaction payload. All fields are required." },
+        {
+          error: "Payload de transação inválido.",
+          issues,
+        },
         { status: 400 }
       );
     }
 
+    const validData = result.data;
+
     const newTransaction: Transaction = {
       id: `tx-${Date.now()}`,
-      description: payload.description,
-      amount: Number(payload.amount),
-      type: payload.type,
-      category: payload.category,
-      date: payload.date || new Date().toISOString().split("T")[0],
+      description: validData.description,
+      amount: validData.amount,
+      type: validData.type,
+      category: validData.category,
+      date: validData.date,
       createdAt: new Date().toISOString(),
     };
 
@@ -70,6 +85,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ data: newTransaction }, { status: 201 });
   } catch {
-    return NextResponse.json({ error: "Failed to process transaction request." }, { status: 500 });
+    return NextResponse.json({ error: "Falha ao processar a requisição." }, { status: 500 });
   }
 }

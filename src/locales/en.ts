@@ -109,4 +109,15 @@ export const en = {
     noTransactionsDescription: "No records found for the selected period or category.",
     clearFilters: "Clear Filters",
   },
+  validation: {
+    descriptionMin: "Description must be at least 3 characters long.",
+    descriptionMax: "Description cannot exceed 60 characters.",
+    amountInvalid: "Please enter a valid numeric amount.",
+    amountPositive: "Amount must be greater than zero.",
+    typeRequired: "Please select a transaction type.",
+    categoryRequired: "Please select a valid category.",
+    dateRequired: "Please select a valid date.",
+    dateFormat: "Invalid date format (YYYY-MM-DD).",
+    dateInvalid: "Invalid date.",
+  },
 } as const;
