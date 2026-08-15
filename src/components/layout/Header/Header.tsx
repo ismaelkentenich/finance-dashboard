@@ -3,12 +3,17 @@
 import { Button } from "@/components/ui/Button";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useModal } from "@/contexts/ModalContext";
+import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import { Plus } from "lucide-react";
 import styles from "./Header.module.css";
 
 export function Header() {
   const { locale, setLocale, t } = useLocale();
   const { openTransactionModal } = useModal();
+  const { filters } = useTransactionFilters();
+
+  const currentPeriodLabel =
+    t.filters.periods[filters.period] || t.filters.periods["current-month"];
 
   return (
     <header className={styles.header}>
@@ -27,9 +32,10 @@ export function Header() {
 
         <span
           className={styles.periodBadge}
-          aria-label={`Selected period: ${t.header.periodBadge}`}
+          data-testid="header-period-badge"
+          aria-label={`Selected period: ${currentPeriodLabel}`}
         >
-          {t.header.periodBadge}
+          {currentPeriodLabel}
         </span>
 
         <div className={styles.localeSwitcher} role="group" aria-label="Language selection">

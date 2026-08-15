@@ -5,6 +5,12 @@ import React from "react";
 import { describe, expect, it } from "vitest";
 import DashboardLayout from "../layout";
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => "/",
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 function renderDashboardLayout(children: React.ReactNode) {
   return render(
     <LocaleProvider>

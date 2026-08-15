@@ -2,8 +2,16 @@ import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ModalProvider } from "@/contexts/ModalContext";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Header } from "../Header";
+
+let mockSearchParams = new URLSearchParams();
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => "/",
+  useSearchParams: () => mockSearchParams,
+}));
 
 function renderHeader() {
   return render(
@@ -16,6 +24,11 @@ function renderHeader() {
 }
 
 describe("Header Language Switcher A11y & Descriptive Labels", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSearchParams = new URLSearchParams();
+  });
+
   it("provides full descriptive aria-labels on language switcher buttons in Portuguese", () => {
     renderHeader();
 

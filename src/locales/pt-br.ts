@@ -8,7 +8,6 @@ export const pt: TranslationSchema = {
   },
   header: {
     title: "Visão Geral Financeira",
-    periodBadge: "Agosto 2026",
     switchToPortuguese: "Mudar idioma para Português",
     switchToEnglish: "Mudar idioma para Inglês",
   },
