@@ -125,7 +125,7 @@ describe("TransactionFormModal Feature Component", () => {
       expect(screen.queryByTestId("transaction-form-modal")).not.toBeInTheDocument();
     });
 
-    it("initializes form with default expense type, default food category, and current date", () => {
+    it("initializes select fields with the first available option", () => {
       renderTransactionModal();
 
       const typeSelect = screen.getByTestId("transaction-type-select") as HTMLSelectElement;
@@ -137,8 +137,8 @@ describe("TransactionFormModal Feature Component", () => {
 
       const todayIsoDate = new Date().toISOString().split("T")[0];
 
-      expect(typeSelect.value).toBe("expense");
-      expect(categorySelect.value).toBe("food");
+      expect(typeSelect.value).toBe(typeSelect.options[0].value);
+      expect(categorySelect.value).toBe(categorySelect.options[0].value);
       expect(dateInput.value).toBe(todayIsoDate);
       expect(descriptionInput.value).toBe("");
     });
@@ -264,19 +264,39 @@ describe("TransactionFormModal Feature Component", () => {
 
       vi.mocked(transactionService.createTransaction).mockResolvedValueOnce(mockResponse);
 
-      renderTransactionModal({ onClose: handleClose, onSuccess: handleSuccess });
+      renderTransactionModal({
+        onClose: handleClose,
+        onSuccess: handleSuccess,
+      });
 
       await user.type(screen.getByTestId("transaction-description-input"), "Monthly Rent");
       await user.type(screen.getByTestId("transaction-amount-input"), "2200");
 
+      const typeSelect = screen.getByTestId("transaction-type-select");
+
+      fireEvent.change(typeSelect, {
+        target: {
+          value: "expense" as TransactionType,
+        },
+      });
+
       const categorySelect = screen.getByTestId("transaction-category-select");
-      fireEvent.change(categorySelect, { target: { value: "housing" as TransactionCategory } });
+
+      fireEvent.change(categorySelect, {
+        target: {
+          value: "housing" as TransactionCategory,
+        },
+      });
 
       const dateInput = screen.getByTestId("transaction-date-input");
-      fireEvent.change(dateInput, { target: { value: "2026-08-05" } });
 
-      const submitButton = screen.getByTestId("transaction-submit-button");
-      await user.click(submitButton);
+      fireEvent.change(dateInput, {
+        target: {
+          value: "2026-08-05",
+        },
+      });
+
+      await user.click(screen.getByTestId("transaction-submit-button"));
 
       await waitFor(() => {
         expect(transactionService.createTransaction).toHaveBeenCalledWith({
@@ -286,6 +306,7 @@ describe("TransactionFormModal Feature Component", () => {
           category: "housing",
           date: "2026-08-05",
         });
+
         expect(handleSuccess).toHaveBeenCalledTimes(1);
         expect(handleClose).toHaveBeenCalledTimes(1);
       });

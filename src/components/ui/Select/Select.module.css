@@ -1,7 +1,8 @@
-Select.module.css.container {
+.container {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-3xs);
+  position: relative;
 }
 
 .fullWidth {
@@ -18,11 +19,10 @@ Select.module.css.container {
 
 .selectWrapper {
   position: relative;
-  display: flex;
-  align-items: center;
+  width: 100%;
 }
 
-.select {
+.triggerButton {
   height: var(--size-button-height-sm, 36px);
   width: 100%;
   padding: 0 var(--spacing-2xl) 0 var(--spacing-md);
@@ -34,38 +34,46 @@ Select.module.css.container {
   font-weight: 500;
   outline: none;
   cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease,
     box-shadow 0.15s ease;
 }
 
-.select:hover:not(:disabled) {
+.triggerButton:hover:not(:disabled) {
   background-color: var(--color-neutral-200);
 }
 
-.select:focus-visible {
+.triggerButton:focus-visible,
+.triggerOpen {
   border-color: var(--color-primary-green-100);
   box-shadow: 0 0 0 2px var(--color-primary-green-alpha-25);
   background-color: var(--color-neutral-50);
 }
 
-.select:disabled {
+.triggerButton:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   background-color: var(--color-neutral-200);
 }
 
-.selectError {
+.triggerError {
   border-color: var(--color-status-error-200);
 }
 
-.selectError:focus-visible {
+.triggerError:focus-visible {
   border-color: var(--color-status-error-200);
   box-shadow: var(--shadow-focus-primary);
+}
+
+.selectedText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chevronIcon {
@@ -73,6 +81,80 @@ Select.module.css.container {
   right: var(--spacing-md);
   pointer-events: none;
   color: var(--color-neutral-500);
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Custom Floating Options Menu */
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: var(--color-neutral-50, #ffffff);
+  border: var(--border-width-thin, 1px) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: var(--z-index-dropdown, 100);
+  padding: 4px;
+  list-style: none;
+  margin: 0;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.optionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-neutral-800);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition:
+    background-color 0.1s ease,
+    color 0.1s ease;
+}
+
+.optionItem:hover:not(.optionDisabled) {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+}
+
+.optionSelected {
+  background-color: var(--color-primary-green-50) !important;
+  color: var(--color-primary-green-300) !important;
+  font-weight: 600;
+}
+
+.optionDisabled {
+  color: var(--color-neutral-300);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.checkIcon {
+  color: var(--color-primary-green-200);
+  flex-shrink: 0;
+}
+
+/* Hidden Select for React Hook Form & Accessibility */
+.nativeSelectHidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 .errorMessage {
@@ -84,4 +166,15 @@ Select.module.css.container {
 .helperText {
   font-size: var(--font-size-xs);
   color: var(--color-neutral-500);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

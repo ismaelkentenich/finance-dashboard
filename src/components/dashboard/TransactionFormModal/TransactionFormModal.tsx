@@ -67,6 +67,7 @@ function focusFirstInvalidField(
     const targetInputElement = document.querySelector<HTMLElement>(
       `[name="${firstInvalidFieldName}"]`
     );
+
     targetInputElement?.focus();
   }, 0);
 }
@@ -83,47 +84,10 @@ export function TransactionFormModal({
 
   const validationSchema = useMemo(() => getCreateTransactionSchema(t), [t]);
 
-  const {
-    register,
-    handleSubmit,
-    reset: resetForm,
-    setFocus,
-    formState: { errors: formErrors, isSubmitting: isFormSubmitting },
-  } = useForm<CreateTransactionFormData>({
-    resolver: zodResolver(validationSchema),
-    shouldFocusError: true,
-    defaultValues: {
-      description: "",
-      amount: undefined,
-      type: "expense",
-      category: "food",
-      date: new Date().toISOString().split("T")[0],
-    },
-  });
-
-  const createTransactionMutation = useMutation(
-    {
-      mutationFn: (formData: CreateTransactionFormData) =>
-        transactionService.createTransaction({
-          description: formData.description,
-          amount: Number(formData.amount),
-          type: formData.type as TransactionType,
-          category: formData.category as TransactionCategory,
-          date: formData.date,
-        }),
-      onSuccess: async () => {
-        await queryClient.invalidateQueries({ queryKey: [DASHBOARD_QUERY_KEY] });
-        resetForm();
-        onSuccess();
-        onClose();
-      },
-      onError: () => {
-        setApiErrorMessage(t.transactionModal.errorMessage);
-      },
-    },
-    queryClient
-  );
-
+  /**
+   * Select options are the single source of truth for the available values
+   * and their ordering.
+   */
   const categoryOptions = useMemo(
     () =>
       ALL_CATEGORIES.map((categoryKey) => ({
@@ -139,6 +103,50 @@ export function TransactionFormModal({
       { value: "expense", label: t.filters.types.expense },
     ],
     [t]
+  );
+
+  const {
+    register,
+    handleSubmit,
+    reset: resetForm,
+    setFocus,
+    formState: { errors: formErrors, isSubmitting: isFormSubmitting },
+  } = useForm<CreateTransactionFormData>({
+    resolver: zodResolver(validationSchema),
+    shouldFocusError: true,
+    defaultValues: {
+      description: "",
+      amount: undefined,
+      type: typeOptions[0].value as TransactionType,
+      category: categoryOptions[0].value as TransactionCategory,
+      date: new Date().toISOString().split("T")[0],
+    },
+  });
+
+  const createTransactionMutation = useMutation(
+    {
+      mutationFn: (formData: CreateTransactionFormData) =>
+        transactionService.createTransaction({
+          description: formData.description,
+          amount: Number(formData.amount),
+          type: formData.type as TransactionType,
+          category: formData.category as TransactionCategory,
+          date: formData.date,
+        }),
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: [DASHBOARD_QUERY_KEY],
+        });
+
+        resetForm();
+        onSuccess();
+        onClose();
+      },
+      onError: () => {
+        setApiErrorMessage(t.transactionModal.errorMessage);
+      },
+    },
+    queryClient
   );
 
   async function handleValidSubmit(formData: CreateTransactionFormData) {
