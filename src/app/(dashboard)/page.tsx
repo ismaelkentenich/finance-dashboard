@@ -84,7 +84,11 @@ function DashboardContent() {
         <>
           <SummaryCards summary={data.summary} />
           <div className={styles.contentGrid}>
-            <RecentTransactions transactions={data.transactions} />
+            <RecentTransactions
+              transactions={data.transactions}
+              title={t.transactions?.title}
+              id="recent-transactions"
+            />
             <CategoryBreakdown categories={data.categories} />
           </div>
         </>

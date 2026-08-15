@@ -8,20 +8,19 @@ import type { RecentTransactionsProps } from "./RecentTransactions.types";
 
 export function RecentTransactions({
   transactions,
+  title,
+  id = "transactions",
   className = "",
   "data-testid": testId = "recent-transactions",
 }: RecentTransactionsProps) {
   const { t } = useLocale();
+  const displayTitle = title || t.transactions.title;
+  const titleId = `${id}-title`;
 
   return (
-    <Card
-      id="transactions"
-      data-testid={testId}
-      className={className}
-      aria-labelledby="recent-transactions-title"
-    >
-      <h2 id="recent-transactions-title" className={styles.cardTitle}>
-        {t.transactions.title}
+    <Card id={id} data-testid={testId} className={className} aria-labelledby={titleId}>
+      <h2 id={titleId} className={styles.cardTitle}>
+        {displayTitle}
       </h2>
 
       {transactions.length === 0 ? (

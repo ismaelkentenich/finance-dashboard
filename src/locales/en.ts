@@ -77,6 +77,16 @@ export const en = {
       amount: "Amount",
     },
   },
+  recentTransactions: {
+    title: "Recent Transactions",
+    empty: "No transactions found for the selected period.",
+    table: {
+      description: "Description",
+      category: "Category",
+      date: "Date",
+      amount: "Amount",
+    },
+  },
   transactionModal: {
     triggerButton: "New Transaction",
     title: "Add New Transaction",
@@ -121,5 +131,11 @@ export const en = {
     dateRequired: "Please select a valid date.",
     dateFormat: "Invalid date format (YYYY-MM-DD).",
     dateInvalid: "Invalid date.",
+  },
+  transactionsPage: {
+    title: "All Transactions",
+    subtitle: "View, filter, and manage your complete financial history.",
+    searchPlaceholder: "Search by description...",
+    totalCount: "{count} transactions found",
   },
 } as const;
