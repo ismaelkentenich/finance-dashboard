@@ -1,5 +1,5 @@
 import { pt } from "@/locales/pt-br";
-import { INITIAL_MOCK_TRANSACTIONS } from "@/mocks/transactions.mock";
+import { mockTransactionsStore } from "@/mocks/transactions.mock";
 import { getCreateTransactionSchema } from "@/schemas/transaction.schema";
 import {
   calculateCategoryBreakdown,
@@ -12,23 +12,19 @@ import {
 import type { PeriodFilter, Transaction, TransactionCategory, TransactionType } from "@/types";
 import { NextResponse, type NextRequest } from "next/server";
 
-// In-memory mutable store for the dev server session
-let transactionsStore: Transaction[] = [...INITIAL_MOCK_TRANSACTIONS];
-
 export async function GET(request: NextRequest) {
-  await new Promise((resolve) => setTimeout(resolve, 400));
-
   const { searchParams } = new URL(request.url);
   const period = (searchParams.get("period") as PeriodFilter) || "current-month";
   const type = searchParams.get("type") as "all" | TransactionType | null;
   const category = searchParams.get("category") as "all" | TransactionCategory | null;
 
   const filterOptions = { type, category };
+  const allTransactions = mockTransactionsStore.getAll();
 
-  const currentPeriodTxs = filterTransactionsByPeriod(transactionsStore, period);
+  const currentPeriodTxs = filterTransactionsByPeriod(allTransactions, period);
   const filtered = applyTransactionFilters(currentPeriodTxs, filterOptions);
 
-  const previousPeriodTxs = filterTransactionsByPeriod(transactionsStore, "previous-month");
+  const previousPeriodTxs = filterTransactionsByPeriod(allTransactions, "previous-month");
   const previousPeriodFiltered = applyTransactionFilters(previousPeriodTxs, filterOptions);
 
   const summary = calculateFinancialSummary(filtered, previousPeriodFiltered);
@@ -81,9 +77,9 @@ export async function POST(request: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    transactionsStore = [newTransaction, ...transactionsStore];
+    const savedTransaction = mockTransactionsStore.add(newTransaction);
 
-    return NextResponse.json({ data: newTransaction }, { status: 201 });
+    return NextResponse.json({ data: savedTransaction }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Falha ao processar a requisição." }, { status: 500 });
   }
