@@ -1,6 +1,78 @@
 import type { PeriodFilter, Transaction } from "@/types";
 import { describe, expect, it } from "vitest";
-import { applyTransactionFilters, filterTransactionsByPeriod } from "../financialFilters";
+import {
+  applyTransactionFilters,
+  filterTransactionsByEquivalentPreviousPeriod,
+  filterTransactionsByPeriod,
+} from "../financialFilters";
+
+const mockDataset: Transaction[] = [
+  {
+    id: "tx-aug",
+    description: "Salário Agosto",
+    amount: 5000,
+    type: "income",
+    category: "salary",
+    date: "2026-08-10",
+    createdAt: "2026-08-10T00:00:00.000Z",
+  },
+  {
+    id: "tx-jul",
+    description: "Salário Julho",
+    amount: 5000,
+    type: "income",
+    category: "salary",
+    date: "2026-07-10",
+    createdAt: "2026-07-10T00:00:00.000Z",
+  },
+  {
+    id: "tx-jun",
+    description: "Salário Junho",
+    amount: 5000,
+    type: "income",
+    category: "salary",
+    date: "2026-06-10",
+    createdAt: "2026-06-10T00:00:00.000Z",
+  },
+  {
+    id: "tx-may",
+    description: "Salário Maio",
+    amount: 4500,
+    type: "income",
+    category: "salary",
+    date: "2026-05-10",
+    createdAt: "2026-05-10T00:00:00.000Z",
+  },
+  {
+    id: "tx-apr",
+    description: "Salário Abril",
+    amount: 4500,
+    type: "income",
+    category: "salary",
+    date: "2026-04-10",
+    createdAt: "2026-04-10T00:00:00.000Z",
+  },
+  {
+    id: "tx-mar",
+    description: "Salário Março",
+    amount: 4500,
+    type: "income",
+    category: "salary",
+    date: "2026-03-10",
+    createdAt: "2026-03-10T00:00:00.000Z",
+  },
+  {
+    id: "tx-feb",
+    description: "Salário Fevereiro",
+    amount: 4000,
+    type: "income",
+    category: "salary",
+    date: "2026-02-10",
+    createdAt: "2026-02-10T00:00:00.000Z",
+  },
+];
+
+const referenceDate = new Date("2026-08-15T12:00:00Z");
 
 function createTransaction(overrides: Partial<Transaction> = {}): Transaction {
   return {
@@ -178,6 +250,44 @@ describe("financialFilters Engine", () => {
         expect(result).toHaveLength(2);
         expect(result).toEqual(transactions);
       });
+    });
+  });
+
+  describe("filterTransactionsByEquivalentPreviousPeriod", () => {
+    it("compara 'current-month' (Agosto) com o mês anterior (Julho)", () => {
+      const previousPeriodTxs = filterTransactionsByEquivalentPreviousPeriod(
+        mockDataset,
+        "current-month",
+        referenceDate
+      );
+
+      expect(previousPeriodTxs.map((t) => t.id)).toEqual(["tx-jul"]);
+    });
+
+    it("compara 'previous-month' (Julho) com o mês retrasado (Junho)", () => {
+      const previousPeriodTxs = filterTransactionsByEquivalentPreviousPeriod(
+        mockDataset,
+        "previous-month",
+        referenceDate
+      );
+
+      expect(previousPeriodTxs.map((t) => t.id)).toEqual(["tx-jun"]);
+    });
+
+    it("compara 'last-3-months' (Jun, Jul, Ago) com os 3 meses anteriores equivalentes (Mar, Abr, Mai)", () => {
+      const currentPeriodTxs = filterTransactionsByPeriod(
+        mockDataset,
+        "last-3-months",
+        referenceDate
+      );
+      expect(currentPeriodTxs.map((t) => t.id)).toEqual(["tx-aug", "tx-jul", "tx-jun"]);
+
+      const previousPeriodTxs = filterTransactionsByEquivalentPreviousPeriod(
+        mockDataset,
+        "last-3-months",
+        referenceDate
+      );
+      expect(previousPeriodTxs.map((t) => t.id)).toEqual(["tx-may", "tx-apr", "tx-mar"]);
     });
   });
 });

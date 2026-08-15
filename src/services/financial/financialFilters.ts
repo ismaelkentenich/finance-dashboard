@@ -76,3 +76,36 @@ export function filterTransactionsByPeriod(
 
   return transactions;
 }
+
+export function filterTransactionsByEquivalentPreviousPeriod(
+  transactions: Transaction[],
+  period: PeriodFilter,
+  referenceDate: Date | string = new Date()
+): Transaction[] {
+  const { year, month } = getYearMonthParts(referenceDate);
+
+  if (period === "current-month") {
+    const previousMonth = formatYearMonth(year, month - 1);
+    return transactions.filter((tx) => tx.date.startsWith(previousMonth));
+  }
+
+  if (period === "previous-month") {
+    const twoMonthsAgo = formatYearMonth(year, month - 2);
+    return transactions.filter((tx) => tx.date.startsWith(twoMonthsAgo));
+  }
+
+  if (period === "last-3-months") {
+    const priorThreeMonths = new Set([
+      formatYearMonth(year, month - 3),
+      formatYearMonth(year, month - 4),
+      formatYearMonth(year, month - 5),
+    ]);
+
+    return transactions.filter((tx) => {
+      const txYearMonth = tx.date.substring(0, 7);
+      return priorThreeMonths.has(txYearMonth);
+    });
+  }
+
+  return [];
+}
