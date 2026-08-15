@@ -1,3 +1,4 @@
+import type { SUPPORTED_LOCALES } from "@/constants/locale.constants";
 import type { en } from "./en";
 
 export type NestedTranslations<T> = {
@@ -8,6 +9,6 @@ export type NestedTranslations<T> = {
       : T[K];
 };
 
-export type SupportedLocale = "en-US" | "pt-BR";
+export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export type TranslationSchema = NestedTranslations<typeof en>;
