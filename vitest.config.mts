@@ -14,14 +14,14 @@ export default defineConfig({
       reportsDirectory: "./coverage",
       include: ["src/**/*.{ts,tsx}"],
       exclude: [
-        "src/**/*.stories.{ts,tsx}", 
+        "src/**/*.stories.{ts,tsx}",
         "src/**/*.types.ts",
-        "src/**/*.constants.ts", 
-        "src/**/index.ts", 
-        "src/test/**/*", 
-        "src/mocks/**/*", 
-        "src/app/layout.tsx", 
-        "src/app/api/**/*", 
+        "src/**/*.constants.ts",
+        "src/**/index.ts",
+        "src/test/**/*",
+        "src/mocks/**/*",
+        "src/app/layout.tsx",
+        "src/app/api/**/*",
       ],
       thresholds: {
         lines: 80,
@@ -33,7 +33,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
 });
