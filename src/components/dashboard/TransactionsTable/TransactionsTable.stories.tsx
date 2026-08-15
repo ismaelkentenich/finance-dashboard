@@ -1,10 +1,10 @@
 import type { Transaction } from "@/types";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { RecentTransactions } from "./RecentTransactions";
+import { TransactionsTable } from "./TransactionsTable";
 
-const meta: Meta<typeof RecentTransactions> = {
-  title: "Features/Dashboard/RecentTransactions/RecentTransactionsTable",
-  component: RecentTransactions,
+const meta: Meta<typeof TransactionsTable> = {
+  title: "Features/Dashboard/TransactionsTable/TransactionsTable",
+  component: TransactionsTable,
   tags: ["autodocs"],
   parameters: {
     docs: {
@@ -17,7 +17,7 @@ const meta: Meta<typeof RecentTransactions> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof RecentTransactions>;
+type Story = StoryObj<typeof TransactionsTable>;
 
 const sampleTransactions: Transaction[] = [
   {

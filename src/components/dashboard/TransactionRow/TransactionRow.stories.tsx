@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { TransactionRow } from "./TransactionRow";
 
 const meta: Meta<typeof TransactionRow> = {
-  title: "Features/Dashboard/RecentTransactions/TransactionRow",
+  title: "Features/Dashboard/TransactionsTable/TransactionRow",
   component: TransactionRow,
   tags: ["autodocs"],
   parameters: {

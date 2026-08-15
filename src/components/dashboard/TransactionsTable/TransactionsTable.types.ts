@@ -1,6 +1,6 @@
 import type { Transaction } from "@/types";
 
-export interface RecentTransactionsProps {
+export interface TransactionsTableProps {
   transactions: Transaction[];
   title?: string;
   id?: string;

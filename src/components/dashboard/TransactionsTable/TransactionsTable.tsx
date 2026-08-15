@@ -3,16 +3,16 @@
 import { Card } from "@/components/ui/Card";
 import { useLocale } from "@/contexts/LocaleContext";
 import { TransactionRow } from "../TransactionRow";
-import styles from "./RecentTransactions.module.css";
-import type { RecentTransactionsProps } from "./RecentTransactions.types";
+import styles from "./TransactionsTable.module.css";
+import type { TransactionsTableProps } from "./TransactionsTable.types";
 
-export function RecentTransactions({
+export function TransactionsTable({
   transactions,
   title,
   id = "transactions",
   className = "",
   "data-testid": testId = "recent-transactions",
-}: RecentTransactionsProps) {
+}: TransactionsTableProps) {
   const { t } = useLocale();
   const displayTitle = title || t.transactions.title;
   const titleId = `${id}-title`;

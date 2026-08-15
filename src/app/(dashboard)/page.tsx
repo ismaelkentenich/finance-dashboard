@@ -2,9 +2,9 @@
 
 import { CategoryBreakdown } from "@/components/dashboard/CategoryBreakdown";
 import { DashboardFilters } from "@/components/dashboard/DashboardFilters";
-import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { TransactionFormModal } from "@/components/dashboard/TransactionFormModal";
+import { TransactionsTable } from "@/components/dashboard/TransactionsTable";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
@@ -84,7 +84,7 @@ function DashboardContent() {
         <>
           <SummaryCards summary={data.summary} />
           <div className={styles.contentGrid}>
-            <RecentTransactions
+            <TransactionsTable
               transactions={data.transactions}
               title={t.transactions?.recentTransactions}
               id="recent-transactions"

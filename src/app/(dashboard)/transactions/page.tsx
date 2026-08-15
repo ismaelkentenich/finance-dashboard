@@ -1,8 +1,8 @@
 "use client";
 
 import { DashboardFilters } from "@/components/dashboard/DashboardFilters";
-import { RecentTransactions } from "@/components/dashboard/RecentTransactions";
 import { TransactionFormModal } from "@/components/dashboard/TransactionFormModal";
+import { TransactionsTable } from "@/components/dashboard/TransactionsTable";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
@@ -110,7 +110,7 @@ function TransactionsContent() {
           }
         />
       ) : (
-        <RecentTransactions
+        <TransactionsTable
           title={t.transactions?.allTransactions}
           id="all-transactions"
           transactions={filteredTransactions}
