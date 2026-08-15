@@ -9,6 +9,7 @@ export interface TransactionFilterParams {
   startDate?: string;
   endDate?: string;
   searchQuery?: string;
+  referenceDate?: Date | string;
 }
 
 export interface TransactionFiltersState {

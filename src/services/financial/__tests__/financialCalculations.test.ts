@@ -1,6 +1,6 @@
 import type { Transaction, TransactionCategory } from "@/types";
 import { describe, expect, it } from "vitest";
-import { calculateCategoryBreakdown, calculateFinancialSummary } from "./financialCalculations";
+import { calculateCategoryBreakdown, calculateFinancialSummary } from "../financialCalculations";
 
 function createTransaction(overrides: Partial<Transaction> = {}): Transaction {
   return {
