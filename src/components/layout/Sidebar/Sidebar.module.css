@@ -29,11 +29,14 @@
     top: 0;
     left: 0;
     bottom: 0;
+    height: 100dvh;
     width: 280px;
     max-width: 80vw;
-    z-index: var(--z-index-sidebar, 400);
+    background-color: var(--color-neutral-50);
+    z-index: calc(var(--z-index-backdrop, 500) + 10);
     box-shadow: var(--shadow-xl);
     animation: slideIn 0.2s ease-out;
+    overflow-y: auto;
   }
 }
 
