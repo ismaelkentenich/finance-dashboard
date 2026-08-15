@@ -1,6 +1,7 @@
 import { WebVitalsReporter } from "@/components/analytics/WebVitalsReporter";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ModalProvider } from "@/contexts/ModalContext";
+import { QueryProvider } from "@/providers/QueryProvider";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -17,12 +18,14 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        <LocaleProvider>
-          <ModalProvider>
-            <WebVitalsReporter />
-            {children}
-          </ModalProvider>
-        </LocaleProvider>
+        <QueryProvider>
+          <LocaleProvider>
+            <ModalProvider>
+              <WebVitalsReporter />
+              {children}
+            </ModalProvider>
+          </LocaleProvider>
+        </QueryProvider>
       </body>
     </html>
   );

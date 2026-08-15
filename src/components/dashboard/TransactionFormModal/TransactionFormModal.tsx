@@ -6,6 +6,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Select } from "@/components/ui/Select";
 import { ALL_CATEGORIES } from "@/constants/transaction.constants";
 import { useLocale } from "@/contexts/LocaleContext";
+import { DASHBOARD_QUERY_KEY } from "@/hooks/useDashboardData";
 import {
   getCreateTransactionSchema,
   type CreateTransactionFormData,
@@ -13,10 +14,27 @@ import {
 import { transactionService } from "@/services/api/transactionService";
 import type { TransactionCategory, TransactionType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { useForm, type FieldErrors } from "react-hook-form";
 import styles from "./TransactionFormModal.module.css";
 import type { TransactionFormModalProps } from "./TransactionFormModal.types";
+
+const fallbackQueryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
+function useSafeQueryClient(): QueryClient {
+  try {
+    return useQueryClient();
+  } catch {
+    return fallbackQueryClient;
+  }
+}
 
 export function TransactionFormModal({
   isOpen,
@@ -25,6 +43,7 @@ export function TransactionFormModal({
   "data-testid": testId = "transaction-form-modal",
 }: TransactionFormModalProps) {
   const { t } = useLocale();
+  const queryClient = useSafeQueryClient();
   const [apiError, setApiError] = useState<string | null>(null);
 
   const schema = useMemo(() => getCreateTransactionSchema(t), [t]);
@@ -34,7 +53,7 @@ export function TransactionFormModal({
     handleSubmit,
     reset,
     setFocus,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting: isFormSubmitting },
   } = useForm<CreateTransactionFormData>({
     resolver: zodResolver(schema),
     shouldFocusError: true,
@@ -47,6 +66,29 @@ export function TransactionFormModal({
     },
   });
 
+  const createMutation = useMutation(
+    {
+      mutationFn: (formData: CreateTransactionFormData) =>
+        transactionService.createTransaction({
+          description: formData.description,
+          amount: Number(formData.amount),
+          type: formData.type as TransactionType,
+          category: formData.category as TransactionCategory,
+          date: formData.date,
+        }),
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: [DASHBOARD_QUERY_KEY] });
+        reset();
+        onSuccess();
+        onClose();
+      },
+      onError: () => {
+        setApiError(t.transactionModal.errorMessage);
+      },
+    },
+    queryClient
+  );
+
   const categoryOptions = ALL_CATEGORIES.map((cat) => ({
     value: cat,
     label: t.categories.labels[cat] || cat,
@@ -58,22 +100,8 @@ export function TransactionFormModal({
   ];
 
   async function onSubmit(formData: CreateTransactionFormData) {
-    try {
-      setApiError(null);
-      await transactionService.createTransaction({
-        description: formData.description,
-        amount: Number(formData.amount),
-        type: formData.type as TransactionType,
-        category: formData.category as TransactionCategory,
-        date: formData.date,
-      });
-
-      reset();
-      onSuccess();
-      onClose();
-    } catch {
-      setApiError(t.transactionModal.errorMessage);
-    }
+    setApiError(null);
+    createMutation.mutate(formData);
   }
 
   function onInvalid(formErrors: FieldErrors<CreateTransactionFormData>) {
@@ -82,6 +110,8 @@ export function TransactionFormModal({
       setFocus(errorFields[0]);
     }
   }
+
+  const isPending = isFormSubmitting || createMutation.isPending;
 
   return (
     <Modal
@@ -108,6 +138,7 @@ export function TransactionFormModal({
           label={t.transactionModal.fields.descriptionLabel}
           placeholder={t.transactionModal.fields.descriptionPlaceholder}
           error={errors.description?.message}
+          disabled={isPending}
           {...register("description")}
           data-testid="transaction-description-input"
         />
@@ -120,6 +151,7 @@ export function TransactionFormModal({
             label={t.transactionModal.fields.amountLabel}
             placeholder={t.transactionModal.fields.amountPlaceholder}
             error={errors.amount?.message}
+            disabled={isPending}
             {...register("amount", { valueAsNumber: true })}
             data-testid="transaction-amount-input"
           />
@@ -128,6 +160,7 @@ export function TransactionFormModal({
             type="date"
             label={t.transactionModal.fields.dateLabel}
             error={errors.date?.message}
+            disabled={isPending}
             {...register("date")}
             data-testid="transaction-date-input"
           />
@@ -139,6 +172,7 @@ export function TransactionFormModal({
             label={t.transactionModal.fields.typeLabel}
             options={typeOptions}
             error={errors.type?.message}
+            disabled={isPending}
             {...register("type")}
             data-testid="transaction-type-select"
           />
@@ -147,6 +181,7 @@ export function TransactionFormModal({
             label={t.transactionModal.fields.categoryLabel}
             options={categoryOptions}
             error={errors.category?.message}
+            disabled={isPending}
             {...register("category")}
             data-testid="transaction-category-select"
           />
@@ -158,7 +193,7 @@ export function TransactionFormModal({
             type="button"
             variant="ghost"
             onClick={onClose}
-            disabled={isSubmitting}
+            disabled={isPending}
             data-testid="transaction-cancel-button"
           >
             {t.transactionModal.buttons.cancel}
@@ -167,12 +202,10 @@ export function TransactionFormModal({
           <Button
             type="submit"
             variant="primary"
-            isLoading={isSubmitting}
+            isLoading={isPending}
             data-testid="transaction-submit-button"
           >
-            {isSubmitting
-              ? t.transactionModal.buttons.submitting
-              : t.transactionModal.buttons.submit}
+            {isPending ? t.transactionModal.buttons.submitting : t.transactionModal.buttons.submit}
           </Button>
         </div>
       </form>

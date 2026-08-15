@@ -2,13 +2,8 @@
 
 import { useLocale } from "@/contexts/LocaleContext";
 import { transactionService } from "@/services/api/transactionService";
-import type {
-  GetDashboardDataResponse,
-  PeriodFilter,
-  TransactionCategory,
-  TransactionType,
-} from "@/types";
-import { useCallback, useEffect, useState } from "react";
+import type { PeriodFilter, TransactionCategory, TransactionType } from "@/types";
+import { useQuery } from "@tanstack/react-query";
 
 interface UseDashboardDataParams {
   period: PeriodFilter;
@@ -16,56 +11,27 @@ interface UseDashboardDataParams {
   category: "all" | TransactionCategory;
 }
 
+export const DASHBOARD_QUERY_KEY = "dashboard";
+
 export function useDashboardData({ period, type, category }: UseDashboardDataParams) {
   const { t } = useLocale();
-  const [data, setData] = useState<GetDashboardDataResponse["data"] | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [refreshIndex, setRefreshIndex] = useState<number>(0);
 
-  const refetch = useCallback(() => {
-    setRefreshIndex((prev) => prev + 1);
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadDashboard() {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const response = await transactionService.getDashboardData({
-          period,
-          type,
-          category,
-        });
-
-        if (isMounted) {
-          setData(response.data);
-        }
-      } catch {
-        if (isMounted) {
-          setError(t.common.noData);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    loadDashboard();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [period, type, category, refreshIndex, t.common.noData]);
+  const query = useQuery({
+    queryKey: [DASHBOARD_QUERY_KEY, { period, type, category }],
+    queryFn: async () => {
+      const response = await transactionService.getDashboardData({
+        period,
+        type,
+        category,
+      });
+      return response.data;
+    },
+  });
 
   return {
-    data,
-    isLoading,
-    error,
-    refetch,
+    data: query.data ?? null,
+    isLoading: query.isLoading,
+    error: query.isError ? query.error?.message || t.common.noData : null,
+    refetch: query.refetch,
   };
 }
