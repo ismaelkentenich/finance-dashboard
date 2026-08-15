@@ -1,9 +1,9 @@
+import { Header } from "@/components/layout/Header";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ModalProvider, useModal } from "@/contexts/ModalContext";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { Header } from "../Header";
 
 let mockSearchParams = new URLSearchParams();
 
@@ -101,7 +101,6 @@ describe("Header Component", () => {
       const user = userEvent.setup();
       renderHeader();
 
-      // No estado inicial pt-BR o botão EN possui o aria-label "Mudar idioma para Inglês"
       const enButton = screen.getByRole("button", {
         name: /mudar idioma para ingl[êe]s|switch language to english/i,
       });
@@ -120,13 +119,11 @@ describe("Header Component", () => {
       const user = userEvent.setup();
       renderHeader();
 
-      // 1. Muda para Inglês
       const enButton = screen.getByRole("button", {
         name: /mudar idioma para ingl[êe]s|switch language to english/i,
       });
       await user.click(enButton);
 
-      // 2. Retorna para Português
       const ptButton = screen.getByRole("button", {
         name: /mudar idioma para portugu[êe]s|switch language to portuguese/i,
       });
@@ -138,6 +135,30 @@ describe("Header Component", () => {
 
       const badge = screen.getByTestId("header-period-badge");
       expect(badge).toHaveTextContent("Mês Atual");
+    });
+  });
+
+  describe("Header Component Responsiveness & Behavior", () => {
+    it("renders the main heading, primary CTA, period badge, and locale switcher", () => {
+      renderHeader();
+
+      expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
+      expect(screen.getByTestId("new-transaction-header-button")).toBeInTheDocument();
+      expect(screen.getByTestId("header-period-badge")).toBeInTheDocument();
+      expect(screen.getByRole("group", { name: /language selection/i })).toBeInTheDocument();
+    });
+
+    it("switches active locale without breaking the layout contract", async () => {
+      const user = userEvent.setup();
+      renderHeader();
+
+      const enButton = screen.getByRole("button", {
+        name: /mudar idioma para ingl[êe]s|switch language to english/i,
+      });
+      await user.click(enButton);
+
+      expect(enButton).toHaveAttribute("aria-pressed", "true");
+      expect(screen.getByText("Financial Overview")).toBeInTheDocument();
     });
   });
 });

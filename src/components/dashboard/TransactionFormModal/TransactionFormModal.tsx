@@ -16,7 +16,7 @@ import type { TransactionCategory, TransactionType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { useForm, type FieldErrors } from "react-hook-form";
+import { useForm, type FieldErrors, type UseFormSetFocus } from "react-hook-form";
 import styles from "./TransactionFormModal.module.css";
 import type { TransactionFormModalProps } from "./TransactionFormModal.types";
 
@@ -36,6 +36,41 @@ function useSafeQueryClient(): QueryClient {
   }
 }
 
+/**
+ * Visual priority order of fields for focus transfer in the event of an error.
+ */
+const FORM_VALIDATION_PRIORITY_ORDER: readonly (keyof CreateTransactionFormData)[] = [
+  "description",
+  "amount",
+  "date",
+  "type",
+  "category",
+] as const;
+
+/**
+ * Manages keyboard focus on the first invalid field, respecting WCAG and test environments (JSDOM).
+ */
+function focusFirstInvalidField(
+  formErrors: FieldErrors<CreateTransactionFormData>,
+  setFormFocus: UseFormSetFocus<CreateTransactionFormData>
+): void {
+  const firstInvalidFieldName = FORM_VALIDATION_PRIORITY_ORDER.find(
+    (fieldName) => formErrors[fieldName]
+  );
+
+  if (!firstInvalidFieldName) return;
+
+  setFormFocus(firstInvalidFieldName, { shouldSelect: true });
+
+  // Schedule focus for after the submit button click cycle
+  setTimeout(() => {
+    const targetInputElement = document.querySelector<HTMLElement>(
+      `[name="${firstInvalidFieldName}"]`
+    );
+    targetInputElement?.focus();
+  }, 0);
+}
+
 export function TransactionFormModal({
   isOpen,
   onClose,
@@ -44,18 +79,18 @@ export function TransactionFormModal({
 }: TransactionFormModalProps) {
   const { t } = useLocale();
   const queryClient = useSafeQueryClient();
-  const [apiError, setApiError] = useState<string | null>(null);
+  const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
 
-  const schema = useMemo(() => getCreateTransactionSchema(t), [t]);
+  const validationSchema = useMemo(() => getCreateTransactionSchema(t), [t]);
 
   const {
     register,
     handleSubmit,
-    reset,
+    reset: resetForm,
     setFocus,
-    formState: { errors, isSubmitting: isFormSubmitting },
+    formState: { errors: formErrors, isSubmitting: isFormSubmitting },
   } = useForm<CreateTransactionFormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(validationSchema),
     shouldFocusError: true,
     defaultValues: {
       description: "",
@@ -66,7 +101,7 @@ export function TransactionFormModal({
     },
   });
 
-  const createMutation = useMutation(
+  const createTransactionMutation = useMutation(
     {
       mutationFn: (formData: CreateTransactionFormData) =>
         transactionService.createTransaction({
@@ -78,40 +113,44 @@ export function TransactionFormModal({
         }),
       onSuccess: async () => {
         await queryClient.invalidateQueries({ queryKey: [DASHBOARD_QUERY_KEY] });
-        reset();
+        resetForm();
         onSuccess();
         onClose();
       },
       onError: () => {
-        setApiError(t.transactionModal.errorMessage);
+        setApiErrorMessage(t.transactionModal.errorMessage);
       },
     },
     queryClient
   );
 
-  const categoryOptions = ALL_CATEGORIES.map((cat) => ({
-    value: cat,
-    label: t.categories.labels[cat] || cat,
-  }));
+  const categoryOptions = useMemo(
+    () =>
+      ALL_CATEGORIES.map((categoryKey) => ({
+        value: categoryKey,
+        label: t.categories.labels[categoryKey] || categoryKey,
+      })),
+    [t]
+  );
 
-  const typeOptions = [
-    { value: "income", label: t.filters.types.income },
-    { value: "expense", label: t.filters.types.expense },
-  ];
+  const typeOptions = useMemo(
+    () => [
+      { value: "income", label: t.filters.types.income },
+      { value: "expense", label: t.filters.types.expense },
+    ],
+    [t]
+  );
 
-  async function onSubmit(formData: CreateTransactionFormData) {
-    setApiError(null);
-    createMutation.mutate(formData);
+  async function handleValidSubmit(formData: CreateTransactionFormData) {
+    setApiErrorMessage(null);
+    createTransactionMutation.mutate(formData);
   }
 
-  function onInvalid(formErrors: FieldErrors<CreateTransactionFormData>) {
-    const errorFields = Object.keys(formErrors) as (keyof CreateTransactionFormData)[];
-    if (errorFields.length > 0) {
-      setFocus(errorFields[0]);
-    }
+  function handleInvalidSubmit(validationErrors: FieldErrors<CreateTransactionFormData>) {
+    focusFirstInvalidField(validationErrors, setFocus);
   }
 
-  const isPending = isFormSubmitting || createMutation.isPending;
+  const isPending = isFormSubmitting || createTransactionMutation.isPending;
 
   return (
     <Modal
@@ -122,72 +161,72 @@ export function TransactionFormModal({
       data-testid={testId}
     >
       <form
-        onSubmit={handleSubmit(onSubmit, onInvalid)}
+        onSubmit={handleSubmit(handleValidSubmit, handleInvalidSubmit)}
         className={styles.form}
         data-testid="transaction-form"
         noValidate
       >
-        {apiError && (
+        {apiErrorMessage && (
           <div className={styles.apiError} role="alert" data-testid="transaction-form-api-error">
-            {apiError}
+            {apiErrorMessage}
           </div>
         )}
 
-        {/* Description */}
+        {/* Description Field */}
         <Input
           label={t.transactionModal.fields.descriptionLabel}
           placeholder={t.transactionModal.fields.descriptionPlaceholder}
-          error={errors.description?.message}
+          error={formErrors.description?.message}
           disabled={isPending}
-          {...register("description")}
           data-testid="transaction-description-input"
+          {...register("description")}
         />
 
-        {/* Amount and Date */}
+        {/* Amount and Date Group */}
         <div className={styles.row}>
           <Input
             type="number"
             step="0.01"
             label={t.transactionModal.fields.amountLabel}
             placeholder={t.transactionModal.fields.amountPlaceholder}
-            error={errors.amount?.message}
+            error={formErrors.amount?.message}
             disabled={isPending}
-            {...register("amount", { valueAsNumber: true })}
             data-testid="transaction-amount-input"
+            {...register("amount", { valueAsNumber: true })}
           />
 
           <Input
             type="date"
             label={t.transactionModal.fields.dateLabel}
-            error={errors.date?.message}
+            error={formErrors.date?.message}
             disabled={isPending}
-            {...register("date")}
             data-testid="transaction-date-input"
+            {...register("date")}
           />
         </div>
 
-        {/* Type and Category */}
+        {/* Type and Category Group */}
         <div className={styles.row}>
           <Select
             label={t.transactionModal.fields.typeLabel}
             options={typeOptions}
-            error={errors.type?.message}
+            error={formErrors.type?.message}
             disabled={isPending}
-            {...register("type")}
             data-testid="transaction-type-select"
+            {...register("type")}
           />
 
           <Select
             label={t.transactionModal.fields.categoryLabel}
             options={categoryOptions}
-            error={errors.category?.message}
+            error={formErrors.category?.message}
             disabled={isPending}
-            {...register("category")}
             data-testid="transaction-category-select"
+            {...register("category")}
           />
         </div>
 
-        {/* Buttons */}
+        {/* Actions Bar */}
         <div className={styles.actions}>
           <Button
             type="button"
