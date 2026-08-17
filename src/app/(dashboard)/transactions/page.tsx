@@ -1,17 +1,23 @@
 "use client";
 
-import { DashboardFilters } from "@/components/dashboard/DashboardFilters";
+import {
+  getCategoryOptions,
+  getPeriodOptions,
+  getTypeOptions,
+} from "@/components/dashboard/DashboardFilters/DashboardFilters.helpers";
 import { TransactionFormModal } from "@/components/dashboard/TransactionFormModal";
 import { TransactionsTable } from "@/components/dashboard/TransactionsTable";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorBanner } from "@/components/ui/ErrorBanner";
 import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useModal } from "@/contexts/ModalContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
+import type { PeriodFilter, TransactionCategory, TransactionType } from "@/types";
 import { FilterX, Plus, Search } from "lucide-react";
 import { Suspense, useMemo, useState } from "react";
 import styles from "./page.module.css";
@@ -19,8 +25,8 @@ import styles from "./page.module.css";
 function TransactionsSkeleton() {
   return (
     <div className={styles.container}>
-      <Skeleton height="36px" width="240px" />
-      <Skeleton height="56px" borderRadius="var(--border-radius-lg)" />
+      <Skeleton height="36px" width="200px" />
+      <Skeleton height="64px" borderRadius="var(--border-radius-lg)" />
       <Skeleton height="400px" borderRadius="var(--border-radius-lg)" />
     </div>
   );
@@ -33,6 +39,10 @@ function TransactionsContent() {
   const { data, isLoading, error, refetch } = useDashboardData(filters);
 
   const [searchQuery, setSearchQuery] = useState("");
+
+  const periodOptions = useMemo(() => getPeriodOptions(t), [t]);
+  const typeOptions = useMemo(() => getTypeOptions(t), [t]);
+  const categoryOptions = useMemo(() => getCategoryOptions(t), [t]);
 
   const transactions = data?.transactions;
 
@@ -59,15 +69,37 @@ function TransactionsContent() {
     return template.replace("{count}", String(count));
   }, [transactions, filteredTransactions.length, searchQuery, t]);
 
+  const isFiltered = hasActiveFilters || searchQuery.length > 0;
+
+  const handleResetAll = () => {
+    resetFilters();
+    setSearchQuery("");
+  };
+
   return (
     <div className={styles.container} data-testid="transactions-page">
       <div className={styles.headerRow}>
-        <h2 className={styles.pageTitle}>{t.sidebar.navigation.transactions}</h2>
+        <div className={styles.titleWrapper}>
+          <h2 className={styles.pageTitle}>{t.sidebar.navigation.transactions}</h2>
+          {!isLoading && !error && transactions && (
+            <span
+              className={styles.statsBadge}
+              data-testid="transaction-search-stats"
+              role="status"
+              aria-live="polite"
+            >
+              {searchStatsMessage}
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className={styles.searchBarWrapper}>
-        <div className={styles.searchInput}>
+      {/* Unified Toolbar Card */}
+      <section className={styles.filterToolbarCard} aria-label="Filtros e Busca de Transações">
+        <div className={styles.searchWrapper}>
           <Input
+            variant="outline"
+            size="md"
             placeholder={t.transactions?.searchDescription}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -78,32 +110,59 @@ function TransactionsContent() {
             fullWidth
           />
         </div>
-        {!isLoading && !error && transactions && (
-          <div
-            className={styles.statsBar}
-            data-testid="transaction-search-stats"
-            role="status"
-            aria-live="polite"
-          >
-            {searchStatsMessage}
+
+        <div className={styles.filtersGroup}>
+          <div className={styles.selectItem}>
+            <Select
+              options={periodOptions}
+              value={filters.period}
+              onChange={(e) => setFilters({ period: e.target.value as PeriodFilter })}
+              data-testid="period-filter-select"
+              aria-label={t.filters.periodLabel}
+              fullWidth
+            />
           </div>
-        )}
-      </div>
 
-      <DashboardFilters
-        period={filters.period}
-        type={filters.type}
-        category={filters.category}
-        onPeriodChange={(period) => setFilters({ period })}
-        onTypeChange={(type) => setFilters({ type })}
-        onCategoryChange={(category) => setFilters({ category })}
-        onReset={() => {
-          resetFilters();
-          setSearchQuery("");
-        }}
-        hasActiveFilters={hasActiveFilters || searchQuery.length > 0}
-      />
+          <div className={styles.selectItem}>
+            <Select
+              options={typeOptions}
+              value={filters.type}
+              onChange={(e) => setFilters({ type: e.target.value as "all" | TransactionType })}
+              data-testid="type-filter-select"
+              aria-label={t.filters.typeLabel}
+              fullWidth
+            />
+          </div>
 
+          <div className={styles.selectItem}>
+            <Select
+              options={categoryOptions}
+              value={filters.category}
+              onChange={(e) =>
+                setFilters({ category: e.target.value as "all" | TransactionCategory })
+              }
+              data-testid="category-filter-select"
+              aria-label={t.filters.categoryLabel}
+              fullWidth
+            />
+          </div>
+
+          {isFiltered && (
+            <button
+              type="button"
+              className={styles.clearButton}
+              onClick={handleResetAll}
+              data-testid="reset-filters-button"
+              aria-label={t.filters.clearFilters}
+            >
+              <FilterX size={14} aria-hidden="true" />
+              {t.filters.clearFilters}
+            </button>
+          )}
+        </div>
+      </section>
+
+      {/* Content Rendering */}
       {isLoading ? (
         <TransactionsSkeleton />
       ) : error ? (
@@ -118,15 +177,8 @@ function TransactionsContent() {
           title={t.emptyStates.noTransactionsTitle}
           description={t.emptyStates.noTransactionsDescription}
           action={
-            hasActiveFilters || searchQuery ? (
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => {
-                  resetFilters();
-                  setSearchQuery("");
-                }}
-              >
+            isFiltered ? (
+              <Button variant="secondary" size="sm" onClick={handleResetAll}>
                 <FilterX size={16} aria-hidden="true" />
                 {t.emptyStates.clearFilters}
               </Button>

@@ -1,12 +1,26 @@
 import { X } from "lucide-react";
 import { forwardRef, useId } from "react";
 import styles from "./Input.module.css";
-import type { InputProps } from "./Input.types";
+import type { InputProps, InputSize, InputVariant } from "./Input.types";
+
+const VARIANT_MAP: Record<InputVariant, string> = {
+  filled: styles.variantFilled,
+  outline: styles.variantOutline,
+  ghost: styles.variantGhost,
+};
+
+const SIZE_MAP: Record<InputSize, string> = {
+  sm: styles.sizeSm,
+  md: styles.sizeMd,
+  lg: styles.sizeLg,
+};
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     id,
     label,
+    variant = "filled",
+    size = "md",
     error,
     helperText,
     fullWidth = false,
@@ -58,9 +72,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           disabled={disabled}
           aria-invalid={Boolean(error)}
           aria-describedby={ariaDescribedBy}
-          className={`${styles.input} ${startIcon ? styles.hasStartIcon : ""} ${
-            hasEndElement ? styles.hasEndElement : ""
-          } ${error ? styles.inputError : ""}`.trim()}
+          className={`${styles.input} ${VARIANT_MAP[variant]} ${SIZE_MAP[size]} ${
+            startIcon ? styles.hasStartIcon : ""
+          } ${hasEndElement ? styles.hasEndElement : ""} ${error ? styles.inputError : ""}`.trim()}
           {...props}
         />
 

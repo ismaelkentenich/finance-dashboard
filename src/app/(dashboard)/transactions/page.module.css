@@ -1,14 +1,20 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xl);
-  width: var(--max-width-full, 100%);
+  gap: var(--spacing-lg);
+  width: 100%;
 }
 
 .headerRow {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .pageTitle {
@@ -17,24 +23,72 @@
   color: var(--color-neutral-900);
 }
 
-.pageSubtitle {
-  font-size: var(--font-size-sm);
+.statsBadge {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
   color: var(--color-neutral-500);
+  background-color: var(--color-neutral-200);
+  padding: 2px 8px;
+  border-radius: var(--border-radius-full);
 }
 
-.searchBarWrapper {
+/* Unified Filter & Search Bar */
+.filterToolbarCard {
+  background-color: var(--color-neutral-50);
+  border: var(--border-width-thin, 1px) solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-md);
 }
 
-.searchInput {
-  max-width: 380px;
-  width: 100%;
+@media (min-width: 1024px) {
+  .filterToolbarCard {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
 }
 
-.statsBar {
+.searchWrapper {
+  flex: 1.4;
+  min-width: 240px;
+}
+
+.filtersGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 2;
+}
+
+.selectItem {
+  flex: 1;
+  min-width: 140px;
+}
+
+.clearButton {
+  height: 38px;
+  padding: 0 var(--spacing-sm);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--color-neutral-100);
+  color: var(--color-status-error-200);
   font-size: var(--font-size-xs);
-  color: var(--color-neutral-500);
-  font-weight: 500;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  transition: all var(--motion-duration-fast) var(--motion-easing-default);
+}
+
+.clearButton:hover {
+  background-color: var(--color-status-error-100);
+  border-color: var(--color-status-error-200);
+  color: var(--color-status-error-300);
 }
