@@ -1,18 +1,20 @@
 import type { SupportedLocale } from "@/locales/types";
 import type { QueryClient } from "@tanstack/react-query";
-import type { RenderOptions } from "@testing-library/react";
+import type { RenderHookOptions, RenderOptions } from "@testing-library/react";
 import type { ReactNode } from "react";
 import type { AxeMatchers } from "vitest-axe/matchers";
 
-export interface CustomRenderProvidersOptions {
+export interface TestProvidersOptions {
   locale?: SupportedLocale;
   queryClient?: QueryClient;
 }
 
-export interface CustomRenderOptions
-  extends Omit<RenderOptions, "wrapper">, CustomRenderProvidersOptions {}
+export interface CustomRenderOptions extends Omit<RenderOptions, "wrapper">, TestProvidersOptions {}
 
-export interface AllTheProvidersProps extends CustomRenderProvidersOptions {
+export type CustomRenderHookOptions<TProps> = Omit<RenderHookOptions<TProps>, "wrapper"> &
+  TestProvidersOptions;
+
+export interface AllTheProvidersProps extends TestProvidersOptions {
   children: ReactNode;
 }
 
