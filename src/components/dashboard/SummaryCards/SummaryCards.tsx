@@ -1,7 +1,9 @@
 "use client";
 
 import { useLocale } from "@/contexts/LocaleContext";
+import { staggerContainerVariants, summaryCardItemVariants } from "@/motion";
 import { formatCurrency, formatPercentage } from "@/utils/formatters";
+import { motion } from "framer-motion";
 import { PiggyBank, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import { SummaryCard } from "../SummaryCard";
 import styles from "./SummaryCards.module.css";
@@ -80,10 +82,13 @@ export function SummaryCards({
   ];
 
   return (
-    <section
+    <motion.section
       data-testid={testId}
       className={styles.gridContainer}
       aria-label="Financial Summary Cards"
+      variants={staggerContainerVariants}
+      initial="initial"
+      animate="animate"
     >
       {cardsData.map((card) => (
         <SummaryCard
@@ -95,8 +100,9 @@ export function SummaryCards({
           iconVariant={card.iconVariant}
           badge={card.badge}
           footerText={card.footerText}
+          variants={summaryCardItemVariants}
         />
       ))}
-    </section>
+    </motion.section>
   );
 }

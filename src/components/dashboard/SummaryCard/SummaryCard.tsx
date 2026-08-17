@@ -1,5 +1,8 @@
+"use client";
+
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
+import { motion, type HTMLMotionProps } from "framer-motion";
 import styles from "./SummaryCard.module.css";
 import type { SummaryCardIconVariant, SummaryCardProps } from "./SummaryCard.types";
 
@@ -19,35 +22,38 @@ export function SummaryCard({
   footerText,
   className = "",
   "data-testid": testId = "summary-card",
-}: SummaryCardProps) {
+  ...motionProps
+}: SummaryCardProps & HTMLMotionProps<"div">) {
   return (
-    <Card data-testid={testId} className={`${styles.cardContainer} ${className}`.trim()}>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <div
-          data-testid="summary-card-icon-wrapper"
-          className={`${styles.iconWrapper} ${ICON_VARIANT_MAP[iconVariant]}`}
-        >
-          {icon}
-        </div>
-      </CardHeader>
-
-      <div data-testid="summary-card-value" className={styles.value}>
-        {value}
-      </div>
-
-      <div className={styles.footerInfo}>
-        {badge && (
-          <Badge
-            variant={badge.variant}
-            aria-label={badge.ariaLabel}
-            data-testid="summary-card-badge"
+    <motion.div {...motionProps}>
+      <Card data-testid={testId} className={`${styles.cardContainer} ${className}`.trim()}>
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+          <div
+            data-testid="summary-card-icon-wrapper"
+            className={`${styles.iconWrapper} ${ICON_VARIANT_MAP[iconVariant]}`}
           >
-            {badge.text}
-          </Badge>
-        )}
-        <span data-testid="summary-card-footer-text">{footerText}</span>
-      </div>
-    </Card>
+            {icon}
+          </div>
+        </CardHeader>
+
+        <div data-testid="summary-card-value" className={styles.value}>
+          {value}
+        </div>
+
+        <div className={styles.footerInfo}>
+          {badge && (
+            <Badge
+              variant={badge.variant}
+              aria-label={badge.ariaLabel}
+              data-testid="summary-card-badge"
+            >
+              {badge.text}
+            </Badge>
+          )}
+          <span data-testid="summary-card-footer-text">{footerText}</span>
+        </div>
+      </Card>
+    </motion.div>
   );
 }
