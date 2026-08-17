@@ -161,4 +161,42 @@ describe("TransactionsPage Search Integration", () => {
       '0 resultados para "inexistente"'
     );
   });
+
+  it("keeps existing transactions visible while filtered data is being refetched", () => {
+    vi.mocked(useDashboardData).mockReturnValue({
+      data: {
+        transactions: mockTransactions,
+        summary: {
+          currentBalance: 4530,
+          totalIncome: 5000,
+          totalExpenses: 470,
+          savingsRate: 90.6,
+          periodComparison: {
+            balanceVariation: 0,
+            incomeVariation: 0,
+            expensesVariation: 0,
+          },
+        },
+        categories: [],
+      },
+      isLoading: false,
+      isFetching: true,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    renderTransactionsPage();
+
+    const status = screen.getByTestId("transactions-updating-status");
+
+    expect(status).toHaveAttribute("role", "status");
+    expect(status).toHaveAttribute("aria-live", "polite");
+    expect(status).toHaveTextContent("Atualizando");
+
+    expect(screen.getByText("Supermercado Extra")).toBeInTheDocument();
+    expect(screen.getByText("Mercado Central")).toBeInTheDocument();
+    expect(screen.getByText("Salário Mensal")).toBeInTheDocument();
+
+    expect(screen.queryByTestId("transactions-loading")).not.toBeInTheDocument();
+  });
 });

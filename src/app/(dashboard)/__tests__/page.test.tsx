@@ -93,7 +93,7 @@ describe("DashboardPage Component Integration", () => {
     });
   });
 
-  it("renders loading skeleton state when data is loading (Line 21)", () => {
+  it("keeps skeleton on initial load without rendering the updating indicator", () => {
     vi.mocked(useDashboardData).mockReturnValue({
       data: null,
       isLoading: true,
@@ -103,7 +103,67 @@ describe("DashboardPage Component Integration", () => {
     });
 
     renderDashboardPage();
+
     expect(screen.getByTestId("dashboard-loading")).toBeInTheDocument();
+    expect(screen.queryByTestId("dashboard-updating-status")).not.toBeInTheDocument();
+  });
+
+  it("keeps current dashboard content visible and renders accessible status while refetching", () => {
+    vi.mocked(useDashboardData).mockReturnValue({
+      data: {
+        transactions: [
+          {
+            id: "tx-1",
+            description: "Salário",
+            amount: 5000,
+            type: "income",
+            category: "salary",
+            date: "2026-08-01",
+            createdAt: "2026-08-01T00:00:00Z",
+          },
+        ],
+        summary: {
+          currentBalance: 5000,
+          totalIncome: 5000,
+          totalExpenses: 0,
+          savingsRate: 100,
+          periodComparison: {
+            balanceVariation: 10,
+            incomeVariation: 5,
+            expensesVariation: 0,
+          },
+        },
+        categories: [],
+      },
+      isLoading: false,
+      isFetching: true,
+      error: null,
+      refetch: mockRefetch,
+    });
+
+    renderDashboardPage();
+
+    const status = screen.getByTestId("dashboard-updating-status");
+
+    expect(status).toBeInTheDocument();
+    expect(status).toHaveAttribute("role", "status");
+    expect(status).toHaveAttribute("aria-live", "polite");
+    expect(status).toHaveTextContent("Atualizando");
+
+    const transactionRow = screen.getByTestId("transaction-row-tx-1");
+
+    expect(transactionRow).toBeInTheDocument();
+    expect(within(transactionRow).getByTestId("transaction-description")).toHaveTextContent(
+      "Salário"
+    );
+
+    expect(screen.queryByTestId("dashboard-loading")).not.toBeInTheDocument();
+  });
+
+  it("does not render updating status when no background fetch is running", () => {
+    renderDashboardPage();
+
+    expect(screen.queryByTestId("dashboard-updating-status")).not.toBeInTheDocument();
   });
 
   it("renders error banner when loading encounters an error and retries on click", async () => {

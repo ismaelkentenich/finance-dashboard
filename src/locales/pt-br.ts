@@ -2,7 +2,8 @@ import type { TranslationSchema } from "./types";
 
 export const pt: TranslationSchema = {
   common: {
-    loading: "Carregando dados financeiros...",
+    loading: "Carregando",
+    updating: "Atualizando",
     noData: "Nenhum dado disponível.",
     closeDialog: "Fechar diálogo",
     dragLabel: "Arrastar para reordenar",

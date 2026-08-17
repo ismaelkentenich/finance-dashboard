@@ -47,7 +47,9 @@ function DashboardContent() {
   const { overviewSettings, reorderWidgets } = useSettings();
   const { isTransactionModalOpen, closeTransactionModal } = useModal();
   const { filters, setFilters, resetFilters, hasActiveFilters } = useTransactionFilters();
-  const { data, isLoading, error, refetch } = useDashboardData(filters);
+  const { data, isLoading, isFetching, error, refetch } = useDashboardData(filters);
+
+  const isUpdating = isFetching && !isLoading;
 
   const hasAnyWidgetVisible =
     overviewSettings.showSummaryCards ||
@@ -98,6 +100,18 @@ function DashboardContent() {
         onReset={resetFilters}
         hasActiveFilters={hasActiveFilters}
       />
+
+      {isUpdating && (
+        <div
+          className={styles.updatingStatus}
+          role="status"
+          aria-live="polite"
+          data-testid="dashboard-updating-status"
+        >
+          <span className={styles.updatingSpinner} aria-hidden="true" />
+          {t.common.updating}
+        </div>
+      )}
 
       {isLoading ? (
         <DashboardSkeleton />
