@@ -6,11 +6,21 @@ import { Switch } from "@/components/ui/Switch";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { RotateCcw } from "lucide-react";
+import { useState } from "react";
 import styles from "./page.module.css";
 
 export default function SettingsPage() {
   const { t } = useLocale();
   const { overviewSettings, updateOverviewSettings, resetOverviewSettings } = useSettings();
+  const [isResetting, setIsResetting] = useState(false);
+
+  const handleResetSettings = () => {
+    setIsResetting(true);
+    resetOverviewSettings();
+    setTimeout(() => {
+      setIsResetting(false);
+    }, 300);
+  };
 
   return (
     <div className={styles.container} data-testid="settings-page">
@@ -100,10 +110,15 @@ export default function SettingsPage() {
           <Button
             variant="secondary"
             size="sm"
-            onClick={resetOverviewSettings}
+            onClick={handleResetSettings}
             data-testid="reset-settings-button"
           >
-            <RotateCcw size={16} aria-hidden="true" />
+            <RotateCcw
+              size={16}
+              aria-hidden="true"
+              className={isResetting ? styles.resetIconAnimated : undefined}
+              data-testid="reset-settings-icon"
+            />
             {t.settings.restoreDefaults}
           </Button>
         </div>

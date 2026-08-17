@@ -44,3 +44,22 @@
   color: var(--color-neutral-500);
   line-height: 1.5;
 }
+
+.spinIcon {
+  animation: singleSpin var(--motion-duration-spin, 800ms) var(--motion-easing-default, ease) 1;
+}
+
+@keyframes singleSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinIcon {
+    animation: none !important;
+  }
+}

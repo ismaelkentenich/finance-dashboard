@@ -30,7 +30,7 @@ describe("DashboardErrorBoundary Component", () => {
     });
   });
 
-  it("triggers the reset callback when clicking the reload button", async () => {
+  it("triggers the reset callback and applies semantic animation class on icon", async () => {
     const user = userEvent.setup();
     const handleReset = vi.fn();
     const error = new Error("Render Failed");
@@ -41,7 +41,14 @@ describe("DashboardErrorBoundary Component", () => {
       </LocaleProvider>
     );
 
-    await user.click(screen.getByTestId("error-reset-button"));
+    const button = screen.getByTestId("error-reset-button");
+    const icon = screen.getByTestId("error-reset-icon");
+
+    expect(icon.getAttribute("class") || "").not.toMatch(/spinIcon/);
+
+    await user.click(button);
+
     expect(handleReset).toHaveBeenCalledTimes(1);
+    expect(icon.getAttribute("class") || "").toMatch(/spinIcon/);
   });
 });

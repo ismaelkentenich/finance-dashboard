@@ -40,9 +40,10 @@ export function Header({ onToggleMenu, isMenuOpen = false }: HeaderProps) {
           size="sm"
           variant="primary"
           onClick={openTransactionModal}
+          className={styles.newTransactionButton}
           data-testid="new-transaction-header-button"
         >
-          <Plus size={16} aria-hidden="true" />
+          <Plus size={16} aria-hidden="true" className={styles.newTransactionIcon} />
           {t.transactionModal.triggerButton}
         </Button>
 
