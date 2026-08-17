@@ -12,7 +12,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useModal } from "@/contexts/ModalContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
-import { FilterX, Plus } from "lucide-react";
+import { FilterX, Plus, Search } from "lucide-react";
 import { Suspense, useMemo, useState } from "react";
 import styles from "./page.module.css";
 
@@ -44,6 +44,21 @@ function TransactionsContent() {
     return transactions.filter((tx) => tx.description.toLowerCase().includes(queryLower));
   }, [transactions, searchQuery]);
 
+  const searchStatsMessage = useMemo(() => {
+    if (!transactions) return "";
+    const count = filteredTransactions.length;
+    const trimmedQuery = searchQuery.trim();
+
+    if (trimmedQuery) {
+      const template =
+        count === 1 ? t.transactions.resultsForQuery : t.transactions.resultsForQueryPlural;
+      return template.replace("{count}", String(count)).replace("{query}", trimmedQuery);
+    }
+
+    const template = count === 1 ? t.transactions.totalFound : t.transactions.totalFoundPlural;
+    return template.replace("{count}", String(count));
+  }, [transactions, filteredTransactions.length, searchQuery, t]);
+
   return (
     <div className={styles.container} data-testid="transactions-page">
       <div className={styles.headerRow}>
@@ -56,9 +71,23 @@ function TransactionsContent() {
             placeholder={t.transactions?.searchDescription}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            startIcon={<Search size={16} />}
+            onClear={searchQuery ? () => setSearchQuery("") : undefined}
+            clearButtonAriaLabel={t.transactions.clearSearch}
+            data-testid="transaction-search-input"
             fullWidth
           />
         </div>
+        {!isLoading && !error && transactions && (
+          <div
+            className={styles.statsBar}
+            data-testid="transaction-search-stats"
+            role="status"
+            aria-live="polite"
+          >
+            {searchStatsMessage}
+          </div>
+        )}
       </div>
 
       <DashboardFilters
