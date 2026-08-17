@@ -24,6 +24,7 @@ export function useDashboardData({ period, type, category }: UseDashboardDataPar
         type,
         category,
       });
+
       return response.data;
     },
     placeholderData: keepPreviousData,
@@ -33,7 +34,7 @@ export function useDashboardData({ period, type, category }: UseDashboardDataPar
     data: query.data ?? null,
     isLoading: query.isLoading,
     isFetching: query.isFetching,
-    error: query.isError ? query.error?.message || t.common.noData : null,
+    error: query.isError ? t.errors.loadFailureMessage : null,
     refetch: query.refetch,
   };
 }

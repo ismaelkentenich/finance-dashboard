@@ -18,7 +18,7 @@ vi.mock("@/services/api/transactionService", () => ({
   },
 }));
 
-function createWrapper() {
+function createWrapper(initialLocale: "pt-BR" | "en-US" = "pt-BR") {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -31,7 +31,7 @@ function createWrapper() {
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        <LocaleProvider>{children}</LocaleProvider>
+        <LocaleProvider initialLocale={initialLocale}>{children}</LocaleProvider>
       </QueryClientProvider>
     );
   };
@@ -160,10 +160,79 @@ describe("useDashboardData Hook", () => {
     await waitFor(() => expect(result.current.data?.transactions).toHaveLength(0));
   });
 
-  it("handles fetch errors gracefully", async () => {
+  it("maps technical fetch errors to a localized pt-BR user message", async () => {
     vi.mocked(transactionService.getDashboardData).mockRejectedValueOnce(
-      new Error("Network Error")
+      new Error("Failed to fetch transactions: 500 Internal Server Error")
     );
+
+    const { result } = renderHook(
+      () =>
+        useDashboardData({
+          period: "current-month",
+          type: "all",
+          category: "all",
+        }),
+      { wrapper: createWrapper("pt-BR") }
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.data).toBeNull();
+    expect(result.current.error).toBe(
+      "Não foi possível carregar seus dados financeiros. Tente novamente."
+    );
+    expect(result.current.error).not.toContain("500");
+    expect(result.current.error).not.toContain("Internal Server Error");
+  });
+
+  it("maps technical fetch errors to a localized en-US user message", async () => {
+    vi.mocked(transactionService.getDashboardData).mockRejectedValueOnce(
+      new Error("Failed to fetch transactions: 503 Service Unavailable")
+    );
+
+    const { result } = renderHook(
+      () =>
+        useDashboardData({
+          period: "current-month",
+          type: "all",
+          category: "all",
+        }),
+      { wrapper: createWrapper("en-US") }
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.error).toBe("Unable to load your financial data. Please try again.");
+    expect(result.current.error).not.toContain("503");
+    expect(result.current.error).not.toContain("Service Unavailable");
+  });
+
+  it("keeps refetch working after a failed request", async () => {
+    const recoveredResponse: GetDashboardDataResponse = {
+      data: {
+        transactions: [],
+        summary: {
+          currentBalance: 0,
+          totalIncome: 0,
+          totalExpenses: 0,
+          savingsRate: 0,
+          periodComparison: {
+            balanceVariation: 0,
+            incomeVariation: 0,
+            expensesVariation: 0,
+          },
+        },
+        categories: [],
+      },
+      meta: {
+        totalCount: 0,
+        period: "current-month",
+      },
+    };
+
+    vi.mocked(transactionService.getDashboardData)
+      .mockRejectedValueOnce(new Error("Network Error"))
+      .mockResolvedValueOnce(recoveredResponse);
 
     const { result } = renderHook(
       () =>
@@ -175,9 +244,13 @@ describe("useDashboardData Hook", () => {
       { wrapper: createWrapper() }
     );
 
-    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    await waitFor(() => expect(result.current.error).not.toBeNull());
 
-    expect(result.current.data).toBeNull();
-    expect(result.current.error).toBe("Network Error");
+    await result.current.refetch();
+
+    await waitFor(() => expect(result.current.error).toBeNull());
+
+    expect(result.current.data).toEqual(recoveredResponse.data);
+    expect(transactionService.getDashboardData).toHaveBeenCalledTimes(2);
   });
 });

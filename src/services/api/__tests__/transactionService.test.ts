@@ -1,9 +1,11 @@
+import { telemetryService } from "@/services/telemetry";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { transactionService } from "../transactionService";
 
 describe("transactionService", () => {
   beforeEach(() => {
     vi.stubGlobal("fetch", vi.fn());
+    vi.spyOn(telemetryService, "logError").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -55,6 +57,18 @@ describe("transactionService", () => {
 
       await expect(transactionService.getDashboardData()).rejects.toThrow(
         "Failed to fetch transactions: 500 Internal Server Error"
+      );
+
+      expect(telemetryService.logError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "Failed to fetch transactions: 500 Internal Server Error",
+        }),
+        {
+          operation: "transactionService.getDashboardData",
+          status: 500,
+          statusText: "Internal Server Error",
+          endpoint: "/api/transactions",
+        }
       );
     });
   });
