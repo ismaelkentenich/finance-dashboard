@@ -17,27 +17,11 @@ import { transactionService } from "@/services/api/transactionService";
 import type { TransactionCategory, TransactionType } from "@/types";
 import { getLocalDateISOString } from "@/utils/date";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
 import { useForm, type FieldErrors, type UseFormSetFocus } from "react-hook-form";
 import styles from "./TransactionFormModal.module.css";
 import type { TransactionFormModalProps } from "./TransactionFormModal.types";
-
-const fallbackQueryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
-
-function useSafeQueryClient(): QueryClient {
-  try {
-    return useQueryClient();
-  } catch {
-    return fallbackQueryClient;
-  }
-}
 
 /**
  * Visual priority order of fields for focus transfer in the event of an error.
@@ -76,7 +60,8 @@ export function TransactionFormModal({
 }: TransactionFormModalProps) {
   const { t } = useLocale();
   const { showToast } = useToast();
-  const queryClient = useSafeQueryClient();
+  const queryClient = useQueryClient();
+
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
   const firstFieldRef = useRef<HTMLInputElement | null>(null);
 
