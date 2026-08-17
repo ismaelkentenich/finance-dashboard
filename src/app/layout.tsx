@@ -4,6 +4,7 @@ import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ModalProvider } from "@/contexts/ModalContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import type { SupportedLocale } from "@/locales/types";
+import { MotionProvider } from "@/providers/MotionProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { isValidLocale } from "@/utils/locale";
 import type { Metadata } from "next";
@@ -30,14 +31,16 @@ export default async function RootLayout({
     <html lang={initialLocale}>
       <body>
         <QueryProvider>
-          <LocaleProvider initialLocale={initialLocale}>
-            <SettingsProvider>
-              <ModalProvider>
-                <WebVitalsReporter />
-                {children}
-              </ModalProvider>
-            </SettingsProvider>
-          </LocaleProvider>
+          <MotionProvider>
+            <LocaleProvider initialLocale={initialLocale}>
+              <SettingsProvider>
+                <ModalProvider>
+                  <WebVitalsReporter />
+                  {children}
+                </ModalProvider>
+              </SettingsProvider>
+            </LocaleProvider>
+          </MotionProvider>
         </QueryProvider>
       </body>
     </html>
