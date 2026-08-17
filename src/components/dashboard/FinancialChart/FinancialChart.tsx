@@ -4,9 +4,18 @@ import { Card } from "@/components/ui/Card";
 import { AreaChart, BarChart, PieChart } from "@/components/ui/Charts";
 import { Select } from "@/components/ui/Select";
 import { useLocale } from "@/contexts/LocaleContext";
-import type { ChartMetric, ChartPreferences, ChartType } from "@/types";
+import type { TranslationSchema } from "@/locales/types";
+import { chartFadeVariants } from "@/motion";
+import type {
+  CategoryChartPoint,
+  ChartMetric,
+  ChartPreferences,
+  ChartType,
+  TimeSeriesPoint,
+} from "@/types";
 import { formatCurrency } from "@/utils/formatters";
-import { useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useMemo, useState, type ReactNode } from "react";
 import { CATEGORY_COLORS } from "./FinancialChart.constants";
 import {
   buildCategoryChartData,
@@ -16,6 +25,130 @@ import {
 } from "./FinancialChart.helpers";
 import styles from "./FinancialChart.module.css";
 import type { FinancialChartProps } from "./FinancialChart.types";
+
+interface ChartRendererProps {
+  preferences: ChartPreferences;
+  timeSeriesData: TimeSeriesPoint[];
+  categoryData: (CategoryChartPoint & { fill: string })[];
+  t: TranslationSchema;
+  valueFormatter: (value: unknown) => string;
+}
+
+function renderActiveChart({
+  preferences,
+  timeSeriesData,
+  categoryData,
+  t,
+  valueFormatter,
+}: ChartRendererProps): ReactNode {
+  if (preferences.metric === "category_breakdown") {
+    if (preferences.chartType === "pie") {
+      return (
+        <PieChart
+          data={categoryData}
+          valueFormatter={valueFormatter}
+          data-testid="financial-pie-chart"
+        />
+      );
+    }
+    return (
+      <BarChart
+        data={categoryData}
+        layout="vertical"
+        xAxisKey="name"
+        series={[
+          {
+            dataKey: "value",
+            name: t.charts.expense,
+            color: "var(--color-primary-green-100)",
+          },
+        ]}
+        valueFormatter={valueFormatter}
+        data-testid="financial-bar-chart"
+      />
+    );
+  }
+
+  if (preferences.metric === "income_vs_expense") {
+    if (preferences.chartType === "bar") {
+      return (
+        <BarChart
+          data={timeSeriesData}
+          xAxisKey="label"
+          series={[
+            {
+              dataKey: "income",
+              name: t.charts.income,
+              color: "var(--color-primary-green-100)",
+            },
+            {
+              dataKey: "expense",
+              name: t.charts.expense,
+              color: "var(--color-status-error-200)",
+            },
+          ]}
+          valueFormatter={valueFormatter}
+          data-testid="financial-bar-chart"
+        />
+      );
+    }
+    return (
+      <AreaChart
+        data={timeSeriesData}
+        xAxisKey="label"
+        series={[
+          {
+            dataKey: "income",
+            name: t.charts.income,
+            color: "var(--color-primary-green-100)",
+          },
+          {
+            dataKey: "expense",
+            name: t.charts.expense,
+            color: "var(--color-status-error-200)",
+          },
+        ]}
+        valueFormatter={valueFormatter}
+        data-testid="financial-area-chart"
+      />
+    );
+  }
+
+  // balance_trend
+  if (preferences.chartType === "bar") {
+    return (
+      <BarChart
+        data={timeSeriesData}
+        xAxisKey="label"
+        series={[
+          {
+            dataKey: "balance",
+            name: t.charts.balance,
+            color: "var(--color-blue-200)",
+          },
+        ]}
+        valueFormatter={valueFormatter}
+        data-testid="financial-bar-chart"
+      />
+    );
+  }
+
+  return (
+    <AreaChart
+      data={timeSeriesData}
+      xAxisKey="label"
+      series={[
+        {
+          dataKey: "balance",
+          name: t.charts.balance,
+          color: "var(--color-blue-200)",
+        },
+      ]}
+      valueFormatter={valueFormatter}
+      data-testid="financial-area-chart"
+    />
+  );
+}
 
 export function FinancialChart({
   transactions,
@@ -69,6 +202,8 @@ export function FinancialChart({
     return String(value ?? "");
   };
 
+  const chartKey = `${preferences.metric}-${preferences.chartType}`;
+
   return (
     <Card data-testid={testId} className={`${styles.card} ${className}`.trim()}>
       <div className={styles.header}>
@@ -102,97 +237,26 @@ export function FinancialChart({
           <div data-testid="chart-empty-state" className={styles.emptyState}>
             {t.charts.empty}
           </div>
-        ) : preferences.metric === "category_breakdown" ? (
-          preferences.chartType === "pie" ? (
-            <PieChart
-              data={categoryData}
-              valueFormatter={valueFormatter}
-              data-testid="financial-pie-chart"
-            />
-          ) : (
-            <BarChart
-              data={categoryData}
-              layout="vertical"
-              xAxisKey="name"
-              series={[
-                {
-                  dataKey: "value",
-                  name: t.charts.expense,
-                  color: "var(--color-primary-green-100)",
-                },
-              ]}
-              valueFormatter={valueFormatter}
-              data-testid="financial-bar-chart"
-            />
-          )
-        ) : preferences.metric === "income_vs_expense" ? (
-          preferences.chartType === "bar" ? (
-            <BarChart
-              data={timeSeriesData}
-              xAxisKey="label"
-              series={[
-                {
-                  dataKey: "income",
-                  name: t.charts.income,
-                  color: "var(--color-primary-green-100)",
-                },
-                {
-                  dataKey: "expense",
-                  name: t.charts.expense,
-                  color: "var(--color-status-error-200)",
-                },
-              ]}
-              valueFormatter={valueFormatter}
-              data-testid="financial-bar-chart"
-            />
-          ) : (
-            <AreaChart
-              data={timeSeriesData}
-              xAxisKey="label"
-              series={[
-                {
-                  dataKey: "income",
-                  name: t.charts.income,
-                  color: "var(--color-primary-green-100)",
-                },
-                {
-                  dataKey: "expense",
-                  name: t.charts.expense,
-                  color: "var(--color-status-error-200)",
-                },
-              ]}
-              valueFormatter={valueFormatter}
-              data-testid="financial-area-chart"
-            />
-          )
-        ) : preferences.chartType === "bar" ? (
-          <BarChart
-            data={timeSeriesData}
-            xAxisKey="label"
-            series={[
-              {
-                dataKey: "balance",
-                name: t.charts.balance,
-                color: "var(--color-blue-200)",
-              },
-            ]}
-            valueFormatter={valueFormatter}
-            data-testid="financial-bar-chart"
-          />
         ) : (
-          <AreaChart
-            data={timeSeriesData}
-            xAxisKey="label"
-            series={[
-              {
-                dataKey: "balance",
-                name: t.charts.balance,
-                color: "var(--color-blue-200)",
-              },
-            ]}
-            valueFormatter={valueFormatter}
-            data-testid="financial-area-chart"
-          />
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={chartKey}
+              variants={chartFadeVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className={styles.motionWrapper}
+              data-testid="financial-chart-animated-wrapper"
+            >
+              {renderActiveChart({
+                preferences,
+                timeSeriesData,
+                categoryData,
+                t,
+                valueFormatter,
+              })}
+            </motion.div>
+          </AnimatePresence>
         )}
       </div>
     </Card>
