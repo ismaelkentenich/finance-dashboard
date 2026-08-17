@@ -9,6 +9,7 @@ export interface AreaChartProps<T extends Record<string, unknown> = Record<strin
   series: AreaSeriesConfig[];
   xAxisKey?: string;
   showGrid?: boolean;
+  isAnimationActive?: boolean;
   valueFormatter?: (value: unknown) => string;
   className?: string;
   "data-testid"?: string;

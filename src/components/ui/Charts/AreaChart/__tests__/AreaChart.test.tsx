@@ -28,4 +28,12 @@ describe("AreaChart UI Component", () => {
     expect(chart).toBeInTheDocument();
     expect(chart.className).toContain("custom-area-class");
   });
+
+  it("disables Recharts SVG animation when isAnimationActive is explicitly false", () => {
+    const { container } = render(
+      <AreaChart data={sampleData} series={[{ dataKey: "balance" }]} isAnimationActive={false} />
+    );
+
+    expect(container.querySelector(".recharts-responsive-container")).toBeInTheDocument();
+  });
 });

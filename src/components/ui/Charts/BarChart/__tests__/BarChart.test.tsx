@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { BarChart } from "../../BarChart";
+import { BarChart } from "../BarChart";
 
 const sampleData = [
   { label: "Aug 05", income: 8500, expense: 2200 },
@@ -48,6 +48,14 @@ describe("BarChart UI Component", () => {
           xAxisKey="label"
           series={[{ dataKey: "income" }]}
         />
+      );
+
+      expect(container.querySelector(".recharts-responsive-container")).toBeInTheDocument();
+    });
+
+    it("disables animation when isAnimationActive is explicitly false", () => {
+      const { container } = render(
+        <BarChart data={sampleData} series={[{ dataKey: "income" }]} isAnimationActive={false} />
       );
 
       expect(container.querySelector(".recharts-responsive-container")).toBeInTheDocument();

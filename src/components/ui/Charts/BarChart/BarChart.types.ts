@@ -11,6 +11,7 @@ export interface BarChartProps<T extends Record<string, unknown> = Record<string
   xAxisKey?: string;
   layout?: "horizontal" | "vertical";
   showGrid?: boolean;
+  isAnimationActive?: boolean;
   valueFormatter?: (value: unknown) => string;
   className?: string;
   "data-testid"?: string;
