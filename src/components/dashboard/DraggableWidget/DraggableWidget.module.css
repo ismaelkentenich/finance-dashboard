@@ -4,6 +4,13 @@
   position: relative;
   width: 100%;
   list-style: none;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid transparent;
+  transition: border-color var(--motion-duration-fast) var(--motion-easing-default);
+}
+
+.dragging {
+  z-index: 50;
 }
 
 .dragHandleBar {
@@ -30,7 +37,8 @@
   -webkit-user-select: none;
   transition:
     background-color var(--motion-duration-fast) var(--motion-easing-default),
-    border-color var(--motion-duration-fast) var(--motion-easing-default);
+    border-color var(--motion-duration-fast) var(--motion-easing-default),
+    color var(--motion-duration-fast) var(--motion-easing-default);
 }
 
 .dragHandleButton:hover {
@@ -39,6 +47,10 @@
   background-color: var(--color-neutral-100);
 }
 
-.dragHandleButton:active {
+.dragHandleButton:active,
+.dragHandleButton[data-dragging="true"] {
   cursor: grabbing;
+  background-color: var(--color-primary-green-50);
+  color: var(--color-primary-green-200);
+  border-color: var(--color-primary-green-100);
 }

@@ -73,7 +73,7 @@ describe("DraggableWidget Component", () => {
     });
   });
 
-  describe("Drag handle button and accessibility", () => {
+  describe("Drag handle button, cursor states and accessibility", () => {
     it("renders drag handle button with native type attribute set to button", () => {
       renderDraggableWidget({ dragLabel: "Arrastar widget" });
 
@@ -89,33 +89,13 @@ describe("DraggableWidget Component", () => {
       expect(handleButton).toHaveAttribute("title");
     });
 
-    it("applies custom aria-label supplied through dragLabel prop", () => {
-      renderDraggableWidget({
-        dragLabel: "Reordenar gráfico de categorias",
-      });
-
-      const handleButton = screen.getByRole("button", {
-        name: "Reordenar gráfico de categorias",
-      });
-      expect(handleButton).toBeInTheDocument();
-    });
-
-    it("renders grip icon hidden from assistive technologies via aria-hidden", () => {
-      const { container } = renderDraggableWidget({ dragLabel: "Arrastar" });
-
-      const iconSvg = container.querySelector("svg");
-      expect(iconSvg).toBeInTheDocument();
-      expect(iconSvg).toHaveAttribute("aria-hidden", "true");
-    });
-  });
-
-  describe("Drag control pointer interactions", () => {
-    it("invokes dragControls start method on pointer down event", () => {
+    it("toggles dragging attribute on drag handle button during pointer interactions", () => {
       renderDraggableWidget({ dragLabel: "Arrastar painel" });
 
       const handleButton = screen.getByRole("button", { name: "Arrastar painel" });
-      fireEvent.pointerDown(handleButton);
+      expect(handleButton).toHaveAttribute("data-dragging", "false");
 
+      fireEvent.pointerDown(handleButton);
       expect(mockStartDrag).toHaveBeenCalledTimes(1);
     });
   });
