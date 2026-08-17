@@ -3,6 +3,7 @@
 import { useLocale } from "@/contexts/LocaleContext";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import { motion } from "framer-motion";
 import { ArrowLeftRight, LayoutDashboard, Settings, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,6 +25,27 @@ export function Sidebar({
   });
 
   const sidebarClasses = `${styles.sidebar} ${isOpen ? styles.sidebarOpen : ""}`.trim();
+
+  const navLinks = [
+    {
+      href: "/",
+      label: t.sidebar.navigation.overview,
+      icon: LayoutDashboard,
+      isActive: pathname === "/",
+    },
+    {
+      href: "/transactions",
+      label: t.sidebar.navigation.transactions,
+      icon: ArrowLeftRight,
+      isActive: pathname.startsWith("/transactions"),
+    },
+    {
+      href: "/settings",
+      label: t.sidebar.navigation.settings,
+      icon: Settings,
+      isActive: pathname.startsWith("/settings"),
+    },
+  ];
 
   return (
     <>
@@ -67,39 +89,27 @@ export function Sidebar({
 
           <nav>
             <ul className={styles.navList}>
-              <li>
-                <Link
-                  href="/"
-                  className={`${styles.navLink} ${pathname === "/" ? styles.navLinkActive : ""}`}
-                  aria-current={pathname === "/" ? "page" : undefined}
-                  onClick={() => onClose?.()}
-                >
-                  <LayoutDashboard size={18} aria-hidden="true" />
-                  {t.sidebar.navigation.overview}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/transactions"
-                  className={`${styles.navLink} ${pathname.startsWith("/transactions") ? styles.navLinkActive : ""}`}
-                  aria-current={pathname.startsWith("/transactions") ? "page" : undefined}
-                  onClick={() => onClose?.()}
-                >
-                  <ArrowLeftRight size={18} aria-hidden="true" />
-                  {t.sidebar.navigation.transactions}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/settings"
-                  className={`${styles.navLink} ${pathname.startsWith("/settings") ? styles.navLinkActive : ""}`}
-                  aria-current={pathname.startsWith("/settings") ? "page" : undefined}
-                  onClick={() => onClose?.()}
-                >
-                  <Settings size={18} aria-hidden="true" />
-                  {t.sidebar.navigation.settings}
-                </Link>
-              </li>
+              {navLinks.map(({ href, label, icon: Icon, isActive }) => (
+                <li key={href}>
+                  <Link
+                    href={href}
+                    className={`${styles.navItem} ${isActive ? styles.navLinkActive : ""}`}
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={() => onClose?.()}
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="active-sidebar-indicator"
+                        className={styles.activeIndicator}
+                        data-testid="active-sidebar-indicator"
+                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                      />
+                    )}
+                    <Icon size={18} aria-hidden="true" />
+                    {label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </nav>
         </div>

@@ -94,4 +94,32 @@ describe("Sidebar Component", () => {
 
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
+
+  describe("Sidebar Motion Indicator & Active State", () => {
+    it("renders active motion indicator only inside the active route link", () => {
+      currentPathname = "/";
+      const { rerender } = renderWithLocale(<Sidebar />);
+
+      const overviewLink = screen.getByRole("link", { name: /Visão Geral/i });
+      const transactionsLink = screen.getByRole("link", { name: /Transações/i });
+      const settingsLink = screen.getByRole("link", { name: /Configurações/i });
+
+      const indicators = screen.getAllByTestId("active-sidebar-indicator");
+      expect(indicators).toHaveLength(1);
+      expect(overviewLink).toContainElement(indicators[0]);
+
+      currentPathname = "/transactions";
+      rerender(
+        <LocaleProvider>
+          <Sidebar />
+        </LocaleProvider>
+      );
+
+      const updatedIndicators = screen.getAllByTestId("active-sidebar-indicator");
+      expect(updatedIndicators).toHaveLength(1);
+      expect(transactionsLink).toContainElement(updatedIndicators[0]);
+      expect(overviewLink).not.toContainElement(updatedIndicators[0]);
+      expect(settingsLink).not.toContainElement(updatedIndicators[0]);
+    });
+  });
 });
