@@ -104,11 +104,9 @@ export const summaryCardItem: Variants = {
 export const chartFade: Variants = {
   initial: {
     opacity: 0,
-    y: 4,
   },
   animate: {
     opacity: 1,
-    y: 0,
     transition: {
       duration: MOTION_DURATIONS.fast,
       ease: MOTION_EASINGS.out,
@@ -116,7 +114,6 @@ export const chartFade: Variants = {
   },
   exit: {
     opacity: 0,
-    y: -4,
     transition: {
       duration: MOTION_DURATIONS.fast,
       ease: MOTION_EASINGS.in,

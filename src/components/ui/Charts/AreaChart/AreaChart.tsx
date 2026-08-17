@@ -13,6 +13,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { CHART_HEIGHT } from "../Charts.constants";
 import type { AreaChartProps } from "./AreaChart.types";
 
 export function AreaChart<T extends Record<string, unknown>>({
@@ -30,8 +31,8 @@ export function AreaChart<T extends Record<string, unknown>>({
   const enableAnimation = isAnimationActive !== undefined ? isAnimationActive : !shouldReduceMotion;
 
   return (
-    <div data-testid={testId} className={className} style={{ width: "100%", height: "100%" }}>
-      <ResponsiveContainer width="100%" height="100%">
+    <div data-testid={testId} className={className} style={{ width: "100%", height: CHART_HEIGHT }}>
+      <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
         <RechartsAreaChart data={data}>
           <defs>
             {series.map((item, index) => {

@@ -91,11 +91,10 @@ describe("Framer Motion Shared Configuration & Variants", () => {
       expect(summaryCardItemVariants).toBe(summaryCardItem);
     });
 
-    it("provides valid chartFade variants with short crossfade and 4px vertical displacement", () => {
-      expect(chartFade.initial).toEqual({ opacity: 0, y: 4 });
+    it("provides valid chartFade variants with short crossfade", () => {
+      expect(chartFade.initial).toEqual({ opacity: 0 });
       expect(chartFade.animate).toEqual({
         opacity: 1,
-        y: 0,
         transition: {
           duration: MOTION_DURATIONS.fast,
           ease: MOTION_EASINGS.out,
@@ -103,7 +102,6 @@ describe("Framer Motion Shared Configuration & Variants", () => {
       });
       expect(chartFade.exit).toEqual({
         opacity: 0,
-        y: -4,
         transition: {
           duration: MOTION_DURATIONS.fast,
           ease: MOTION_EASINGS.in,
