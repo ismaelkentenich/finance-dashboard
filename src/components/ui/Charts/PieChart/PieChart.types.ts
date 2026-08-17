@@ -5,6 +5,7 @@ export interface PieChartProps {
   innerRadius?: number;
   outerRadius?: number;
   showLegend?: boolean;
+  isAnimationActive?: boolean;
   valueFormatter?: (value: unknown) => string;
   className?: string;
   "data-testid"?: string;

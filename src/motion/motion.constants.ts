@@ -26,6 +26,12 @@ export const MOTION_EASINGS = {
 export type MotionEasingKey = keyof typeof MOTION_EASINGS;
 
 /**
+ * Recharts standard animation configurations (in milliseconds)
+ */
+export const CHART_ANIMATION_DURATION = MOTION_DURATIONS.slow * 1000; // 300ms
+export const CHART_ANIMATION_EASING = "ease-out" as const;
+
+/**
  * Spring transition presets for layout reorder and interactive gestures
  */
 export const SPRING_TRANSITIONS: Record<string, Transition> = {

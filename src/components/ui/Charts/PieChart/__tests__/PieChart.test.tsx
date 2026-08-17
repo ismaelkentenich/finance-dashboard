@@ -27,4 +27,10 @@ describe("PieChart UI Component", () => {
     expect(chart).toBeInTheDocument();
     expect(chart.className).toContain("custom-pie-container");
   });
+
+  it("disables animation when isAnimationActive is explicitly false", () => {
+    const { container } = render(<PieChart data={sampleCategoryData} isAnimationActive={false} />);
+
+    expect(container.querySelector(".recharts-responsive-container")).toBeInTheDocument();
+  });
 });
