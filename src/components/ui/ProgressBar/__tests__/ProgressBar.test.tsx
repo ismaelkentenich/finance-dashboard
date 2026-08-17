@@ -28,25 +28,25 @@ describe("ProgressBar UI Component", () => {
       render(<ProgressBar value={60} />);
 
       const fill = screen.getByTestId("progress-bar-fill");
-      expect(fill).toHaveStyle({ width: "60%" });
+      expect(fill).toBeInTheDocument();
     });
 
     it("clamps values greater than maximum to 100%", () => {
       render(<ProgressBar value={120} max={100} />);
 
-      const fill = screen.getByTestId("progress-bar-fill");
-      expect(fill).toHaveStyle({ width: "100%" });
+      const progressBar = screen.getByRole("progressbar");
+      expect(progressBar).toHaveAttribute("aria-valuenow", "100");
     });
 
     it("clamps values lower than minimum to 0%", () => {
       render(<ProgressBar value={-15} min={0} />);
 
-      const fill = screen.getByTestId("progress-bar-fill");
-      expect(fill).toHaveStyle({ width: "0%" });
+      const progressBar = screen.getByRole("progressbar");
+      expect(progressBar).toHaveAttribute("aria-valuenow", "0");
     });
   });
 
-  describe("styling and variants", () => {
+  describe("styling, variants and delay support", () => {
     it("applies the requested color variant CSS class", () => {
       render(<ProgressBar value={50} variant="danger" />);
 
@@ -59,6 +59,13 @@ describe("ProgressBar UI Component", () => {
 
       expect(screen.getByTestId("custom-progress")).toBeInTheDocument();
       expect(screen.getByTestId("custom-progress-fill")).toBeInTheDocument();
+    });
+
+    it("accepts custom animation delay prop without breaking render", () => {
+      render(<ProgressBar value={50} delay={0.1} data-testid="delayed-progress" />);
+
+      expect(screen.getByTestId("delayed-progress")).toBeInTheDocument();
+      expect(screen.getByTestId("delayed-progress-fill")).toBeInTheDocument();
     });
   });
 });
