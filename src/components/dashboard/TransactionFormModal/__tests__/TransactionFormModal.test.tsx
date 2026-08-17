@@ -1,9 +1,10 @@
-import { LocaleProvider } from "@/contexts/LocaleContext";
-import { ToastProvider } from "@/contexts/ToastContext";
+import { DASHBOARD_QUERY_KEY } from "@/hooks/useDashboardData";
 import { transactionService } from "@/services/api/transactionService";
+import { createTestQueryClient, customRender } from "@/test/utils";
 import type { Transaction, TransactionCategory, TransactionType } from "@/types";
 import { getLocalDateISOString } from "@/utils/date";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { QueryClient } from "@tanstack/react-query";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TransactionFormModal } from "../TransactionFormModal";
@@ -38,7 +39,8 @@ function createMockTransaction(overrides: Partial<Transaction> = {}): Transactio
 
 function renderTransactionModal(
   props: Partial<TransactionFormModalProps> = {},
-  initialLocale: "pt-BR" | "en-US" = "pt-BR"
+  initialLocale: "pt-BR" | "en-US" = "pt-BR",
+  queryClient?: QueryClient
 ) {
   const defaultProps: TransactionFormModalProps = {
     isOpen: true,
@@ -47,20 +49,16 @@ function renderTransactionModal(
     ...props,
   };
 
-  const renderResult = render(
-    <LocaleProvider initialLocale={initialLocale}>
-      <ToastProvider>
-        <TransactionFormModal {...defaultProps} />
-      </ToastProvider>
-    </LocaleProvider>
-  );
+  const renderResult = customRender(<TransactionFormModal {...defaultProps} />, {
+    locale: initialLocale,
+    queryClient,
+  });
 
   return {
     ...renderResult,
     props: defaultProps,
   };
 }
-
 async function fillAndSubmitForm(
   user: ReturnType<typeof userEvent.setup>,
   overrides?: {
@@ -457,6 +455,27 @@ describe("TransactionFormModal Feature Component", () => {
       expect(screen.queryByTestId("toast-success")).not.toBeInTheDocument();
       expect(handleSuccess).not.toHaveBeenCalled();
       expect(handleClose).not.toHaveBeenCalled();
+    });
+
+    it("invalidates the dashboard query using the QueryClient provided by the application context", async () => {
+      const user = userEvent.setup();
+      const queryClient = createTestQueryClient();
+
+      const invalidateQueriesSpy = vi.spyOn(queryClient, "invalidateQueries");
+
+      vi.mocked(transactionService.createTransaction).mockResolvedValueOnce(
+        createMockTransaction()
+      );
+
+      renderTransactionModal({}, "pt-BR", queryClient);
+
+      await fillAndSubmitForm(user);
+
+      await waitFor(() => {
+        expect(invalidateQueriesSpy).toHaveBeenCalledWith({
+          queryKey: [DASHBOARD_QUERY_KEY],
+        });
+      });
     });
 
     it("clears previously displayed API error on subsequent submission attempt", async () => {

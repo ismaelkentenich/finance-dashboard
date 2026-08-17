@@ -1,9 +1,7 @@
-import { LocaleProvider } from "@/contexts/LocaleContext";
-import { ModalProvider } from "@/contexts/ModalContext";
-import { ToastProvider } from "@/contexts/ToastContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
-import { render, screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { customRender } from "@/test/utils";
+import { screen, waitForElementToBeRemoved } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import TransactionsPage from "../page";
@@ -48,15 +46,9 @@ const mockTransactions = [
 ];
 
 function renderTransactionsPage(locale: "pt-BR" | "en-US" = "pt-BR") {
-  return render(
-    <LocaleProvider initialLocale={locale}>
-      <ToastProvider>
-        <ModalProvider>
-          <TransactionsPage />
-        </ModalProvider>
-      </ToastProvider>
-    </LocaleProvider>
-  );
+  return customRender(<TransactionsPage />, {
+    locale,
+  });
 }
 
 describe("TransactionsPage Search Integration", () => {
