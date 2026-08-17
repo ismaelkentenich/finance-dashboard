@@ -1,7 +1,7 @@
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { MotionProvider } from "@/providers/MotionProvider";
 import type { FinancialSummary } from "@/types";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { SummaryCards } from "../SummaryCards";
 
@@ -47,7 +47,11 @@ describe("SummaryCards Feature Grid Component", () => {
     const summary = createFinancialSummary({ currentBalance: 7001.8 });
     renderWithProviders(<SummaryCards summary={summary} />);
 
-    expect(screen.getByText(/R\$\s*7\.001,80/)).toBeInTheDocument();
+    const balanceCard = screen.getByTestId("summary-card-balance");
+    const valueContainer = within(balanceCard).getByTestId("summary-card-value");
+
+    expect(valueContainer).toHaveAttribute("aria-label", expect.stringMatching(/R\$\s*7\.001,80/));
+    expect(within(valueContainer).getAllByText(/R\$\s*7\.001,80/).length).toBeGreaterThanOrEqual(1);
   });
 
   it("displays variation badges with trend indications", () => {

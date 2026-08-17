@@ -26,6 +26,8 @@ export function SummaryCards({
     {
       id: "balance",
       title: t.summary.balance,
+      numericValue: summary.currentBalance,
+      formatter: (val: number) => formatCurrency(val, locale),
       value: formatCurrency(summary.currentBalance, locale),
       icon: <Wallet size={16} aria-hidden="true" />,
       iconVariant: "balance" as const,
@@ -42,6 +44,8 @@ export function SummaryCards({
     {
       id: "income",
       title: t.summary.income,
+      numericValue: summary.totalIncome,
+      formatter: (val: number) => formatCurrency(val, locale),
       value: formatCurrency(summary.totalIncome, locale),
       icon: <TrendingUp size={16} aria-hidden="true" />,
       iconVariant: "income" as const,
@@ -58,6 +62,8 @@ export function SummaryCards({
     {
       id: "expenses",
       title: t.summary.expenses,
+      numericValue: summary.totalExpenses,
+      formatter: (val: number) => formatCurrency(val, locale),
       value: formatCurrency(summary.totalExpenses, locale),
       icon: <TrendingDown size={16} aria-hidden="true" />,
       iconVariant: "expense" as const,
@@ -74,6 +80,8 @@ export function SummaryCards({
     {
       id: "savings",
       title: t.summary.savingsRate,
+      numericValue: summary.savingsRate,
+      formatter: (val: number) => `${val.toFixed(1)}%`,
       value: `${summary.savingsRate}%`,
       icon: <PiggyBank size={16} aria-hidden="true" />,
       iconVariant: "savings" as const,
@@ -96,6 +104,8 @@ export function SummaryCards({
           data-testid={`summary-card-${card.id}`}
           title={card.title}
           value={card.value}
+          numericValue={card.numericValue}
+          formatter={card.formatter}
           icon={card.icon}
           iconVariant={card.iconVariant}
           badge={card.badge}

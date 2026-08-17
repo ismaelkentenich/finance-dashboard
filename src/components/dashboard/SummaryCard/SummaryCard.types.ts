@@ -13,6 +13,8 @@ export interface SummaryCardBadgeProps {
 export interface SummaryCardProps extends HTMLMotionProps<"div"> {
   title: string;
   value: string;
+  numericValue?: number;
+  formatter?: (value: number) => string;
   icon: ReactNode;
   iconVariant: SummaryCardIconVariant;
   badge?: SummaryCardBadgeProps;
