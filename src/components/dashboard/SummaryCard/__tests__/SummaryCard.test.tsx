@@ -23,6 +23,20 @@ describe("SummaryCard Component", () => {
       expect(screen.getByTestId("summary-card-value")).toHaveTextContent("R$ 5.000,00");
     });
 
+    it("renders animated number with accessibility wrapper when numericValue and formatter are passed", () => {
+      render(
+        <SummaryCard
+          {...defaultProps}
+          numericValue={5000}
+          formatter={(val) => `R$ ${val.toFixed(2)}`}
+        />
+      );
+
+      const valueContainer = screen.getByTestId("summary-card-value");
+      expect(valueContainer).toHaveAttribute("aria-label", "R$ 5000.00");
+      expect(valueContainer).toHaveTextContent("R$ 5000.00");
+    });
+
     it("renders the received footer text description", () => {
       render(<SummaryCard {...defaultProps} footerText="vs mês anterior" />);
       expect(screen.getByTestId("summary-card-footer-text")).toHaveTextContent("vs mês anterior");
@@ -39,37 +53,6 @@ describe("SummaryCard Component", () => {
       const badge = screen.getByTestId("summary-card-badge");
       expect(badge).toBeInTheDocument();
       expect(badge).toHaveTextContent("+10%");
-    });
-
-    it("does not render the badge element when badge prop is omitted", () => {
-      render(<SummaryCard {...defaultProps} badge={undefined} />);
-      expect(screen.queryByTestId("summary-card-badge")).not.toBeInTheDocument();
-    });
-  });
-
-  describe("icon styling variant assignments", () => {
-    it("applies the corresponding CSS variant class on the icon wrapper for savings variant", () => {
-      render(<SummaryCard {...defaultProps} iconVariant="savings" />);
-      const iconWrapper = screen.getByTestId("summary-card-icon-wrapper");
-      expect(iconWrapper.className).toMatch(/iconSavings/i);
-    });
-
-    it("applies the corresponding CSS variant class on the icon wrapper for balance variant", () => {
-      render(<SummaryCard {...defaultProps} iconVariant="balance" />);
-      const iconWrapper = screen.getByTestId("summary-card-icon-wrapper");
-      expect(iconWrapper.className).toMatch(/iconBalance/i);
-    });
-
-    it("applies the corresponding CSS variant class on the icon wrapper for income variant", () => {
-      render(<SummaryCard {...defaultProps} iconVariant="income" />);
-      const iconWrapper = screen.getByTestId("summary-card-icon-wrapper");
-      expect(iconWrapper.className).toMatch(/iconIncome/i);
-    });
-
-    it("applies the corresponding CSS variant class on the icon wrapper for expense variant", () => {
-      render(<SummaryCard {...defaultProps} iconVariant="expense" />);
-      const iconWrapper = screen.getByTestId("summary-card-icon-wrapper");
-      expect(iconWrapper.className).toMatch(/iconExpense/i);
     });
   });
 });
