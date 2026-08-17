@@ -49,8 +49,8 @@
   gap: var(--spacing-2xs);
   align-self: flex-end;
   transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+    background-color var(--motion-duration-fast) var(--motion-easing-default),
+    color var(--motion-duration-fast) var(--motion-easing-default);
 }
 
 @media (min-width: 768px) {

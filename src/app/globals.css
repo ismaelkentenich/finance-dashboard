@@ -192,6 +192,24 @@
   --shadow-focus-error: 0 0 0 2px var(--color-status-error-alpha-25);
 
   /* ==========================================
+     MOTION & TRANSITIONS (Durations & Easings)
+     ========================================== */
+  /* Durations */
+  --motion-duration-instant: 50ms; /* For immediate micro-feedback */
+  --motion-duration-fast: 150ms; /* Standard hover, focus, active transitions (0.15s) */
+  --motion-duration-normal: 200ms; /* Collapsible panels, small modals, menu reveals (0.2s) */
+  --motion-duration-slow: 300ms; /* Progress bars, large surface transitions (0.3s) */
+  --motion-duration-spin: 800ms; /* Continuous circular loading spinners (0.8s) */
+  --motion-duration-shimmer: 1500ms; /* Skeleton shimmer animation cycle (1.5s) */
+
+  /* Easings */
+  --motion-easing-linear: linear;
+  --motion-easing-default: ease;
+  --motion-easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --motion-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --motion-easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ==========================================
      Z-INDEX LAYERING
      ========================================== */
   --z-index-base: 0;

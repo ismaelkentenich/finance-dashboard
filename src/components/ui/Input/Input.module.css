@@ -28,9 +28,9 @@
   font-weight: 500;
   outline: none;
   transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
+    background-color var(--motion-duration-fast) var(--motion-easing-default),
+    border-color var(--motion-duration-fast) var(--motion-easing-default),
+    box-shadow var(--motion-duration-fast) var(--motion-easing-default);
 }
 
 .input:hover:not(:disabled) {

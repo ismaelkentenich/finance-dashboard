@@ -45,7 +45,7 @@
   border: var(--border-width-thin, 1px) solid var(--border-color);
   border-radius: var(--border-radius-md);
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-color var(--motion-duration-fast) var(--motion-easing-default);
 }
 
 .optionItem:hover {

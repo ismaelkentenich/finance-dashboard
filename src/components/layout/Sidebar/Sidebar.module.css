@@ -20,7 +20,7 @@
     inset: 0;
     background-color: var(--color-overlay-backdrop);
     z-index: var(--z-index-backdrop, 500);
-    animation: fadeIn 0.15s ease-out;
+    animation: fadeIn var(--motion-duration-fast) var(--motion-easing-out);
   }
 
   .sidebarOpen {
@@ -35,7 +35,7 @@
     background-color: var(--color-neutral-50);
     z-index: calc(var(--z-index-backdrop, 500) + 10);
     box-shadow: var(--shadow-xl);
-    animation: slideIn 0.2s ease-out;
+    animation: slideIn var(--motion-duration-normal) var(--motion-easing-out);
     overflow-y: auto;
   }
 }
@@ -91,8 +91,8 @@
   padding: var(--spacing-3xs);
   border-radius: var(--border-radius-sm);
   transition:
-    color 0.15s ease,
-    background-color 0.15s ease;
+    color var(--motion-duration-fast) var(--motion-easing-default),
+    background-color var(--motion-duration-fast) var(--motion-easing-default);
 }
 
 .closeButton:hover {
@@ -124,8 +124,8 @@
   font-weight: 500;
   color: var(--color-neutral-500);
   transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+    background-color var(--motion-duration-fast) var(--motion-easing-default),
+    color var(--motion-duration-fast) var(--motion-easing-default);
 }
 
 .navLink:hover {
