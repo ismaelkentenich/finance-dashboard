@@ -56,6 +56,12 @@ export const SPRING_TRANSITIONS: Record<string, Transition> = {
     stiffness: 200,
     damping: 25,
   },
+  dragDrop: {
+    type: "spring",
+    stiffness: 400,
+    damping: 32,
+    mass: 0.8,
+  },
 };
 
 /**
