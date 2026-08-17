@@ -1,6 +1,6 @@
 import { LocaleProvider } from "@/contexts/LocaleContext";
-import { fireEvent, render, screen } from "@testing-library/react";
-import React from "react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import React, { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Modal } from "../Modal";
 
@@ -9,6 +9,21 @@ function renderWithLocale(ui: React.ReactElement) {
 }
 
 describe("Modal UI Component", () => {
+  function ControlledModal({ initiallyOpen = true }: { initiallyOpen?: boolean }) {
+    const [isOpen, setIsOpen] = useState(initiallyOpen);
+
+    return (
+      <>
+        <button type="button" data-testid="modal-opener" onClick={() => setIsOpen(true)}>
+          Open modal
+        </button>
+
+        <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Animated Modal">
+          <button type="button">Dialog action</button>
+        </Modal>
+      </>
+    );
+  }
   describe("visibility and DOM mounting", () => {
     it("returns null and does not mount to DOM when isOpen is false", () => {
       renderWithLocale(
@@ -91,5 +106,45 @@ describe("Modal UI Component", () => {
       unmount();
       expect(document.body.style.overflow).toBe("unset");
     });
+  });
+
+  it("keeps the dialog mounted and scroll locked until the exit animation completes", async () => {
+    renderWithLocale(<ControlledModal />);
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(document.body.style.overflow).toBe("hidden");
+
+    fireEvent.click(screen.getByTestId("modal-close-button"));
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(document.body.style.overflow).toBe("hidden");
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    expect(document.body.style.overflow).toBe("unset");
+  });
+
+  it("restores focus to the opener only after the exit animation finishes", async () => {
+    renderWithLocale(<ControlledModal initiallyOpen={false} />);
+
+    const opener = screen.getByTestId("modal-opener");
+    opener.focus();
+
+    fireEvent.click(opener);
+
+    const closeButton = await screen.findByTestId("modal-close-button");
+    expect(closeButton).toHaveFocus();
+
+    fireEvent.click(closeButton);
+
+    expect(opener).not.toHaveFocus();
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    expect(opener).toHaveFocus();
   });
 });
