@@ -30,6 +30,38 @@
   gap: var(--spacing-lg);
 }
 
+.updatingStatus {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-end;
+  gap: var(--spacing-xs);
+  min-height: 20px;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-neutral-500);
+}
+
+.updatingSpinner {
+  width: 12px;
+  height: 12px;
+  border: var(--border-width-medium) solid var(--color-neutral-200);
+  border-top-color: var(--color-primary-green-100);
+  border-radius: var(--border-radius-full);
+  animation: updatingSpin var(--motion-duration-spin) var(--motion-easing-linear) infinite;
+}
+
+@keyframes updatingSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .updatingSpinner {
+    animation: none;
+  }
+}
+
 @media (min-width: 640px) {
   .skeletonCardsGrid {
     grid-template-columns: repeat(2, 1fr);

@@ -1,6 +1,7 @@
 export const en = {
   common: {
-    loading: "Loading financial data...",
+    loading: "Loading",
+    updating: "Updating",
     noData: "No data available.",
     closeDialog: "Close Dialog",
     dragLabel: "Drag to reorder",

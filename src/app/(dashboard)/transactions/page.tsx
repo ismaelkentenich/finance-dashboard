@@ -36,7 +36,7 @@ function TransactionsContent() {
   const { t } = useLocale();
   const { isTransactionModalOpen, openTransactionModal, closeTransactionModal } = useModal();
   const { filters, setFilters, resetFilters, hasActiveFilters } = useTransactionFilters();
-  const { data, isLoading, error, refetch } = useDashboardData(filters);
+  const { data, isLoading, isFetching, error, refetch } = useDashboardData(filters);
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -70,6 +70,7 @@ function TransactionsContent() {
   }, [transactions, filteredTransactions.length, searchQuery, t]);
 
   const isFiltered = hasActiveFilters || searchQuery.length > 0;
+  const isUpdating = isFetching && !isLoading;
 
   const handleResetAll = () => {
     resetFilters();
@@ -161,6 +162,18 @@ function TransactionsContent() {
           )}
         </div>
       </section>
+
+      {isUpdating && (
+        <div
+          className={styles.updatingStatus}
+          role="status"
+          aria-live="polite"
+          data-testid="transactions-updating-status"
+        >
+          <span className={styles.updatingSpinner} aria-hidden="true" />
+          {t.common.updating}
+        </div>
+      )}
 
       {/* Content Rendering */}
       {isLoading ? (
