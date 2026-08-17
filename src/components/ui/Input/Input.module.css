@@ -16,6 +16,13 @@
   letter-spacing: 0.05em;
 }
 
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 .input {
   height: var(--size-button-height-sm, 36px);
   width: 100%;
@@ -31,6 +38,52 @@
     background-color var(--motion-duration-fast) var(--motion-easing-default),
     border-color var(--motion-duration-fast) var(--motion-easing-default),
     box-shadow var(--motion-duration-fast) var(--motion-easing-default);
+}
+
+.hasStartIcon {
+  padding-left: var(--spacing-2xl);
+}
+
+.hasEndElement {
+  padding-right: var(--spacing-2xl);
+}
+
+.startIconWrapper {
+  position: absolute;
+  left: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-neutral-500);
+  pointer-events: none;
+}
+
+.endIconWrapper {
+  position: absolute;
+  right: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clearButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: var(--spacing-3xs);
+  border-radius: var(--border-radius-full);
+  color: var(--color-neutral-500);
+  cursor: pointer;
+  transition:
+    color var(--motion-duration-fast) var(--motion-easing-default),
+    background-color var(--motion-duration-fast) var(--motion-easing-default);
+}
+
+.clearButton:hover {
+  color: var(--color-neutral-900);
+  background-color: var(--color-neutral-200);
 }
 
 .input:hover:not(:disabled) {

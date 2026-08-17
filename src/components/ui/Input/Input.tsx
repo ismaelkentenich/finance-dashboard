@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import { forwardRef, useId } from "react";
 import styles from "./Input.module.css";
 import type { InputProps } from "./Input.types";
@@ -9,6 +10,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     error,
     helperText,
     fullWidth = false,
+    startIcon,
+    endIcon,
+    onClear,
+    clearButtonAriaLabel = "Limpar campo",
     className = "",
     disabled,
     "data-testid": testId = "input",
@@ -22,6 +27,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const helperId = `${inputId}-helper`;
 
   const ariaDescribedBy = error ? errorId : helperText ? helperId : undefined;
+  const hasEndElement = Boolean(endIcon || onClear);
 
   return (
     <div
@@ -34,16 +40,48 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         </label>
       )}
 
-      <input
-        ref={ref}
-        id={inputId}
-        data-testid={testId}
-        disabled={disabled}
-        aria-invalid={Boolean(error)}
-        aria-describedby={ariaDescribedBy}
-        className={`${styles.input} ${error ? styles.inputError : ""}`}
-        {...props}
-      />
+      <div className={styles.inputWrapper}>
+        {startIcon && (
+          <div
+            className={styles.startIconWrapper}
+            aria-hidden="true"
+            data-testid={`${testId}-start-icon`}
+          >
+            {startIcon}
+          </div>
+        )}
+
+        <input
+          ref={ref}
+          id={inputId}
+          data-testid={testId}
+          disabled={disabled}
+          aria-invalid={Boolean(error)}
+          aria-describedby={ariaDescribedBy}
+          className={`${styles.input} ${startIcon ? styles.hasStartIcon : ""} ${
+            hasEndElement ? styles.hasEndElement : ""
+          } ${error ? styles.inputError : ""}`.trim()}
+          {...props}
+        />
+
+        {hasEndElement && (
+          <div className={styles.endIconWrapper}>
+            {onClear ? (
+              <button
+                type="button"
+                className={styles.clearButton}
+                onClick={onClear}
+                aria-label={clearButtonAriaLabel}
+                data-testid={`${testId}-clear-button`}
+              >
+                <X size={16} aria-hidden="true" />
+              </button>
+            ) : (
+              endIcon
+            )}
+          </div>
+        )}
+      </div>
 
       {error && (
         <span

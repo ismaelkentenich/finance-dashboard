@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Input } from "../Input";
@@ -82,6 +83,29 @@ describe("Input UI Component", () => {
       render(<Input error="Invalid field" />);
 
       expect(screen.getByTestId("input").className).toMatch(/inputError/i);
+    });
+  });
+
+  describe("startIcon and onClear action", () => {
+    it("renders start icon when provided", () => {
+      render(<Input startIcon={<span data-testid="search-icon">🔍</span>} />);
+      expect(screen.getByTestId("input-start-icon")).toBeInTheDocument();
+      expect(screen.getByTestId("search-icon")).toBeInTheDocument();
+    });
+
+    it("renders clear button and triggers onClear callback when clicked", async () => {
+      const user = userEvent.setup();
+      const handleClear = vi.fn();
+      render(
+        <Input value="Test query" onClear={handleClear} clearButtonAriaLabel="Limpar busca" />
+      );
+
+      const clearBtn = screen.getByTestId("input-clear-button");
+      expect(clearBtn).toBeInTheDocument();
+      expect(clearBtn).toHaveAttribute("aria-label", "Limpar busca");
+
+      await user.click(clearBtn);
+      expect(handleClear).toHaveBeenCalledTimes(1);
     });
   });
 });
