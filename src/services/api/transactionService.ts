@@ -1,3 +1,7 @@
+import {
+  createTransactionResponseSchema,
+  getDashboardDataResponseSchema,
+} from "@/schemas/api.schema";
 import { telemetryService } from "@/services/telemetry";
 import type { FetchTransactionsParams, GetDashboardDataResponse, Transaction } from "@/types";
 
@@ -37,7 +41,22 @@ export const transactionService = {
       throw error;
     }
 
-    return response.json();
+    const rawData: unknown = await response.json();
+    const parseResult = getDashboardDataResponseSchema.safeParse(rawData);
+
+    if (!parseResult.success) {
+      const validationError = new Error("Invalid API response contract: dashboard schema mismatch");
+
+      telemetryService.logError(validationError, {
+        operation: "transactionService.getDashboardData",
+        endpoint,
+        issues: parseResult.error.issues,
+      });
+
+      throw validationError;
+    }
+
+    return parseResult.data;
   },
 
   async createTransaction(payload: Omit<Transaction, "id" | "createdAt">): Promise<Transaction> {
@@ -53,7 +72,23 @@ export const transactionService = {
       throw new Error(`Failed to create transaction: ${response.status}`);
     }
 
-    const json = await response.json();
-    return json.data;
+    const rawData: unknown = await response.json();
+    const parseResult = createTransactionResponseSchema.safeParse(rawData);
+
+    if (!parseResult.success) {
+      const validationError = new Error(
+        "Invalid API response contract: transaction creation schema mismatch"
+      );
+
+      telemetryService.logError(validationError, {
+        operation: "transactionService.createTransaction",
+        endpoint: "/api/transactions",
+        issues: parseResult.error.issues,
+      });
+
+      throw validationError;
+    }
+
+    return parseResult.data.data;
   },
 };
