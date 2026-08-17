@@ -81,6 +81,26 @@
   }
 }
 
+.newTransactionButton {
+  display: inline-flex;
+  align-items: center;
+}
+
+.newTransactionIcon {
+  transition: transform var(--motion-duration-normal, 200ms) var(--motion-easing-default, ease);
+}
+
+.newTransactionButton:hover .newTransactionIcon {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .newTransactionIcon {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
 .periodBadge {
   display: none;
   font-size: var(--font-size-sm);

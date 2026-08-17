@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { useLocale } from "@/contexts/LocaleContext";
 import { telemetryService } from "@/services/telemetry";
 import { AlertTriangle, RefreshCw } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styles from "./error.module.css";
 
 interface ErrorBoundaryProps {
@@ -15,6 +15,7 @@ interface ErrorBoundaryProps {
 
 export default function DashboardErrorBoundary({ error, reset }: ErrorBoundaryProps) {
   const { t } = useLocale();
+  const [isRetrying, setIsRetrying] = useState(false);
 
   useEffect(() => {
     // Sends unhandled runtime exceptions to telemetry logging
@@ -23,6 +24,14 @@ export default function DashboardErrorBoundary({ error, reset }: ErrorBoundaryPr
       digest: error.digest,
     });
   }, [error]);
+
+  const handleReset = () => {
+    setIsRetrying(true);
+    reset();
+    setTimeout(() => {
+      setIsRetrying(false);
+    }, 800);
+  };
 
   return (
     <div className={styles.container} data-testid="dashboard-route-error">
@@ -36,13 +45,13 @@ export default function DashboardErrorBoundary({ error, reset }: ErrorBoundaryPr
           <p className={styles.description}>{t.errors.dashboardDescription}</p>
         </div>
 
-        <Button
-          variant="primary"
-          size="md"
-          onClick={() => reset()}
-          data-testid="error-reset-button"
-        >
-          <RefreshCw size={16} aria-hidden="true" />
+        <Button variant="primary" size="md" onClick={handleReset} data-testid="error-reset-button">
+          <RefreshCw
+            size={16}
+            aria-hidden="true"
+            className={isRetrying ? styles.spinIcon : undefined}
+            data-testid="error-reset-icon"
+          />
           {t.errors.reloadPage}
         </Button>
       </Card>
