@@ -131,6 +131,7 @@ export const pt: TranslationSchema = {
     dashboardDescription:
       "Não foi possível carregar os dados financeiros no momento. Tente restabelecer a conexão.",
     loadFailureTitle: "Falha ao carregar o dashboard",
+    loadFailureMessage: "Não foi possível carregar seus dados financeiros. Tente novamente.",
     reloadPage: "Recarregar Página",
     retry: "Tentar novamente",
   },

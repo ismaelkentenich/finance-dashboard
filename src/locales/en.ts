@@ -129,6 +129,7 @@ export const en = {
     dashboardDescription:
       "Unable to load financial data at this moment. Please check your connection.",
     loadFailureTitle: "Failed to load dashboard",
+    loadFailureMessage: "Unable to load your financial data. Please try again.",
     reloadPage: "Reload Page",
     retry: "Try again",
   },
