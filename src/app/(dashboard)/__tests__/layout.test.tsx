@@ -2,7 +2,7 @@ import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ModalProvider } from "@/contexts/ModalContext";
 import { render, screen } from "@testing-library/react";
 import React from "react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import DashboardLayout from "../layout";
 
 vi.mock("next/navigation", () => ({
@@ -33,5 +33,12 @@ describe("DashboardLayout Component", () => {
     expect(mainElement).toHaveAttribute("id", "main-content");
     expect(mainElement).toHaveAttribute("tabIndex", "-1");
     expect(screen.getByTestId("dashboard-children-content")).toBeInTheDocument();
+  });
+
+  it("applies dashboardShell styling class with ambient background capability", () => {
+    const { container } = renderDashboardLayout(<div>Test Child</div>);
+    const shellElement = container.firstChild as HTMLElement;
+
+    expect(shellElement.className).toMatch(/dashboardShell/i);
   });
 });

@@ -12,6 +12,8 @@
   --color-primary-green-300: #003d1f;
 
   /* Primary Green Alpha */
+  --color-primary-green-alpha-05: rgba(0, 143, 71, 0.05);
+  --color-primary-green-alpha-02: rgba(0, 143, 71, 0.02);
   --color-primary-green-alpha-25: rgba(0, 152, 61, 0.25);
 
   /* Secondary Green */
