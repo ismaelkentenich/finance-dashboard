@@ -2,6 +2,13 @@
   display: flex;
   min-height: 100vh;
   background-color: var(--color-neutral-100);
+  background-image: radial-gradient(
+    1000px circle at 50% 0%,
+    var(--color-primary-green-alpha-05) 0%,
+    var(--color-primary-green-alpha-02) 45%,
+    transparent 75%
+  );
+  background-attachment: fixed;
 }
 
 .mainWrapper {
