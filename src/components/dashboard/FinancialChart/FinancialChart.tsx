@@ -5,7 +5,7 @@ import { AreaChart, BarChart, PieChart } from "@/components/ui/Charts";
 import { Select } from "@/components/ui/Select";
 import { useLocale } from "@/contexts/LocaleContext";
 import type { TranslationSchema } from "@/locales/types";
-import { chartFadeVariants } from "@/motion";
+import { chartFadeVariants, summaryCardItemVariants } from "@/motion";
 import type {
   CategoryChartPoint,
   ChartMetric,
@@ -205,60 +205,62 @@ export function FinancialChart({
   const chartKey = `${preferences.metric}-${preferences.chartType}`;
 
   return (
-    <Card data-testid={testId} className={`${styles.card} ${className}`.trim()}>
-      <div className={styles.header}>
-        <h2 className={styles.title}>{t.charts.title}</h2>
+    <motion.div variants={summaryCardItemVariants} initial="initial" animate="animate">
+      <Card data-testid={testId} className={`${styles.card} ${className}`.trim()}>
+        <div className={styles.header}>
+          <h2 className={styles.title}>{t.charts.title}</h2>
 
-        <div className={styles.controls}>
-          <div className={styles.selectWrapper}>
-            <Select
-              options={metricOptions}
-              value={preferences.metric}
-              onChange={(e) => handleMetricChange(e.target.value as ChartMetric)}
-              aria-label={t.charts.metricLabel}
-              data-testid="chart-metric-select"
-            />
-          </div>
+          <div className={styles.controls}>
+            <div className={styles.selectWrapper}>
+              <Select
+                options={metricOptions}
+                value={preferences.metric}
+                onChange={(e) => handleMetricChange(e.target.value as ChartMetric)}
+                aria-label={t.charts.metricLabel}
+                data-testid="chart-metric-select"
+              />
+            </div>
 
-          <div className={styles.selectWrapper}>
-            <Select
-              options={typeOptions}
-              value={preferences.chartType}
-              onChange={(e) => handleTypeChange(e.target.value as ChartType)}
-              aria-label={t.charts.typeLabel}
-              data-testid="chart-type-select"
-            />
+            <div className={styles.selectWrapper}>
+              <Select
+                options={typeOptions}
+                value={preferences.chartType}
+                onChange={(e) => handleTypeChange(e.target.value as ChartType)}
+                aria-label={t.charts.typeLabel}
+                data-testid="chart-type-select"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className={styles.chartContainer}>
-        {!hasData ? (
-          <div data-testid="chart-empty-state" className={styles.emptyState}>
-            {t.charts.empty}
-          </div>
-        ) : (
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={chartKey}
-              variants={chartFadeVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className={styles.motionWrapper}
-              data-testid="financial-chart-animated-wrapper"
-            >
-              {renderActiveChart({
-                preferences,
-                timeSeriesData,
-                categoryData,
-                t,
-                valueFormatter,
-              })}
-            </motion.div>
-          </AnimatePresence>
-        )}
-      </div>
-    </Card>
+        <div className={styles.chartContainer}>
+          {!hasData ? (
+            <div data-testid="chart-empty-state" className={styles.emptyState}>
+              {t.charts.empty}
+            </div>
+          ) : (
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={chartKey}
+                variants={chartFadeVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                className={styles.motionWrapper}
+                data-testid="financial-chart-animated-wrapper"
+              >
+                {renderActiveChart({
+                  preferences,
+                  timeSeriesData,
+                  categoryData,
+                  t,
+                  valueFormatter,
+                })}
+              </motion.div>
+            </AnimatePresence>
+          )}
+        </div>
+      </Card>
+    </motion.div>
   );
 }
