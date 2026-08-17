@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Switch } from "@/components/ui/Switch";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { RotateCcw } from "lucide-react";
@@ -21,70 +22,78 @@ export default function SettingsPage() {
       <Card className={styles.settingsCard}>
         <div className={styles.optionsList}>
           {/* Summary Cards */}
-          <label className={styles.optionItem}>
+          <div className={styles.optionItem}>
             <div className={styles.optionInfo}>
-              <span className={styles.optionTitle}>{t.settings.cards.summary.title}</span>
+              <span id="summary-cards-title" className={styles.optionTitle}>
+                {t.settings.cards.summary.title}
+              </span>
               <span className={styles.optionDescription}>
                 {t.settings.cards.summary.description}
               </span>
             </div>
-            <input
-              type="checkbox"
-              className={styles.checkbox}
+            <Switch
               checked={overviewSettings.showSummaryCards}
-              onChange={(e) => updateOverviewSettings({ showSummaryCards: e.target.checked })}
+              onCheckedChange={(checked) => updateOverviewSettings({ showSummaryCards: checked })}
+              aria-labelledby="summary-cards-title"
               data-testid="toggle-summary-cards"
             />
-          </label>
+          </div>
 
           {/* Financial Chart Toggle */}
-          <label className={styles.optionItem}>
+          <div className={styles.optionItem}>
             <div className={styles.optionInfo}>
-              <span className={styles.optionTitle}>{t.settings.cards.chart.title}</span>
+              <span id="financial-chart-title" className={styles.optionTitle}>
+                {t.settings.cards.chart.title}
+              </span>
               <span className={styles.optionDescription}>{t.settings.cards.chart.description}</span>
             </div>
-            <input
-              type="checkbox"
-              className={styles.checkbox}
+            <Switch
               checked={overviewSettings.showFinancialChart}
-              onChange={(e) => updateOverviewSettings({ showFinancialChart: e.target.checked })}
+              onCheckedChange={(checked) => updateOverviewSettings({ showFinancialChart: checked })}
+              aria-labelledby="financial-chart-title"
               data-testid="toggle-financial-chart"
             />
-          </label>
+          </div>
 
           {/* Category Breakdown */}
-          <label className={styles.optionItem}>
+          <div className={styles.optionItem}>
             <div className={styles.optionInfo}>
-              <span className={styles.optionTitle}>{t.settings.cards.categories.title}</span>
+              <span id="category-breakdown-title" className={styles.optionTitle}>
+                {t.settings.cards.categories.title}
+              </span>
               <span className={styles.optionDescription}>
                 {t.settings.cards.categories.description}
               </span>
             </div>
-            <input
-              type="checkbox"
-              className={styles.checkbox}
+            <Switch
               checked={overviewSettings.showCategoryBreakdown}
-              onChange={(e) => updateOverviewSettings({ showCategoryBreakdown: e.target.checked })}
+              onCheckedChange={(checked) =>
+                updateOverviewSettings({ showCategoryBreakdown: checked })
+              }
+              aria-labelledby="category-breakdown-title"
               data-testid="toggle-category-breakdown"
             />
-          </label>
+          </div>
 
           {/* Recent Transactions */}
-          <label className={styles.optionItem}>
+          <div className={styles.optionItem}>
             <div className={styles.optionInfo}>
-              <span className={styles.optionTitle}>{t.settings.cards.transactions.title}</span>
+              <span id="recent-transactions-title" className={styles.optionTitle}>
+                {t.settings.cards.transactions.title}
+              </span>
               <span className={styles.optionDescription}>
                 {t.settings.cards.transactions.description}
               </span>
             </div>
-            <input
-              type="checkbox"
-              className={styles.checkbox}
+            <Switch
               checked={overviewSettings.showRecentTransactions}
-              onChange={(e) => updateOverviewSettings({ showRecentTransactions: e.target.checked })}
+              onCheckedChange={(checked) =>
+                updateOverviewSettings({ showRecentTransactions: checked })
+              }
+              aria-labelledby="recent-transactions-title"
               data-testid="toggle-recent-transactions"
             />
-          </label>
+          </div>
         </div>
 
         <div className={styles.actions}>

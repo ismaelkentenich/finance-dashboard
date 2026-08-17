@@ -44,7 +44,6 @@
   background-color: var(--color-neutral-100);
   border: var(--border-width-thin, 1px) solid var(--border-color);
   border-radius: var(--border-radius-md);
-  cursor: pointer;
   transition: background-color var(--motion-duration-fast) var(--motion-easing-default);
 }
 
@@ -67,13 +66,6 @@
 .optionDescription {
   font-size: var(--font-size-xs);
   color: var(--color-neutral-500);
-}
-
-.checkbox {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  accent-color: var(--color-primary-green-100);
 }
 
 .actions {
