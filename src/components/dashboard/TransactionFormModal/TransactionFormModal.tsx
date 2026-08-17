@@ -6,6 +6,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Select } from "@/components/ui/Select";
 import { ALL_CATEGORIES } from "@/constants/transaction.constants";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useToast } from "@/contexts/ToastContext";
 import { DASHBOARD_QUERY_KEY } from "@/hooks/useDashboardData";
 import {
   createTransactionSchema,
@@ -61,16 +62,9 @@ function focusFirstInvalidField(
 
   if (!firstInvalidFieldName) return;
 
-  setFormFocus(firstInvalidFieldName, { shouldSelect: true });
-
-  // Schedule focus for after the submit button click cycle
-  setTimeout(() => {
-    const targetInputElement = document.querySelector<HTMLElement>(
-      `[name="${firstInvalidFieldName}"]`
-    );
-
-    targetInputElement?.focus();
-  }, 0);
+  setFormFocus(firstInvalidFieldName, {
+    shouldSelect: true,
+  });
 }
 
 export function TransactionFormModal({
@@ -80,6 +74,7 @@ export function TransactionFormModal({
   "data-testid": testId = "transaction-form-modal",
 }: TransactionFormModalProps) {
   const { t } = useLocale();
+  const { showToast } = useToast();
   const queryClient = useSafeQueryClient();
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
   const firstFieldRef = useRef<HTMLInputElement | null>(null);
@@ -113,7 +108,7 @@ export function TransactionFormModal({
     formState: { errors: formErrors, isSubmitting: isFormSubmitting },
   } = useForm<CreateTransactionFormData>({
     resolver: zodResolver(createTransactionSchema),
-    shouldFocusError: true,
+    shouldFocusError: false,
     defaultValues: {
       description: "",
       amount: undefined,
@@ -140,12 +135,24 @@ export function TransactionFormModal({
           queryKey: [DASHBOARD_QUERY_KEY],
         });
 
+        showToast({
+          type: "success",
+          title: t.transactionModal.successTitle,
+          message: t.transactionModal.successMessage,
+        });
+
         resetForm();
         onSuccess();
         onClose();
       },
       onError: () => {
         setApiErrorMessage(t.transactionModal.errorMessage);
+
+        showToast({
+          type: "error",
+          title: t.transactionModal.errorTitle,
+          message: t.transactionModal.errorMessage,
+        });
       },
     },
     queryClient
