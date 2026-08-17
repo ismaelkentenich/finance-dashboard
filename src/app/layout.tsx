@@ -3,6 +3,7 @@ import { DEFAULT_LOCALE, LOCALE_COOKIE_NAME } from "@/constants/locale.constants
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ModalProvider } from "@/contexts/ModalContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
+import { ToastProvider } from "@/contexts/ToastContext";
 import type { SupportedLocale } from "@/locales/types";
 import { MotionProvider } from "@/providers/MotionProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
@@ -33,12 +34,14 @@ export default async function RootLayout({
         <QueryProvider>
           <MotionProvider>
             <LocaleProvider initialLocale={initialLocale}>
-              <SettingsProvider>
-                <ModalProvider>
-                  <WebVitalsReporter />
-                  {children}
-                </ModalProvider>
-              </SettingsProvider>
+              <ToastProvider>
+                <SettingsProvider>
+                  <ModalProvider>
+                    <WebVitalsReporter />
+                    {children}
+                  </ModalProvider>
+                </SettingsProvider>
+              </ToastProvider>
             </LocaleProvider>
           </MotionProvider>
         </QueryProvider>
