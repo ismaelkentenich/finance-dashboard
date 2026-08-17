@@ -1,5 +1,11 @@
 import { LocaleProvider } from "@/contexts/LocaleContext";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import React, { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { Modal } from "../Modal";
@@ -130,21 +136,27 @@ describe("Modal UI Component", () => {
     renderWithLocale(<ControlledModal initiallyOpen={false} />);
 
     const opener = screen.getByTestId("modal-opener");
+
     opener.focus();
+    expect(opener).toHaveFocus();
 
     fireEvent.click(opener);
 
-    const closeButton = await screen.findByTestId("modal-close-button");
-    expect(closeButton).toHaveFocus();
+    const dialog = screen.getByRole("dialog");
 
-    fireEvent.click(closeButton);
-
+    expect(dialog).toBeInTheDocument();
     expect(opener).not.toHaveFocus();
 
-    await waitFor(() => {
-      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    });
+    fireEvent.click(screen.getByTestId("modal-close-button"));
 
-    expect(opener).toHaveFocus();
+    // AnimatePresence keeps the dialog mounted during exit.
+    expect(dialog).toBeInTheDocument();
+
+    // Wait for Framer Motion to actually finish the exit lifecycle.
+    await waitForElementToBeRemoved(dialog);
+
+    await waitFor(() => {
+      expect(opener).toHaveFocus();
+    });
   });
 });

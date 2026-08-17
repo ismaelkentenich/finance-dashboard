@@ -1,0 +1,164 @@
+import { LocaleProvider } from "@/contexts/LocaleContext";
+import { ModalProvider } from "@/contexts/ModalContext";
+import { ToastProvider } from "@/contexts/ToastContext";
+import { useDashboardData } from "@/hooks/useDashboardData";
+import { useTransactionFilters } from "@/hooks/useTransactionFilters";
+import { render, screen, waitForElementToBeRemoved } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import TransactionsPage from "../page";
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => "/transactions",
+  useSearchParams: () => new URLSearchParams(),
+}));
+
+vi.mock("@/hooks/useDashboardData");
+vi.mock("@/hooks/useTransactionFilters");
+
+const mockTransactions = [
+  {
+    id: "tx-1",
+    description: "Supermercado Extra",
+    amount: 350,
+    type: "expense" as const,
+    category: "food" as const,
+    date: "2026-08-01",
+    createdAt: "2026-08-01T00:00:00Z",
+  },
+  {
+    id: "tx-2",
+    description: "Mercado Central",
+    amount: 120,
+    type: "expense" as const,
+    category: "food" as const,
+    date: "2026-08-02",
+    createdAt: "2026-08-02T00:00:00Z",
+  },
+  {
+    id: "tx-3",
+    description: "Salário Mensal",
+    amount: 5000,
+    type: "income" as const,
+    category: "salary" as const,
+    date: "2026-08-03",
+    createdAt: "2026-08-03T00:00:00Z",
+  },
+];
+
+function renderTransactionsPage(locale: "pt-BR" | "en-US" = "pt-BR") {
+  return render(
+    <LocaleProvider initialLocale={locale}>
+      <ToastProvider>
+        <ModalProvider>
+          <TransactionsPage />
+        </ModalProvider>
+      </ToastProvider>
+    </LocaleProvider>
+  );
+}
+
+describe("TransactionsPage Search Integration", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    vi.mocked(useTransactionFilters).mockReturnValue({
+      filters: { period: "current-month", type: "all", category: "all" },
+      setFilters: vi.fn(),
+      resetFilters: vi.fn(),
+      hasActiveFilters: false,
+    });
+
+    vi.mocked(useDashboardData).mockReturnValue({
+      data: {
+        transactions: mockTransactions,
+        summary: {
+          currentBalance: 4530,
+          totalIncome: 5000,
+          totalExpenses: 470,
+          savingsRate: 90.6,
+          periodComparison: { balanceVariation: 0, incomeVariation: 0, expensesVariation: 0 },
+        },
+        categories: [],
+      },
+      isLoading: false,
+      isFetching: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+  });
+
+  it("renders search input with search icon and total transactions count when no search is active", () => {
+    renderTransactionsPage();
+
+    expect(screen.getByTestId("transaction-search-input-start-icon")).toBeInTheDocument();
+    expect(screen.getByTestId("transaction-search-stats")).toHaveTextContent(
+      "3 transações encontradas"
+    );
+  });
+
+  it("filters transactions and updates stats feedback with query and pluralization in pt-BR", async () => {
+    const user = userEvent.setup();
+
+    renderTransactionsPage("pt-BR");
+
+    const searchInput = screen.getByTestId("transaction-search-input");
+
+    const salaryTransaction = screen.getByText("Salário Mensal");
+
+    await user.type(searchInput, "mercado");
+
+    expect(screen.getByTestId("transaction-search-stats")).toHaveTextContent(
+      '2 resultados para "mercado"'
+    );
+
+    expect(screen.getByText("Supermercado Extra")).toBeInTheDocument();
+    expect(screen.getByText("Mercado Central")).toBeInTheDocument();
+
+    await waitForElementToBeRemoved(salaryTransaction);
+
+    expect(screen.queryByText("Salário Mensal")).not.toBeInTheDocument();
+  });
+  it("formats singular query result correctly in en-US", async () => {
+    const user = userEvent.setup();
+    renderTransactionsPage("en-US");
+
+    const searchInput = screen.getByTestId("transaction-search-input");
+    await user.type(searchInput, "Salário");
+
+    expect(screen.getByTestId("transaction-search-stats")).toHaveTextContent(
+      '1 result for "Salário"'
+    );
+  });
+
+  it("clears search query and restores full list when clicking the clear button", async () => {
+    const user = userEvent.setup();
+    renderTransactionsPage();
+
+    const searchInput = screen.getByTestId("transaction-search-input");
+    await user.type(searchInput, "Extra");
+
+    expect(screen.getByTestId("transaction-search-input-clear-button")).toBeInTheDocument();
+
+    await user.click(screen.getByTestId("transaction-search-input-clear-button"));
+
+    expect(searchInput).toHaveValue("");
+    expect(screen.getByTestId("transaction-search-stats")).toHaveTextContent(
+      "3 transações encontradas"
+    );
+  });
+
+  it("displays EmptyState when search matches zero items", async () => {
+    const user = userEvent.setup();
+    renderTransactionsPage();
+
+    const searchInput = screen.getByTestId("transaction-search-input");
+    await user.type(searchInput, "inexistente");
+
+    expect(screen.getByTestId("empty-state")).toBeInTheDocument();
+    expect(screen.getByTestId("transaction-search-stats")).toHaveTextContent(
+      '0 resultados para "inexistente"'
+    );
+  });
+});
