@@ -16,6 +16,27 @@ describe("Card Component Family", () => {
       expect(screen.getByText("Card body content")).toBeInTheDocument();
     });
 
+    it("applies default 'flat' variant class when variant prop is not specified", () => {
+      render(<Card>Default Flat Card</Card>);
+
+      const container = screen.getByTestId("card-container");
+      expect(container.className).toMatch(/flat/i);
+    });
+
+    it("applies 'raised' elevation variant class when explicitly passed", () => {
+      render(<Card variant="raised">Raised Card</Card>);
+
+      const container = screen.getByTestId("card-container");
+      expect(container.className).toMatch(/raised/i);
+    });
+
+    it("applies 'interactive' elevation variant class when explicitly passed", () => {
+      render(<Card variant="interactive">Interactive Card</Card>);
+
+      const container = screen.getByTestId("card-container");
+      expect(container.className).toMatch(/interactive/i);
+    });
+
     it("applies custom data-testid when provided via props", () => {
       render(<Card data-testid="custom-card">Custom ID Card</Card>);
 
@@ -109,7 +130,7 @@ describe("Card Component Family", () => {
   describe("Integrated Card Composition", () => {
     it("renders complete card structure combining Header, Title and Body content", () => {
       render(
-        <Card data-testid="overview-card">
+        <Card data-testid="overview-card" variant="raised">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
           </CardHeader>
@@ -121,6 +142,7 @@ describe("Card Component Family", () => {
       const title = screen.getByRole("heading", { level: 3, name: "Recent Activity" });
 
       expect(card).toContainElement(title);
+      expect(card.className).toMatch(/raised/i);
       expect(screen.getByText("List of recent activity transactions")).toBeInTheDocument();
     });
   });
