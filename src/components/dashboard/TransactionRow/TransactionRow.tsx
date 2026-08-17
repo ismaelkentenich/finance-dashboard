@@ -2,7 +2,9 @@
 
 import { Badge } from "@/components/ui/Badge";
 import { useLocale } from "@/contexts/LocaleContext";
+import { SPRING_TRANSITIONS, tableRowVariants } from "@/motion";
 import { formatCurrency, formatDate } from "@/utils/formatters";
+import { motion } from "framer-motion";
 import styles from "./TransactionRow.module.css";
 import type { TransactionRowProps } from "./TransactionRow.types";
 
@@ -10,6 +12,7 @@ export function TransactionRow({
   transaction,
   className = "",
   "data-testid": testId = `transaction-row-${transaction.id}`,
+  ...motionProps
 }: TransactionRowProps) {
   const { t, locale } = useLocale();
   const isIncome = transaction.type === "income";
@@ -19,7 +22,17 @@ export function TransactionRow({
   const accessibleTypeLabel = isIncome ? t.filters.types.income : t.filters.types.expense;
 
   return (
-    <tr data-testid={testId} className={`${styles.row} ${className}`.trim()}>
+    <motion.tr
+      layout="position"
+      variants={tableRowVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={SPRING_TRANSITIONS.layout}
+      data-testid={testId}
+      className={`${styles.row} ${className}`.trim()}
+      {...motionProps}
+    >
       {/* Description */}
       <td
         data-testid="transaction-description"
@@ -50,6 +63,6 @@ export function TransactionRow({
         <span className="sr-only">{accessibleTypeLabel}: </span>
         {formattedAmount}
       </td>
-    </tr>
+    </motion.tr>
   );
 }

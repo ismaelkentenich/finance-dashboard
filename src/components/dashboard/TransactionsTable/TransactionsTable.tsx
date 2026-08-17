@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/ui/Card";
 import { useLocale } from "@/contexts/LocaleContext";
+import { AnimatePresence } from "framer-motion";
 import { TransactionRow } from "../TransactionRow";
 import styles from "./TransactionsTable.module.css";
 import type { TransactionsTableProps } from "./TransactionsTable.types";
@@ -41,9 +42,11 @@ export function TransactionsTable({
               </tr>
             </thead>
             <tbody>
-              {transactions.map((tx) => (
-                <TransactionRow key={tx.id} transaction={tx} />
-              ))}
+              <AnimatePresence initial={false}>
+                {transactions.map((tx) => (
+                  <TransactionRow key={tx.id} transaction={tx} />
+                ))}
+              </AnimatePresence>
             </tbody>
           </table>
         </div>

@@ -124,9 +124,33 @@ export const chartFade: Variants = {
   },
 };
 
+/**
+ * Discrete opacity fade transition for table rows during filter and search updates.
+ */
+export const tableRow: Variants = {
+  initial: {
+    opacity: 0,
+  },
+  animate: {
+    opacity: 1,
+    transition: {
+      duration: MOTION_DURATIONS.fast,
+      ease: MOTION_EASINGS.out,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: MOTION_DURATIONS.fast,
+      ease: MOTION_EASINGS.in,
+    },
+  },
+};
+
 export const fadeVariants = fade;
 export const fadeUpVariants = fadeUp;
 export const scaleFadeVariants = scaleFade;
 export const staggerContainerVariants = staggerContainer;
 export const summaryCardItemVariants = summaryCardItem;
 export const chartFadeVariants = chartFade;
+export const tableRowVariants = tableRow;

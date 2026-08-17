@@ -3,7 +3,7 @@
 import { useLocale } from "@/contexts/LocaleContext";
 import { transactionService } from "@/services/api/transactionService";
 import type { PeriodFilter, TransactionCategory, TransactionType } from "@/types";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 interface UseDashboardDataParams {
   period: PeriodFilter;
@@ -26,11 +26,13 @@ export function useDashboardData({ period, type, category }: UseDashboardDataPar
       });
       return response.data;
     },
+    placeholderData: keepPreviousData,
   });
 
   return {
     data: query.data ?? null,
     isLoading: query.isLoading,
+    isFetching: query.isFetching,
     error: query.isError ? query.error?.message || t.common.noData : null,
     refetch: query.refetch,
   };
