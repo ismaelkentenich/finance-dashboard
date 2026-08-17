@@ -43,6 +43,22 @@ function reportSettingsStorageError(action: string, error: unknown) {
   });
 }
 
+function isValidWidgetId(id: unknown): id is WidgetId {
+  return typeof id === "string" && DEFAULT_WIDGET_ORDER.includes(id as WidgetId);
+}
+
+function sanitizeWidgetOrder(rawOrder: unknown): WidgetId[] {
+  if (!Array.isArray(rawOrder)) {
+    return [...DEFAULT_WIDGET_ORDER];
+  }
+
+  const validUniqueWidgets = Array.from(new Set(rawOrder.filter(isValidWidgetId)));
+
+  const missingWidgets = DEFAULT_WIDGET_ORDER.filter((id) => !validUniqueWidgets.includes(id));
+
+  return [...validUniqueWidgets, ...missingWidgets];
+}
+
 /**
  * Parses raw JSON string from storage ensuring schema validity and complete widget list.
  */
@@ -51,24 +67,38 @@ function parseOverviewSettings(raw: string | null): OverviewWidgetPreferences {
 
   try {
     const parsed = JSON.parse(raw);
-    if (!parsed || typeof parsed !== "object") {
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
       return DEFAULT_OVERVIEW_SETTINGS;
     }
 
-    const savedOrder: WidgetId[] = Array.isArray(parsed.widgetOrder)
-      ? parsed.widgetOrder.filter((id: string): id is WidgetId =>
-          DEFAULT_WIDGET_ORDER.includes(id as WidgetId)
-        )
-      : [];
+    const showSummaryCards =
+      typeof parsed.showSummaryCards === "boolean"
+        ? parsed.showSummaryCards
+        : DEFAULT_OVERVIEW_SETTINGS.showSummaryCards;
 
-    const missingWidgets = DEFAULT_WIDGET_ORDER.filter((id) => !savedOrder.includes(id));
-    const mergedOrder =
-      savedOrder.length > 0 ? [...savedOrder, ...missingWidgets] : DEFAULT_WIDGET_ORDER;
+    const showFinancialChart =
+      typeof parsed.showFinancialChart === "boolean"
+        ? parsed.showFinancialChart
+        : DEFAULT_OVERVIEW_SETTINGS.showFinancialChart;
+
+    const showCategoryBreakdown =
+      typeof parsed.showCategoryBreakdown === "boolean"
+        ? parsed.showCategoryBreakdown
+        : DEFAULT_OVERVIEW_SETTINGS.showCategoryBreakdown;
+
+    const showRecentTransactions =
+      typeof parsed.showRecentTransactions === "boolean"
+        ? parsed.showRecentTransactions
+        : DEFAULT_OVERVIEW_SETTINGS.showRecentTransactions;
+
+    const widgetOrder = sanitizeWidgetOrder(parsed.widgetOrder);
 
     return {
-      ...DEFAULT_OVERVIEW_SETTINGS,
-      ...parsed,
-      widgetOrder: mergedOrder,
+      showSummaryCards,
+      showFinancialChart,
+      showCategoryBreakdown,
+      showRecentTransactions,
+      widgetOrder,
     };
   } catch (error) {
     reportSettingsStorageError("parseOverviewSettings", error);
@@ -156,7 +186,24 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const updateOverviewSettings = useCallback(
     (partial: Partial<OverviewWidgetPreferences>) => {
       const current = getClientSnapshot();
-      const nextSettings: OverviewWidgetPreferences = { ...current, ...partial };
+      const nextSettings: OverviewWidgetPreferences = {
+        ...current,
+        ...(typeof partial.showSummaryCards === "boolean" && {
+          showSummaryCards: partial.showSummaryCards,
+        }),
+        ...(typeof partial.showFinancialChart === "boolean" && {
+          showFinancialChart: partial.showFinancialChart,
+        }),
+        ...(typeof partial.showCategoryBreakdown === "boolean" && {
+          showCategoryBreakdown: partial.showCategoryBreakdown,
+        }),
+        ...(typeof partial.showRecentTransactions === "boolean" && {
+          showRecentTransactions: partial.showRecentTransactions,
+        }),
+        ...(Array.isArray(partial.widgetOrder) && {
+          widgetOrder: sanitizeWidgetOrder(partial.widgetOrder),
+        }),
+      };
       persistSettings(nextSettings, "updateOverviewSettings");
     },
     [persistSettings]
@@ -178,7 +225,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const reorderWidgets = useCallback(
     (newOrder: WidgetId[]) => {
       const current = getClientSnapshot();
-      const nextSettings: OverviewWidgetPreferences = { ...current, widgetOrder: newOrder };
+      const nextSettings: OverviewWidgetPreferences = {
+        ...current,
+        widgetOrder: sanitizeWidgetOrder(newOrder),
+      };
       persistSettings(nextSettings, "reorderWidgets");
     },
     [persistSettings]
