@@ -6,6 +6,7 @@ export interface ProgressBarProps {
   min?: number;
   label?: string;
   variant?: ProgressBarVariant;
+  delay?: number;
   className?: string;
   "data-testid"?: string;
 }
