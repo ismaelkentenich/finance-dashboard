@@ -114,7 +114,9 @@ export const pt: TranslationSchema = {
       submit: "Salvar Transação",
       submitting: "Salvando...",
     },
+    successTitle: "Transação criada",
     successMessage: "Transação criada com sucesso!",
+    errorTitle: "Erro ao salvar",
     errorMessage: "Falha ao salvar a transação. Tente novamente.",
   },
   errors: {

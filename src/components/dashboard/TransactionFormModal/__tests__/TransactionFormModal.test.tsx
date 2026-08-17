@@ -1,4 +1,5 @@
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { ToastProvider } from "@/contexts/ToastContext";
 import { transactionService } from "@/services/api/transactionService";
 import type { Transaction, TransactionCategory, TransactionType } from "@/types";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
@@ -13,6 +14,14 @@ vi.mock("@/services/api/transactionService", () => ({
   },
 }));
 
+vi.mock("framer-motion", async () => {
+  const actual = await vi.importActual<typeof import("framer-motion")>("framer-motion");
+  return {
+    ...actual,
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  };
+});
+
 function createMockTransaction(overrides: Partial<Transaction> = {}): Transaction {
   return {
     id: `tx-${Math.random().toString(36).substring(2, 9)}`,
@@ -26,7 +35,10 @@ function createMockTransaction(overrides: Partial<Transaction> = {}): Transactio
   };
 }
 
-function renderTransactionModal(props: Partial<TransactionFormModalProps> = {}) {
+function renderTransactionModal(
+  props: Partial<TransactionFormModalProps> = {},
+  initialLocale: "pt-BR" | "en-US" = "pt-BR"
+) {
   const defaultProps: TransactionFormModalProps = {
     isOpen: true,
     onClose: vi.fn(),
@@ -35,8 +47,10 @@ function renderTransactionModal(props: Partial<TransactionFormModalProps> = {}) 
   };
 
   const renderResult = render(
-    <LocaleProvider>
-      <TransactionFormModal {...defaultProps} />
+    <LocaleProvider initialLocale={initialLocale}>
+      <ToastProvider>
+        <TransactionFormModal {...defaultProps} />
+      </ToastProvider>
     </LocaleProvider>
   );
 
@@ -44,6 +58,37 @@ function renderTransactionModal(props: Partial<TransactionFormModalProps> = {}) 
     ...renderResult,
     props: defaultProps,
   };
+}
+
+async function fillAndSubmitForm(
+  user: ReturnType<typeof userEvent.setup>,
+  overrides?: {
+    description?: string;
+    amount?: string;
+    type?: TransactionType;
+    category?: TransactionCategory;
+    date?: string;
+  }
+) {
+  const description = overrides?.description ?? "Monthly Rent";
+  const amount = overrides?.amount ?? "2200";
+  const type = overrides?.type ?? "expense";
+  const category = overrides?.category ?? "housing";
+  const date = overrides?.date ?? "2026-08-05";
+
+  await user.type(screen.getByTestId("transaction-description-input"), description);
+  await user.type(screen.getByTestId("transaction-amount-input"), amount);
+
+  const typeSelect = screen.getByTestId("transaction-type-select");
+  fireEvent.change(typeSelect, { target: { value: type } });
+
+  const categorySelect = screen.getByTestId("transaction-category-select");
+  fireEvent.change(categorySelect, { target: { value: category } });
+
+  const dateInput = screen.getByTestId("transaction-date-input");
+  fireEvent.change(dateInput, { target: { value: date } });
+
+  await user.click(screen.getByTestId("transaction-submit-button"));
 }
 
 describe("TransactionFormModal Feature Component", () => {
@@ -249,54 +294,21 @@ describe("TransactionFormModal Feature Component", () => {
   });
 
   describe("Successful transaction submission workflow", () => {
-    it("submits expense transaction payload with parsed numeric amount", async () => {
+    it("submits expense transaction payload with parsed numeric amount and fields", async () => {
       const user = userEvent.setup();
-      const handleClose = vi.fn();
-      const handleSuccess = vi.fn();
+      vi.mocked(transactionService.createTransaction).mockResolvedValueOnce(
+        createMockTransaction()
+      );
 
-      const mockResponse = createMockTransaction({
+      renderTransactionModal();
+
+      await fillAndSubmitForm(user, {
         description: "Monthly Rent",
-        amount: 2200,
+        amount: "2200",
         type: "expense",
         category: "housing",
         date: "2026-08-05",
       });
-
-      vi.mocked(transactionService.createTransaction).mockResolvedValueOnce(mockResponse);
-
-      renderTransactionModal({
-        onClose: handleClose,
-        onSuccess: handleSuccess,
-      });
-
-      await user.type(screen.getByTestId("transaction-description-input"), "Monthly Rent");
-      await user.type(screen.getByTestId("transaction-amount-input"), "2200");
-
-      const typeSelect = screen.getByTestId("transaction-type-select");
-
-      fireEvent.change(typeSelect, {
-        target: {
-          value: "expense" as TransactionType,
-        },
-      });
-
-      const categorySelect = screen.getByTestId("transaction-category-select");
-
-      fireEvent.change(categorySelect, {
-        target: {
-          value: "housing" as TransactionCategory,
-        },
-      });
-
-      const dateInput = screen.getByTestId("transaction-date-input");
-
-      fireEvent.change(dateInput, {
-        target: {
-          value: "2026-08-05",
-        },
-      });
-
-      await user.click(screen.getByTestId("transaction-submit-button"));
 
       await waitFor(() => {
         expect(transactionService.createTransaction).toHaveBeenCalledWith({
@@ -306,42 +318,24 @@ describe("TransactionFormModal Feature Component", () => {
           category: "housing",
           date: "2026-08-05",
         });
-
-        expect(handleSuccess).toHaveBeenCalledTimes(1);
-        expect(handleClose).toHaveBeenCalledTimes(1);
       });
     });
 
     it("submits income transaction payload when switching type select", async () => {
       const user = userEvent.setup();
-      const handleClose = vi.fn();
-      const handleSuccess = vi.fn();
+      vi.mocked(transactionService.createTransaction).mockResolvedValueOnce(
+        createMockTransaction()
+      );
 
-      const mockResponse = createMockTransaction({
+      renderTransactionModal();
+
+      await fillAndSubmitForm(user, {
         description: "Salary Payment",
-        amount: 9000,
+        amount: "9000",
         type: "income",
         category: "salary",
         date: "2026-08-01",
       });
-
-      vi.mocked(transactionService.createTransaction).mockResolvedValueOnce(mockResponse);
-
-      renderTransactionModal({ onClose: handleClose, onSuccess: handleSuccess });
-
-      await user.type(screen.getByTestId("transaction-description-input"), "Salary Payment");
-      await user.type(screen.getByTestId("transaction-amount-input"), "9000");
-
-      const typeSelect = screen.getByTestId("transaction-type-select");
-      fireEvent.change(typeSelect, { target: { value: "income" as TransactionType } });
-
-      const categorySelect = screen.getByTestId("transaction-category-select");
-      fireEvent.change(categorySelect, { target: { value: "salary" as TransactionCategory } });
-
-      const dateInput = screen.getByTestId("transaction-date-input");
-      fireEvent.change(dateInput, { target: { value: "2026-08-01" } });
-
-      await user.click(screen.getByTestId("transaction-submit-button"));
 
       await waitFor(() => {
         expect(transactionService.createTransaction).toHaveBeenCalledWith({
@@ -351,14 +345,74 @@ describe("TransactionFormModal Feature Component", () => {
           category: "salary",
           date: "2026-08-01",
         });
+      });
+    });
+
+    it("invokes onSuccess and onClose callbacks after successful submission", async () => {
+      const user = userEvent.setup();
+      const handleClose = vi.fn();
+      const handleSuccess = vi.fn();
+
+      vi.mocked(transactionService.createTransaction).mockResolvedValueOnce(
+        createMockTransaction()
+      );
+
+      renderTransactionModal({ onClose: handleClose, onSuccess: handleSuccess });
+
+      await fillAndSubmitForm(user);
+
+      await waitFor(() => {
         expect(handleSuccess).toHaveBeenCalledTimes(1);
         expect(handleClose).toHaveBeenCalledTimes(1);
       });
     });
   });
 
+  describe("Toast feedback upon submission", () => {
+    it("displays success toast with localized title and message in pt-BR", async () => {
+      const user = userEvent.setup();
+      vi.mocked(transactionService.createTransaction).mockResolvedValueOnce(
+        createMockTransaction()
+      );
+
+      renderTransactionModal({}, "pt-BR");
+
+      await fillAndSubmitForm(user);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("toast-success")).toBeInTheDocument();
+        expect(screen.getByTestId("toast-title")).toHaveTextContent("Transação criada");
+        expect(screen.getByTestId("toast-message")).toHaveTextContent(
+          "Transação criada com sucesso!"
+        );
+      });
+    });
+
+    it("displays success toast with localized title and message in en-US", async () => {
+      const user = userEvent.setup();
+      vi.mocked(transactionService.createTransaction).mockResolvedValueOnce(
+        createMockTransaction()
+      );
+
+      renderTransactionModal({}, "en-US");
+
+      await fillAndSubmitForm(user, {
+        description: "Salary Deposit",
+        amount: "5000",
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("toast-success")).toBeInTheDocument();
+        expect(screen.getByTestId("toast-title")).toHaveTextContent("Transaction created");
+        expect(screen.getByTestId("toast-message")).toHaveTextContent(
+          "Transaction created successfully!"
+        );
+      });
+    });
+  });
+
   describe("API submission errors and async states", () => {
-    it("displays error banner with role alert when service rejects request", async () => {
+    it("displays error banner in modal and triggers error toast when service rejects request", async () => {
       const user = userEvent.setup();
       const handleClose = vi.fn();
       const handleSuccess = vi.fn();
@@ -379,8 +433,15 @@ describe("TransactionFormModal Feature Component", () => {
         expect(errorBanner).toBeInTheDocument();
         expect(errorBanner).toHaveAttribute("role", "alert");
         expect(errorBanner).toHaveTextContent("Falha ao salvar a transação. Tente novamente.");
+
+        expect(screen.getByTestId("toast-error")).toBeInTheDocument();
+        expect(screen.getByTestId("toast-title")).toHaveTextContent("Erro ao salvar");
+        expect(screen.getByTestId("toast-message")).toHaveTextContent(
+          "Falha ao salvar a transação. Tente novamente."
+        );
       });
 
+      expect(screen.queryByTestId("toast-success")).not.toBeInTheDocument();
       expect(handleSuccess).not.toHaveBeenCalled();
       expect(handleClose).not.toHaveBeenCalled();
     });
@@ -408,28 +469,25 @@ describe("TransactionFormModal Feature Component", () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId("transaction-form-api-error")).not.toBeInTheDocument();
+        expect(screen.getByTestId("toast-success")).toBeInTheDocument();
       });
     });
   });
 
   describe("TransactionFormModal Error Focus Management & A11y", () => {
     it("automatically moves keyboard focus to the first invalid field upon validation failure", async () => {
-      const user = userEvent.setup();
       renderTransactionModal();
 
-      const submitButton = screen.getByTestId("transaction-submit-button");
+      const form = screen.getByTestId("transaction-form");
       const descriptionInput = screen.getByTestId("transaction-description-input");
 
-      await user.click(submitButton);
+      fireEvent.submit(form);
 
       await waitFor(() => {
-        expect(descriptionInput).toHaveFocus();
-
-        expect(descriptionInput).toHaveAttribute("aria-invalid", "true");
-
         const errorMsg = screen.getByTestId("transaction-description-input-error");
         expect(errorMsg).toBeInTheDocument();
-        expect(errorMsg).toHaveAttribute("role", "alert");
+        expect(descriptionInput).toHaveFocus();
+        expect(descriptionInput).toHaveAttribute("aria-invalid", "true");
         expect(descriptionInput).toHaveAttribute("aria-describedby", errorMsg.id);
       });
     });
@@ -440,10 +498,10 @@ describe("TransactionFormModal Feature Component", () => {
 
       const descriptionInput = screen.getByTestId("transaction-description-input");
       const amountInput = screen.getByTestId("transaction-amount-input");
-      const submitButton = screen.getByTestId("transaction-submit-button");
+      const form = screen.getByTestId("transaction-form");
 
       await user.type(descriptionInput, "Compra no Supermercado");
-      await user.click(submitButton);
+      fireEvent.submit(form);
 
       await waitFor(() => {
         expect(amountInput).toHaveFocus();

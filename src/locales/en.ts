@@ -112,7 +112,9 @@ export const en = {
       submit: "Save Transaction",
       submitting: "Saving...",
     },
+    successTitle: "Transaction created",
     successMessage: "Transaction created successfully!",
+    errorTitle: "Error saving transaction",
     errorMessage: "Failed to save transaction. Please try again.",
   },
   errors: {
