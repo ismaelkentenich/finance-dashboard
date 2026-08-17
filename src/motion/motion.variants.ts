@@ -98,8 +98,35 @@ export const summaryCardItem: Variants = {
   },
 };
 
+/**
+ * Short crossfade transition for switching between financial chart states.
+ */
+export const chartFade: Variants = {
+  initial: {
+    opacity: 0,
+    y: 4,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: MOTION_DURATIONS.fast,
+      ease: MOTION_EASINGS.out,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -4,
+    transition: {
+      duration: MOTION_DURATIONS.fast,
+      ease: MOTION_EASINGS.in,
+    },
+  },
+};
+
 export const fadeVariants = fade;
 export const fadeUpVariants = fadeUp;
 export const scaleFadeVariants = scaleFade;
 export const staggerContainerVariants = staggerContainer;
 export const summaryCardItemVariants = summaryCardItem;
+export const chartFadeVariants = chartFade;
