@@ -7,13 +7,23 @@
   font-weight: 600;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: all var(--motion-duration-fast) var(--motion-easing-in-out);
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-easing-in-out),
+    border-color var(--motion-duration-fast) var(--motion-easing-in-out),
+    color var(--motion-duration-fast) var(--motion-easing-in-out),
+    box-shadow var(--motion-duration-fast) var(--motion-easing-in-out),
+    opacity var(--motion-duration-fast) var(--motion-easing-in-out),
+    transform var(--motion-duration-fast) var(--motion-easing-in-out);
   outline: none;
   white-space: nowrap;
 }
 
 .fullWidth {
   width: 100%;
+}
+
+.button:active:not(:disabled) {
+  transform: scale(0.98);
 }
 
 .button:disabled {

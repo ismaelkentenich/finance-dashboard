@@ -30,6 +30,14 @@ describe("Button UI Component", () => {
       expect(button.className).toMatch(/danger/i);
       expect(button.className).toMatch(/sizeSm/i);
     });
+
+    it("renders secondary and ghost variants correctly", () => {
+      const { rerender } = render(<Button variant="secondary">Secondary</Button>);
+      expect(screen.getByTestId("button").className).toMatch(/secondary/i);
+
+      rerender(<Button variant="ghost">Ghost</Button>);
+      expect(screen.getByTestId("button").className).toMatch(/ghost/i);
+    });
   });
 
   describe("events and interactive states", () => {
