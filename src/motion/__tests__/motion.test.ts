@@ -6,6 +6,10 @@ import {
   fade,
   fadeUp,
   fadeVariants,
+  modalBackdrop,
+  modalBackdropVariants,
+  modalDialog,
+  modalDialogVariants,
   MOTION_DURATIONS,
   MOTION_EASINGS,
   scaleFade,
@@ -128,5 +132,53 @@ describe("Framer Motion Shared Configuration & Variants", () => {
       });
       expect(tableRowVariants).toBe(tableRow);
     });
+  });
+  it("provides coordinated modal backdrop and dialog variants", () => {
+    expect(modalBackdrop.initial).toEqual({ opacity: 0 });
+
+    expect(modalBackdrop.animate).toEqual({
+      opacity: 1,
+      transition: {
+        duration: MOTION_DURATIONS.fast,
+        ease: MOTION_EASINGS.out,
+      },
+    });
+
+    expect(modalBackdrop.exit).toEqual({
+      opacity: 0,
+      transition: {
+        duration: MOTION_DURATIONS.fast,
+        ease: MOTION_EASINGS.in,
+      },
+    });
+
+    expect(modalDialog.initial).toEqual({
+      opacity: 0,
+      scale: 0.98,
+      y: 8,
+    });
+
+    expect(modalDialog.animate).toEqual({
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
+        duration: MOTION_DURATIONS.normal,
+        ease: MOTION_EASINGS.out,
+      },
+    });
+
+    expect(modalDialog.exit).toEqual({
+      opacity: 0,
+      scale: 0.98,
+      y: 4,
+      transition: {
+        duration: MOTION_DURATIONS.fast,
+        ease: MOTION_EASINGS.in,
+      },
+    });
+
+    expect(modalBackdropVariants).toBe(modalBackdrop);
+    expect(modalDialogVariants).toBe(modalDialog);
   });
 });

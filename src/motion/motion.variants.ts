@@ -144,6 +144,58 @@ export const tableRow: Variants = {
   },
 };
 
+/**
+ * Modal backdrop fade used by AnimatePresence for coordinated mount/unmount.
+ */
+export const modalBackdrop: Variants = {
+  initial: {
+    opacity: 0,
+  },
+  animate: {
+    opacity: 1,
+    transition: {
+      duration: MOTION_DURATIONS.fast,
+      ease: MOTION_EASINGS.out,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: MOTION_DURATIONS.fast,
+      ease: MOTION_EASINGS.in,
+    },
+  },
+};
+
+/**
+ * Modal dialog entrance/exit with subtle scale and vertical displacement.
+ */
+export const modalDialog: Variants = {
+  initial: {
+    opacity: 0,
+    scale: 0.98,
+    y: 8,
+  },
+  animate: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: MOTION_DURATIONS.normal,
+      ease: MOTION_EASINGS.out,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.98,
+    y: 4,
+    transition: {
+      duration: MOTION_DURATIONS.fast,
+      ease: MOTION_EASINGS.in,
+    },
+  },
+};
+
 export const fadeVariants = fade;
 export const fadeUpVariants = fadeUp;
 export const scaleFadeVariants = scaleFade;
@@ -151,3 +203,5 @@ export const staggerContainerVariants = staggerContainer;
 export const summaryCardItemVariants = summaryCardItem;
 export const chartFadeVariants = chartFade;
 export const tableRowVariants = tableRow;
+export const modalBackdropVariants = modalBackdrop;
+export const modalDialogVariants = modalDialog;

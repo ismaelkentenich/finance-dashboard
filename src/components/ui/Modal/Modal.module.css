@@ -7,7 +7,6 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-md);
-  animation: fadeIn var(--motion-duration-fast) var(--motion-easing-out);
 }
 
 .modalContent {
@@ -22,7 +21,13 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
-  animation: scaleUp var(--motion-duration-fast) var(--motion-easing-out);
+  transform-origin: center center;
+}
+
+@media (max-width: 479px) {
+  .modalContent {
+    transform-origin: center bottom;
+  }
 }
 
 .header {
@@ -65,24 +70,4 @@
 .closeButton:hover {
   background-color: var(--color-neutral-100);
   color: var(--color-neutral-900);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes scaleUp {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
