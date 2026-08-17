@@ -87,6 +87,7 @@ describe("DashboardPage Component Integration", () => {
         categories: [],
       },
       isLoading: false,
+      isFetching: false,
       error: null,
       refetch: mockRefetch,
     });
@@ -96,6 +97,7 @@ describe("DashboardPage Component Integration", () => {
     vi.mocked(useDashboardData).mockReturnValue({
       data: null,
       isLoading: true,
+      isFetching: true,
       error: null,
       refetch: mockRefetch,
     });
@@ -109,6 +111,7 @@ describe("DashboardPage Component Integration", () => {
     vi.mocked(useDashboardData).mockReturnValue({
       data: null,
       isLoading: false,
+      isFetching: false,
       error: "Falha na conexão",
       refetch: mockRefetch,
     });
@@ -158,6 +161,7 @@ describe("DashboardPage Component Integration", () => {
         categories: [],
       },
       isLoading: false,
+      isFetching: false,
       error: null,
       refetch: mockRefetch,
     });

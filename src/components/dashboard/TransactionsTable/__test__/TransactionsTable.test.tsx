@@ -1,4 +1,5 @@
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { MotionProvider } from "@/providers/MotionProvider";
 import type { Transaction } from "@/types";
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
@@ -18,7 +19,11 @@ function createTransaction(overrides: Partial<Transaction> = {}): Transaction {
 }
 
 function renderWithLocale(ui: React.ReactElement) {
-  return render(<LocaleProvider>{ui}</LocaleProvider>);
+  return render(
+    <MotionProvider>
+      <LocaleProvider>{ui}</LocaleProvider>
+    </MotionProvider>
+  );
 }
 
 describe("TransactionsTable Component", () => {
@@ -133,6 +138,30 @@ describe("TransactionsTable Component", () => {
 
       expect(within(rowIncome).getByText("Freelance Project")).toBeInTheDocument();
       expect(within(rowExpense).getByText("Gym Membership")).toBeInTheDocument();
+    });
+  });
+
+  describe("TransactionsTable Dynamic Filtering and Motion Updates", () => {
+    it("renders smoothly during dynamic updates without losing table structure semantics", () => {
+      const initialList = [
+        createTransaction({ id: "tx-1", description: "Salário" }),
+        createTransaction({ id: "tx-2", description: "Mercado" }),
+      ];
+
+      const { rerender } = renderWithLocale(<TransactionsTable transactions={initialList} />);
+      expect(screen.getByTestId("transaction-row-tx-1")).toBeInTheDocument();
+      expect(screen.getByTestId("transaction-row-tx-2")).toBeInTheDocument();
+
+      // Simulate filtering down to 1 item
+      rerender(
+        <MotionProvider>
+          <LocaleProvider>
+            <TransactionsTable transactions={[initialList[0]]} />
+          </LocaleProvider>
+        </MotionProvider>
+      );
+
+      expect(screen.getByTestId("transaction-row-tx-1")).toBeInTheDocument();
     });
   });
 

@@ -14,6 +14,8 @@ import {
   staggerContainerVariants,
   summaryCardItem,
   summaryCardItemVariants,
+  tableRow,
+  tableRowVariants,
 } from "..";
 
 describe("Framer Motion Shared Configuration & Variants", () => {
@@ -108,6 +110,25 @@ describe("Framer Motion Shared Configuration & Variants", () => {
         },
       });
       expect(chartFadeVariants).toBe(chartFade);
+    });
+
+    it("provides valid tableRow variants with pure opacity fade and fast duration", () => {
+      expect(tableRow.initial).toEqual({ opacity: 0 });
+      expect(tableRow.animate).toEqual({
+        opacity: 1,
+        transition: {
+          duration: MOTION_DURATIONS.fast,
+          ease: MOTION_EASINGS.out,
+        },
+      });
+      expect(tableRow.exit).toEqual({
+        opacity: 0,
+        transition: {
+          duration: MOTION_DURATIONS.fast,
+          ease: MOTION_EASINGS.in,
+        },
+      });
+      expect(tableRowVariants).toBe(tableRow);
     });
   });
 });
