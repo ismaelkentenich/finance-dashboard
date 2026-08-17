@@ -1,42 +1,39 @@
 import {
-  render,
-  renderHook,
-  type RenderHookOptions,
+  render as testingLibraryRender,
+  renderHook as testingLibraryRenderHook,
   type RenderHookResult,
   type RenderResult,
 } from "@testing-library/react";
-import { type ReactElement } from "react";
-import type { CustomRenderOptions, CustomRenderProvidersOptions } from "../types";
+import type { ReactElement } from "react";
+import type { CustomRenderHookOptions, CustomRenderOptions } from "../types";
 import { AllTheProviders } from "./providers";
 
-export const customRender = (
+export function customRender(
   ui: ReactElement,
-  { locale, queryClient, ...options }: CustomRenderOptions = {}
-): RenderResult => {
-  return render(ui, {
+  { locale, queryClient, ...renderOptions }: CustomRenderOptions = {}
+): RenderResult {
+  return testingLibraryRender(ui, {
     wrapper: ({ children }) => (
       <AllTheProviders locale={locale} queryClient={queryClient}>
         {children}
       </AllTheProviders>
     ),
-    ...options,
+    ...renderOptions,
   });
-};
+}
 
-export const customRenderHook = <TProps, TResult>(
+export function customRenderHook<TProps, TResult>(
   callback: (props: TProps) => TResult,
-  options?: Omit<RenderHookOptions<TProps>, "wrapper"> & CustomRenderProvidersOptions
-): RenderHookResult<TResult, TProps> => {
-  const { locale, queryClient, ...restOptions } = options || {};
+  options: CustomRenderHookOptions<TProps> = {}
+): RenderHookResult<TResult, TProps> {
+  const { locale, queryClient, ...renderHookOptions } = options;
 
-  return renderHook(callback, {
+  return testingLibraryRenderHook(callback, {
     wrapper: ({ children }) => (
       <AllTheProviders locale={locale} queryClient={queryClient}>
         {children}
       </AllTheProviders>
     ),
-    ...restOptions,
+    ...renderHookOptions,
   });
-};
-
-export * from "@testing-library/react";
+}
