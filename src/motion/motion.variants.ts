@@ -67,6 +67,39 @@ export const scaleFade: Variants = {
   },
 };
 
+/**
+ * Stagger container orchestrating child card arrivals
+ */
+export const staggerContainer: Variants = {
+  initial: {},
+  animate: {
+    transition: {
+      staggerChildren: 0.06,
+      delayChildren: 0.02,
+    },
+  },
+};
+
+/**
+ * Subtle entrance variant for individual cards (max 8px vertical displacement, 250ms duration)
+ */
+export const summaryCardItem: Variants = {
+  initial: {
+    opacity: 0,
+    y: 8,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.25,
+      ease: MOTION_EASINGS.out,
+    },
+  },
+};
+
 export const fadeVariants = fade;
 export const fadeUpVariants = fadeUp;
 export const scaleFadeVariants = scaleFade;
+export const staggerContainerVariants = staggerContainer;
+export const summaryCardItemVariants = summaryCardItem;

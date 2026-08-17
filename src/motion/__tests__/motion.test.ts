@@ -8,6 +8,10 @@ import {
   MOTION_EASINGS,
   scaleFade,
   SPRING_TRANSITIONS,
+  staggerContainer,
+  staggerContainerVariants,
+  summaryCardItem,
+  summaryCardItemVariants,
 } from "..";
 
 describe("Framer Motion Shared Configuration & Variants", () => {
@@ -60,6 +64,27 @@ describe("Framer Motion Shared Configuration & Variants", () => {
       expect(scaleFade.animate).toHaveProperty("scale", 1);
       expect(scaleFade.exit).toHaveProperty("opacity", 0);
       expect(scaleFade.exit).toHaveProperty("scale", 0.96);
+    });
+
+    it("provides valid stagger container and summary card item variants", () => {
+      expect(staggerContainer.animate).toEqual({
+        transition: {
+          staggerChildren: 0.06,
+          delayChildren: 0.02,
+        },
+      });
+      expect(staggerContainerVariants).toBe(staggerContainer);
+
+      expect(summaryCardItem.initial).toEqual({ opacity: 0, y: 8 });
+      expect(summaryCardItem.animate).toEqual({
+        opacity: 1,
+        y: 0,
+        transition: {
+          duration: 0.25,
+          ease: MOTION_EASINGS.out,
+        },
+      });
+      expect(summaryCardItemVariants).toBe(summaryCardItem);
     });
   });
 });

@@ -1,5 +1,6 @@
 import type { BadgeVariant } from "@/components/ui/Badge/Badge.types";
-import { ReactNode } from "react";
+import type { HTMLMotionProps } from "framer-motion";
+import type { ReactNode } from "react";
 
 export type SummaryCardIconVariant = "balance" | "income" | "expense" | "savings";
 
@@ -9,7 +10,7 @@ export interface SummaryCardBadgeProps {
   ariaLabel?: string;
 }
 
-export interface SummaryCardProps {
+export interface SummaryCardProps extends HTMLMotionProps<"div"> {
   title: string;
   value: string;
   icon: ReactNode;

@@ -1,4 +1,5 @@
 import { LocaleProvider } from "@/contexts/LocaleContext";
+import { MotionProvider } from "@/providers/MotionProvider";
 import type { FinancialSummary } from "@/types";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
@@ -19,14 +20,22 @@ function createFinancialSummary(overrides: Partial<FinancialSummary> = {}): Fina
   };
 }
 
-function renderWithLocale(ui: React.ReactElement) {
-  return render(<LocaleProvider>{ui}</LocaleProvider>);
+function renderWithProviders(ui: React.ReactElement) {
+  return render(
+    <MotionProvider>
+      <LocaleProvider>{ui}</LocaleProvider>
+    </MotionProvider>
+  );
 }
 
 describe("SummaryCards Feature Grid Component", () => {
-  it("renders all four primary financial summary cards", () => {
+  it("renders all four primary financial summary cards inside motion section", () => {
     const summary = createFinancialSummary();
-    renderWithLocale(<SummaryCards summary={summary} />);
+    renderWithProviders(<SummaryCards summary={summary} />);
+
+    const section = screen.getByTestId("summary-cards-grid");
+    expect(section).toBeInTheDocument();
+    expect(section).toHaveAttribute("aria-label", "Financial Summary Cards");
 
     expect(screen.getByTestId("summary-card-balance")).toBeInTheDocument();
     expect(screen.getByTestId("summary-card-income")).toBeInTheDocument();
@@ -36,7 +45,7 @@ describe("SummaryCards Feature Grid Component", () => {
 
   it("formats currency values according to active locale", () => {
     const summary = createFinancialSummary({ currentBalance: 7001.8 });
-    renderWithLocale(<SummaryCards summary={summary} />);
+    renderWithProviders(<SummaryCards summary={summary} />);
 
     expect(screen.getByText(/R\$\s*7\.001,80/)).toBeInTheDocument();
   });
@@ -49,7 +58,8 @@ describe("SummaryCards Feature Grid Component", () => {
         expensesVariation: -8.2,
       },
     });
-    renderWithLocale(<SummaryCards summary={summary} />);
+
+    renderWithProviders(<SummaryCards summary={summary} />);
 
     expect(screen.getByText("+12.5%")).toBeInTheDocument();
     expect(screen.getByText("+5.0%")).toBeInTheDocument();
