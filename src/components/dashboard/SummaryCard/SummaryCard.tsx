@@ -38,31 +38,33 @@ export function SummaryCard({
   const displayFormattedValue = isAnimated ? animated.displayValue : value;
 
   return (
-    <motion.div {...motionProps}>
+    <motion.div className={styles.cardWrapper} {...motionProps}>
       <Card data-testid={testId} className={`${styles.cardContainer} ${className}`.trim()}>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          <div
-            data-testid="summary-card-icon-wrapper"
-            className={`${styles.iconWrapper} ${ICON_VARIANT_MAP[iconVariant]}`}
-          >
-            {icon}
-          </div>
-        </CardHeader>
+        <div className={styles.mainContent}>
+          <CardHeader>
+            <CardTitle className={styles.title}>{title}</CardTitle>
+            <div
+              data-testid="summary-card-icon-wrapper"
+              className={`${styles.iconWrapper} ${ICON_VARIANT_MAP[iconVariant]}`}
+            >
+              {icon}
+            </div>
+          </CardHeader>
 
-        <div
-          data-testid="summary-card-value"
-          className={styles.value}
-          aria-label={finalFormattedValue}
-        >
-          {isAnimated ? (
-            <>
-              <span aria-hidden="true">{displayFormattedValue}</span>
-              <span className="sr-only">{finalFormattedValue}</span>
-            </>
-          ) : (
-            displayFormattedValue
-          )}
+          <div
+            data-testid="summary-card-value"
+            className={styles.value}
+            aria-label={finalFormattedValue}
+          >
+            {isAnimated ? (
+              <>
+                <span aria-hidden="true">{displayFormattedValue}</span>
+                <span className="sr-only">{finalFormattedValue}</span>
+              </>
+            ) : (
+              displayFormattedValue
+            )}
+          </div>
         </div>
 
         <div className={styles.footerInfo}>
