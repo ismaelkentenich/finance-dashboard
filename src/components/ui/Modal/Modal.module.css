@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-md);
-  animation: fadeIn 0.15s ease-out;
+  animation: fadeIn var(--motion-duration-fast) var(--motion-easing-out);
 }
 
 .modalContent {
@@ -22,7 +22,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
-  animation: scaleUp 0.15s ease-out;
+  animation: scaleUp var(--motion-duration-fast) var(--motion-easing-out);
 }
 
 .header {
@@ -59,7 +59,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease;
+  transition: all var(--motion-duration-fast) var(--motion-easing-default);
 }
 
 .closeButton:hover {
