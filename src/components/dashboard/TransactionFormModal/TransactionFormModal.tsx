@@ -15,6 +15,7 @@ import {
 } from "@/schemas/transaction.schema";
 import { transactionService } from "@/services/api/transactionService";
 import type { TransactionCategory, TransactionType } from "@/types";
+import { getLocalDateISOString } from "@/utils/date";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
@@ -114,7 +115,7 @@ export function TransactionFormModal({
       amount: undefined,
       type: typeOptions[0].value,
       category: categoryOptions[0].value,
-      date: new Date().toISOString().split("T")[0],
+      date: getLocalDateISOString(),
     },
   });
 

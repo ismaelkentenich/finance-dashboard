@@ -2,6 +2,7 @@ import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { transactionService } from "@/services/api/transactionService";
 import type { Transaction, TransactionCategory, TransactionType } from "@/types";
+import { getLocalDateISOString } from "@/utils/date";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -180,12 +181,24 @@ describe("TransactionFormModal Feature Component", () => {
         "transaction-description-input"
       ) as HTMLInputElement;
 
-      const todayIsoDate = new Date().toISOString().split("T")[0];
+      const todayLocalDate = getLocalDateISOString();
 
       expect(typeSelect.value).toBe(typeSelect.options[0].value);
       expect(categorySelect.value).toBe(categorySelect.options[0].value);
-      expect(dateInput.value).toBe(todayIsoDate);
+      expect(dateInput.value).toBe(todayLocalDate);
       expect(descriptionInput.value).toBe("");
+    });
+
+    it("initializes the date field with the local day, even if it differs from the UTC day", () => {
+      vi.useFakeTimers();
+      const lateNightDate = new Date("2026-08-18T01:00:00.000Z");
+      vi.setSystemTime(lateNightDate);
+
+      renderTransactionModal();
+
+      const dateInput = screen.getByTestId("transaction-date-input") as HTMLInputElement;
+      expect(dateInput.value).toBe(getLocalDateISOString(lateNightDate));
+      vi.useRealTimers();
     });
 
     it("propagates custom data-testid to the modal container", () => {
