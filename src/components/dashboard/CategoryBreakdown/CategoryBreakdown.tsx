@@ -3,7 +3,9 @@
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { useLocale } from "@/contexts/LocaleContext";
+import { staggerContainerVariants, summaryCardItemVariants } from "@/motion";
 import { formatCurrency } from "@/utils/formatters";
+import { motion } from "framer-motion";
 import styles from "./CategoryBreakdown.module.css";
 import type { CategoryBreakdownProps } from "./CategoryBreakdown.types";
 
@@ -25,17 +27,24 @@ export function CategoryBreakdown({
           {t.categories.empty}
         </p>
       ) : (
-        <div className={styles.categoryList} data-testid="category-list">
+        <motion.div
+          className={styles.categoryList}
+          data-testid="category-list"
+          variants={staggerContainerVariants}
+          initial="initial"
+          animate="animate"
+        >
           {categories.map((cat, index) => {
             const label = t.categories.labels[cat.category] || cat.categoryLabel || cat.category;
             const formattedAmount = `${formatCurrency(cat.totalAmount, locale)} (${cat.percentage}%)`;
-            const staggerDelay = index * 0.2;
+            const staggerDelay = index * 0.1;
 
             return (
-              <div
+              <motion.div
                 key={cat.category}
                 className={styles.categoryItem}
                 data-testid={`category-item-${cat.category}`}
+                variants={summaryCardItemVariants}
               >
                 <div className={styles.categoryHeader}>
                   <span
@@ -58,10 +67,10 @@ export function CategoryBreakdown({
                   delay={staggerDelay}
                   data-testid={`category-progress-${cat.category}`}
                 />
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       )}
     </Card>
   );
