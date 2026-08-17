@@ -3,7 +3,28 @@
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-lg);
   padding: 1.5rem;
+  transition:
+    box-shadow var(--motion-duration-fast) var(--motion-easing-default),
+    border-color var(--motion-duration-fast) var(--motion-easing-default),
+    background-color var(--motion-duration-fast) var(--motion-easing-default);
+}
+
+.flat {
+  box-shadow: none;
+}
+
+.raised {
+  box-shadow: var(--shadow-md);
+}
+
+.interactive {
   box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+.interactive:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-neutral-300);
 }
 
 .cardHeader {
