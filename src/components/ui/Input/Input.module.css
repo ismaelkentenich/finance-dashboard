@@ -24,28 +24,91 @@
 }
 
 .input {
-  height: var(--size-button-height-sm, 36px);
   width: 100%;
-  padding: 0 var(--spacing-md);
   border-radius: var(--border-radius-md);
-  border: var(--border-width-thin, 1px) solid var(--border-color);
-  background-color: var(--color-neutral-100);
   color: var(--color-neutral-900);
-  font-size: var(--font-size-sm);
   font-weight: 500;
   outline: none;
-  transition:
-    background-color var(--motion-duration-fast) var(--motion-easing-default),
-    border-color var(--motion-duration-fast) var(--motion-easing-default),
-    box-shadow var(--motion-duration-fast) var(--motion-easing-default);
+  transition: all var(--motion-duration-fast) var(--motion-easing-default);
 }
 
-.hasStartIcon {
-  padding-left: var(--spacing-2xl);
+/* Sizing */
+.sizeSm {
+  height: 32px;
+  padding: 0 var(--spacing-sm);
+  font-size: var(--font-size-xs);
 }
 
-.hasEndElement {
-  padding-right: var(--spacing-2xl);
+.sizeMd {
+  height: 38px;
+  padding: 0 var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+.sizeLg {
+  height: 44px;
+  padding: 0 var(--spacing-lg);
+  font-size: var(--font-size-md);
+}
+
+/* Variants */
+.variantFilled {
+  background-color: var(--color-neutral-100);
+  border: var(--border-width-thin, 1px) solid transparent;
+}
+.variantFilled:hover:not(:disabled) {
+  background-color: var(--color-neutral-200);
+}
+.variantFilled:focus-visible {
+  background-color: var(--color-neutral-50);
+  border-color: var(--color-primary-green-100);
+  box-shadow: var(--shadow-focus-primary);
+}
+
+.variantOutline {
+  background-color: var(--color-neutral-50);
+  border: var(--border-width-thin, 1px) solid var(--border-color);
+}
+.variantOutline:hover:not(:disabled) {
+  border-color: var(--color-neutral-400);
+}
+.variantOutline:focus-visible {
+  border-color: var(--color-primary-green-100);
+  box-shadow: var(--shadow-focus-primary);
+}
+
+.variantGhost {
+  background-color: transparent;
+  border: var(--border-width-thin, 1px) solid transparent;
+}
+.variantGhost:hover:not(:disabled) {
+  background-color: var(--color-neutral-100);
+}
+.variantGhost:focus-visible {
+  background-color: var(--color-neutral-50);
+  border-color: var(--color-primary-green-100);
+  box-shadow: var(--shadow-focus-primary);
+}
+
+/* Icon Padding Adjustments */
+.hasStartIcon.sizeSm {
+  padding-left: 28px;
+}
+.hasStartIcon.sizeMd {
+  padding-left: 36px;
+}
+.hasStartIcon.sizeLg {
+  padding-left: 42px;
+}
+
+.hasEndElement.sizeSm {
+  padding-right: 28px;
+}
+.hasEndElement.sizeMd {
+  padding-right: 36px;
+}
+.hasEndElement.sizeLg {
+  padding-right: 42px;
 }
 
 .startIconWrapper {
@@ -72,43 +135,22 @@
   justify-content: center;
   background: transparent;
   border: none;
-  padding: var(--spacing-3xs);
+  padding: 2px;
   border-radius: var(--border-radius-full);
   color: var(--color-neutral-500);
   cursor: pointer;
-  transition:
-    color var(--motion-duration-fast) var(--motion-easing-default),
-    background-color var(--motion-duration-fast) var(--motion-easing-default);
+  transition: all var(--motion-duration-fast) var(--motion-easing-default);
 }
-
 .clearButton:hover {
   color: var(--color-neutral-900);
   background-color: var(--color-neutral-200);
 }
 
-.input:hover:not(:disabled) {
-  background-color: var(--color-neutral-200);
-}
-
-.input:focus-visible {
-  border-color: var(--color-primary-green-100);
-  box-shadow: var(--shadow-focus-primary);
-  background-color: var(--color-neutral-50);
-}
-
-.input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  background-color: var(--color-neutral-200);
-}
-
 .inputError {
-  border-color: var(--color-status-error-200);
+  border-color: var(--color-status-error-200) !important;
 }
-
 .inputError:focus-visible {
-  border-color: var(--color-status-error-200);
-  box-shadow: var(--shadow-focus-error);
+  box-shadow: var(--shadow-focus-error) !important;
 }
 
 .errorMessage {
@@ -116,7 +158,6 @@
   color: var(--color-status-error-200);
   font-weight: 500;
 }
-
 .helperText {
   font-size: var(--font-size-xs);
   color: var(--color-neutral-500);
