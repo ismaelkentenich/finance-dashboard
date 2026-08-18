@@ -1,7 +1,6 @@
-import { LocaleProvider } from "@/contexts/LocaleContext";
-import { MotionProvider } from "@/providers/MotionProvider";
+import { customRender } from "@/test/utils";
 import type { FinancialSummary } from "@/types";
-import { render, screen, within } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { SummaryCards } from "../SummaryCards";
 
@@ -20,38 +19,85 @@ function createFinancialSummary(overrides: Partial<FinancialSummary> = {}): Fina
   };
 }
 
-function renderWithProviders(ui: React.ReactElement) {
-  return render(
-    <MotionProvider>
-      <LocaleProvider>{ui}</LocaleProvider>
-    </MotionProvider>
-  );
-}
-
 describe("SummaryCards Feature Grid Component", () => {
   it("renders all four primary financial summary cards inside motion section", () => {
     const summary = createFinancialSummary();
-    renderWithProviders(<SummaryCards summary={summary} />);
 
-    const section = screen.getByTestId("summary-cards-grid");
-    expect(section).toBeInTheDocument();
-    expect(section).toHaveAttribute("aria-label", "Financial Summary Cards");
+    customRender(<SummaryCards summary={summary} />);
+
+    expect(screen.getByTestId("summary-cards-grid")).toBeInTheDocument();
 
     expect(screen.getByTestId("summary-card-balance")).toBeInTheDocument();
+
     expect(screen.getByTestId("summary-card-income")).toBeInTheDocument();
+
     expect(screen.getByTestId("summary-card-expenses")).toBeInTheDocument();
+
     expect(screen.getByTestId("summary-card-savings")).toBeInTheDocument();
   });
 
+  describe("Accessibility and localization", () => {
+    it("renders summary region with localized accessible name in pt-BR", () => {
+      const summary = createFinancialSummary();
+
+      customRender(<SummaryCards summary={summary} />, {
+        locale: "pt-BR",
+      });
+
+      expect(
+        screen.getByRole("region", {
+          name: "Resumo financeiro",
+        })
+      ).toBeInTheDocument();
+    });
+
+    it("renders summary region with localized accessible name in en-US", () => {
+      const summary = createFinancialSummary();
+
+      customRender(<SummaryCards summary={summary} />, {
+        locale: "en-US",
+      });
+
+      expect(
+        screen.getByRole("region", {
+          name: "Financial summary",
+        })
+      ).toBeInTheDocument();
+    });
+  });
+
   it("formats currency values according to active locale", () => {
-    const summary = createFinancialSummary({ currentBalance: 7001.8 });
-    renderWithProviders(<SummaryCards summary={summary} />);
+    const summary = createFinancialSummary({
+      currentBalance: 7001.8,
+    });
+
+    customRender(<SummaryCards summary={summary} />, {
+      locale: "pt-BR",
+    });
 
     const balanceCard = screen.getByTestId("summary-card-balance");
+
     const valueContainer = within(balanceCard).getByTestId("summary-card-value");
 
     expect(valueContainer).toHaveAttribute("aria-label", expect.stringMatching(/R\$\s*7\.001,80/));
+
     expect(within(valueContainer).getAllByText(/R\$\s*7\.001,80/).length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("formats currency values according to en-US locale", () => {
+    const summary = createFinancialSummary({
+      currentBalance: 7001.8,
+    });
+
+    customRender(<SummaryCards summary={summary} />, {
+      locale: "en-US",
+    });
+
+    const balanceCard = screen.getByTestId("summary-card-balance");
+
+    const valueContainer = within(balanceCard).getByTestId("summary-card-value");
+
+    expect(valueContainer).toHaveAttribute("aria-label", expect.stringMatching(/\$7,001\.80/));
   });
 
   it("displays variation badges with trend indications", () => {
@@ -63,7 +109,7 @@ describe("SummaryCards Feature Grid Component", () => {
       },
     });
 
-    renderWithProviders(<SummaryCards summary={summary} />);
+    customRender(<SummaryCards summary={summary} />);
 
     expect(screen.getByText("+12.5%")).toBeInTheDocument();
     expect(screen.getByText("+5.0%")).toBeInTheDocument();

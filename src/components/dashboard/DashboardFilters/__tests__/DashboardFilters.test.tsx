@@ -1,11 +1,15 @@
-import { LocaleProvider } from "@/contexts/LocaleContext";
-import { render, screen } from "@testing-library/react";
+import type { SupportedLocale } from "@/locales/types";
+import { customRender } from "@/test/utils";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { DashboardFilters } from "../DashboardFilters";
 import type { DashboardFiltersProps } from "../DashboardFilters.types";
 
-function renderDashboardFilters(props: Partial<DashboardFiltersProps> = {}) {
+function renderDashboardFilters(
+  props: Partial<DashboardFiltersProps> = {},
+  locale: SupportedLocale = "pt-BR"
+) {
   const defaultProps: DashboardFiltersProps = {
     period: "current-month",
     type: "all",
@@ -18,11 +22,9 @@ function renderDashboardFilters(props: Partial<DashboardFiltersProps> = {}) {
     ...props,
   };
 
-  const renderResult = render(
-    <LocaleProvider>
-      <DashboardFilters {...defaultProps} />
-    </LocaleProvider>
-  );
+  const renderResult = customRender(<DashboardFilters {...defaultProps} />, {
+    locale,
+  });
 
   return {
     ...renderResult,
@@ -32,12 +34,24 @@ function renderDashboardFilters(props: Partial<DashboardFiltersProps> = {}) {
 
 describe("DashboardFilters Component", () => {
   describe("Accessibility and structural rendering", () => {
-    it("renders semantic section container with accessible label and default test identifier", () => {
-      renderDashboardFilters();
+    it("renders filter region with localized accessible name in pt-BR", () => {
+      renderDashboardFilters({}, "pt-BR");
 
-      const section = screen.getByTestId("dashboard-filters");
-      expect(section).toBeInTheDocument();
-      expect(section).toHaveAttribute("aria-label", "Transaction Filters Bar");
+      expect(
+        screen.getByRole("region", {
+          name: "Filtros de transações",
+        })
+      ).toBeInTheDocument();
+    });
+
+    it("renders filter region with localized accessible name in en-US", () => {
+      renderDashboardFilters({}, "en-US");
+
+      expect(
+        screen.getByRole("region", {
+          name: "Transaction filters",
+        })
+      ).toBeInTheDocument();
     });
 
     it("propagates custom data-testid and custom className to root element", () => {
@@ -47,6 +61,7 @@ describe("DashboardFilters Component", () => {
       });
 
       const section = screen.getByTestId("custom-filters-bar");
+
       expect(section).toBeInTheDocument();
       expect(section.className).toContain("custom-filter-class");
     });
@@ -55,7 +70,9 @@ describe("DashboardFilters Component", () => {
       renderDashboardFilters();
 
       expect(screen.getByTestId("period-filter-select")).toBeInTheDocument();
+
       expect(screen.getByTestId("type-filter-select")).toBeInTheDocument();
+
       expect(screen.getByTestId("category-filter-select")).toBeInTheDocument();
     });
   });
@@ -69,7 +86,9 @@ describe("DashboardFilters Component", () => {
       });
 
       const periodSelect = screen.getByTestId("period-filter-select") as HTMLSelectElement;
+
       const typeSelect = screen.getByTestId("type-filter-select") as HTMLSelectElement;
+
       const categorySelect = screen.getByTestId("category-filter-select") as HTMLSelectElement;
 
       expect(periodSelect.value).toBe("last-3-months");
@@ -83,9 +102,12 @@ describe("DashboardFilters Component", () => {
       const user = userEvent.setup();
       const handlePeriodChange = vi.fn();
 
-      renderDashboardFilters({ onPeriodChange: handlePeriodChange });
+      renderDashboardFilters({
+        onPeriodChange: handlePeriodChange,
+      });
 
       const periodSelect = screen.getByTestId("period-filter-select");
+
       await user.selectOptions(periodSelect, "previous-month");
 
       expect(handlePeriodChange).toHaveBeenCalledTimes(1);
@@ -96,9 +118,12 @@ describe("DashboardFilters Component", () => {
       const user = userEvent.setup();
       const handleTypeChange = vi.fn();
 
-      renderDashboardFilters({ onTypeChange: handleTypeChange });
+      renderDashboardFilters({
+        onTypeChange: handleTypeChange,
+      });
 
       const typeSelect = screen.getByTestId("type-filter-select");
+
       await user.selectOptions(typeSelect, "income");
 
       expect(handleTypeChange).toHaveBeenCalledTimes(1);
@@ -109,9 +134,12 @@ describe("DashboardFilters Component", () => {
       const user = userEvent.setup();
       const handleCategoryChange = vi.fn();
 
-      renderDashboardFilters({ onCategoryChange: handleCategoryChange });
+      renderDashboardFilters({
+        onCategoryChange: handleCategoryChange,
+      });
 
       const categorySelect = screen.getByTestId("category-filter-select");
+
       await user.selectOptions(categorySelect, "food");
 
       expect(handleCategoryChange).toHaveBeenCalledTimes(1);
@@ -121,18 +149,41 @@ describe("DashboardFilters Component", () => {
 
   describe("Reset button visibility and trigger flow", () => {
     it("does not mount reset filters button when hasActiveFilters is false", () => {
-      renderDashboardFilters({ hasActiveFilters: false });
+      renderDashboardFilters({
+        hasActiveFilters: false,
+      });
 
       expect(screen.queryByTestId("reset-filters-button")).not.toBeInTheDocument();
     });
 
     it("renders reset button with localized aria-label when hasActiveFilters is true", () => {
-      renderDashboardFilters({ hasActiveFilters: true });
+      renderDashboardFilters(
+        {
+          hasActiveFilters: true,
+        },
+        "pt-BR"
+      );
 
       const resetButton = screen.getByTestId("reset-filters-button");
+
       expect(resetButton).toBeInTheDocument();
       expect(resetButton).toHaveAttribute("type", "button");
-      expect(resetButton).toHaveAttribute("aria-label", "Limpar Filtros");
+      expect(resetButton).toHaveAccessibleName("Limpar Filtros");
+    });
+
+    it("renders reset button accessible name in en-US", () => {
+      renderDashboardFilters(
+        {
+          hasActiveFilters: true,
+        },
+        "en-US"
+      );
+
+      expect(
+        screen.getByRole("button", {
+          name: "Reset Filters",
+        })
+      ).toBeInTheDocument();
     });
 
     it("invokes onReset callback when clicking reset filters button", async () => {
@@ -145,6 +196,7 @@ describe("DashboardFilters Component", () => {
       });
 
       const resetButton = screen.getByTestId("reset-filters-button");
+
       await user.click(resetButton);
 
       expect(handleReset).toHaveBeenCalledTimes(1);

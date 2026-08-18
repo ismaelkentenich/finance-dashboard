@@ -9,6 +9,7 @@ export const en = {
     clear: "Clear",
     cancel: "Cancel",
     confirm: "Confirm",
+    notifications: "Notifications",
   },
   header: {
     title: "Financial Overview",
@@ -16,9 +17,12 @@ export const en = {
     closeMenu: "Close navigation menu",
     switchToPortuguese: "Switch language to Portuguese",
     switchToEnglish: "Switch language to English",
+    selectedPeriodLabel: "Selected period: {period}",
+    languageSelectionLabel: "Language selection",
   },
   sidebar: {
     brandName: "FinFlow",
+    navigationLabel: "Main navigation",
     navigation: {
       overview: "Overview",
       transactions: "Transactions",
@@ -29,6 +33,7 @@ export const en = {
   },
   filters: {
     periodLabel: "Period",
+    toolbarLabel: "Transaction filters",
     periods: {
       "current-month": "Current Month",
       "previous-month": "Previous Month",
@@ -47,6 +52,7 @@ export const en = {
   },
   summary: {
     balance: "Current Balance",
+    cardsLabel: "Financial summary",
     income: "Total Income",
     expenses: "Total Expenses",
     savingsRate: "Savings Rate",
@@ -91,6 +97,7 @@ export const en = {
       date: "Date",
       amount: "Amount",
     },
+    filtersAndSearchLabel: "Transaction filters and search",
   },
   recentTransactions: {
     title: "Recent Transactions",

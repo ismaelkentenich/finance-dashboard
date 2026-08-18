@@ -11,6 +11,7 @@ export const pt: TranslationSchema = {
     clear: "Limpar",
     cancel: "Cancelar",
     confirm: "Confirmar",
+    notifications: "Notificações",
   },
   header: {
     title: "Visão Geral Financeira",
@@ -18,9 +19,12 @@ export const pt: TranslationSchema = {
     closeMenu: "Fechar menu de navegação",
     switchToPortuguese: "Mudar idioma para Português",
     switchToEnglish: "Mudar idioma para Inglês",
+    selectedPeriodLabel: "Período selecionado: {period}",
+    languageSelectionLabel: "Seleção de idioma",
   },
   sidebar: {
     brandName: "FinFlow",
+    navigationLabel: "Navegação Principal",
     navigation: {
       overview: "Visão Geral",
       transactions: "Transações",
@@ -31,6 +35,7 @@ export const pt: TranslationSchema = {
   },
   filters: {
     periodLabel: "Período",
+    toolbarLabel: "Filtros de transações",
     periods: {
       "current-month": "Mês Atual",
       "previous-month": "Mês Anterior",
@@ -48,6 +53,7 @@ export const pt: TranslationSchema = {
     clearFilters: "Limpar Filtros",
   },
   summary: {
+    cardsLabel: "Resumo financeiro",
     balance: "Saldo Atual",
     income: "Receitas Totais",
     expenses: "Despesas Totais",
@@ -93,6 +99,7 @@ export const pt: TranslationSchema = {
       date: "Data",
       amount: "Valor",
     },
+    filtersAndSearchLabel: "Filtros e busca de transações",
   },
   recentTransactions: {
     title: "Transações Recentes",

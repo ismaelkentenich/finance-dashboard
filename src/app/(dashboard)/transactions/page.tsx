@@ -96,7 +96,10 @@ function TransactionsContent() {
       </div>
 
       {/* Unified Toolbar Card */}
-      <section className={styles.filterToolbarCard} aria-label="Filtros e Busca de Transações">
+      <section
+        className={styles.filterToolbarCard}
+        aria-label={t.transactions.filtersAndSearchLabel}
+      >
         <div className={styles.searchWrapper}>
           <Input
             variant="outline"

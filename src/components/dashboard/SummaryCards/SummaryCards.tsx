@@ -93,7 +93,7 @@ export function SummaryCards({
     <motion.section
       data-testid={testId}
       className={styles.gridContainer}
-      aria-label="Financial Summary Cards"
+      aria-label={t.summary.cardsLabel}
       variants={staggerContainerVariants}
       initial="initial"
       animate="animate"

@@ -31,7 +31,7 @@ export function DashboardFilters({
     <section
       data-testid={testId}
       className={`${styles.filterContainer} ${className}`.trim()}
-      aria-label="Transaction Filters Bar"
+      aria-label={t.filters.toolbarLabel}
     >
       <div className={styles.controlsGroup}>
         {/* Period Selector */}

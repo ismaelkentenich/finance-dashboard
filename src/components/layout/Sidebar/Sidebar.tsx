@@ -19,6 +19,7 @@ export function Sidebar({
   const pathname = usePathname();
 
   useScrollLock(isOpen);
+
   const sidebarRef = useFocusTrap<HTMLElement>({
     isOpen,
     onEscape: onClose,
@@ -62,7 +63,7 @@ export function Sidebar({
         id="main-sidebar"
         ref={sidebarRef}
         className={sidebarClasses}
-        aria-label="Main Navigation"
+        aria-label={t.sidebar.navigationLabel}
         data-testid={testId}
       >
         <div>
@@ -71,6 +72,7 @@ export function Sidebar({
               <div className={styles.brandIcon} aria-hidden="true">
                 $
               </div>
+
               <span className={styles.brandName}>{t.sidebar.brandName}</span>
             </div>
 
@@ -102,9 +104,14 @@ export function Sidebar({
                         layoutId="active-sidebar-indicator"
                         className={styles.activeIndicator}
                         data-testid="active-sidebar-indicator"
-                        transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 350,
+                          damping: 30,
+                        }}
                       />
                     )}
+
                     <Icon size={18} aria-hidden="true" />
                     {label}
                   </Link>
@@ -119,6 +126,7 @@ export function Sidebar({
             <div className={styles.avatar} aria-hidden="true">
               JD
             </div>
+
             <div className={styles.userInfo}>
               <span className={styles.userName}>John Doe</span>
               <span className={styles.userRole}>{t.sidebar.userRole}</span>
