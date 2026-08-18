@@ -70,7 +70,11 @@ describe("TransactionsPage Search Integration", () => {
           totalIncome: 5000,
           totalExpenses: 470,
           savingsRate: 90.6,
-          periodComparison: { balanceVariation: 0, incomeVariation: 0, expensesVariation: 0 },
+          periodComparison: {
+            balanceVariation: 0,
+            incomeVariation: 0,
+            expensesVariation: 0,
+          },
         },
         categories: [],
       },
@@ -78,6 +82,28 @@ describe("TransactionsPage Search Integration", () => {
       isFetching: false,
       error: null,
       refetch: vi.fn(),
+    });
+  });
+
+  describe("Accessibility and localization", () => {
+    it("renders filters and search region with localized accessible name in pt-BR", () => {
+      renderTransactionsPage("pt-BR");
+
+      expect(
+        screen.getByRole("region", {
+          name: /filtros e busca de transações/i,
+        })
+      ).toBeInTheDocument();
+    });
+
+    it("renders filters and search region with localized accessible name in en-US", () => {
+      renderTransactionsPage("en-US");
+
+      expect(
+        screen.getByRole("region", {
+          name: /transaction filters and search/i,
+        })
+      ).toBeInTheDocument();
     });
   });
 
@@ -96,7 +122,6 @@ describe("TransactionsPage Search Integration", () => {
     renderTransactionsPage("pt-BR");
 
     const searchInput = screen.getByTestId("transaction-search-input");
-
     const salaryTransaction = screen.getByText("Salário Mensal");
 
     await user.type(searchInput, "mercado");
@@ -112,11 +137,14 @@ describe("TransactionsPage Search Integration", () => {
 
     expect(screen.queryByText("Salário Mensal")).not.toBeInTheDocument();
   });
+
   it("formats singular query result correctly in en-US", async () => {
     const user = userEvent.setup();
+
     renderTransactionsPage("en-US");
 
     const searchInput = screen.getByTestId("transaction-search-input");
+
     await user.type(searchInput, "Salário");
 
     expect(screen.getByTestId("transaction-search-stats")).toHaveTextContent(
@@ -126,9 +154,11 @@ describe("TransactionsPage Search Integration", () => {
 
   it("clears search query and restores full list when clicking the clear button", async () => {
     const user = userEvent.setup();
+
     renderTransactionsPage();
 
     const searchInput = screen.getByTestId("transaction-search-input");
+
     await user.type(searchInput, "Extra");
 
     expect(screen.getByTestId("transaction-search-input-clear-button")).toBeInTheDocument();
@@ -143,9 +173,11 @@ describe("TransactionsPage Search Integration", () => {
 
   it("displays EmptyState when search matches zero items", async () => {
     const user = userEvent.setup();
+
     renderTransactionsPage();
 
     const searchInput = screen.getByTestId("transaction-search-input");
+
     await user.type(searchInput, "inexistente");
 
     expect(screen.getByTestId("empty-state")).toBeInTheDocument();

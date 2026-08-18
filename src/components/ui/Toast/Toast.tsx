@@ -40,7 +40,13 @@ export function Toast({ toast, onDismiss }: ToastProps) {
 
   const motionVariants = {
     initial: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -16, scale: 0.95 },
-    animate: { opacity: 1, y: 0, scale: 1 },
+
+    animate: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+    },
+
     exit: shouldReduceMotion ? { opacity: 0 } : { opacity: 0, x: 24, scale: 0.95 },
   };
 
@@ -51,7 +57,9 @@ export function Toast({ toast, onDismiss }: ToastProps) {
       initial="initial"
       animate="animate"
       exit="exit"
-      transition={{ duration: shouldReduceMotion ? 0.01 : 0.2 }}
+      transition={{
+        duration: shouldReduceMotion ? 0.01 : 0.2,
+      }}
       role={isAssertive ? "alert" : "status"}
       aria-live={isAssertive ? "assertive" : "polite"}
       aria-atomic="true"
@@ -72,6 +80,7 @@ export function Toast({ toast, onDismiss }: ToastProps) {
             {toast.title}
           </div>
         )}
+
         <div className={styles.message} data-testid="toast-message">
           {toast.message}
         </div>
@@ -81,7 +90,7 @@ export function Toast({ toast, onDismiss }: ToastProps) {
         type="button"
         className={styles.closeButton}
         onClick={() => onDismiss(toast.id)}
-        aria-label={t.common?.closeDialog || "Fechar"}
+        aria-label={t.common.closeDialog}
         data-testid="toast-close-button"
       >
         <X size={18} aria-hidden="true" />
@@ -91,10 +100,12 @@ export function Toast({ toast, onDismiss }: ToastProps) {
 }
 
 export function ToastContainer({ toasts, onDismiss }: ToastContainerProps) {
+  const { t } = useLocale();
+
   return (
     <div
       role="region"
-      aria-label="Notificações"
+      aria-label={t.common.notifications}
       className={styles.container}
       data-testid="toast-container"
     >

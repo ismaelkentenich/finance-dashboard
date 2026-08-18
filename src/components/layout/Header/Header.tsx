@@ -16,6 +16,11 @@ export function Header({ onToggleMenu, isMenuOpen = false }: HeaderProps) {
   const currentPeriodLabel =
     t.filters.periods[filters.period] || t.filters.periods["current-month"];
 
+  const selectedPeriodAriaLabel = t.header.selectedPeriodLabel.replace(
+    "{period}",
+    currentPeriodLabel
+  );
+
   return (
     <header className={styles.header}>
       <div className={styles.brandGroup}>
@@ -32,6 +37,7 @@ export function Header({ onToggleMenu, isMenuOpen = false }: HeaderProps) {
             <Menu size={20} aria-hidden="true" />
           </button>
         )}
+
         <h1 className={styles.title}>{t.header.title}</h1>
       </div>
 
@@ -50,24 +56,33 @@ export function Header({ onToggleMenu, isMenuOpen = false }: HeaderProps) {
         <span
           className={styles.periodBadge}
           data-testid="header-period-badge"
-          aria-label={`Selected period: ${currentPeriodLabel}`}
+          aria-label={selectedPeriodAriaLabel}
         >
           {currentPeriodLabel}
         </span>
 
-        <div className={styles.localeSwitcher} role="group" aria-label="Language selection">
+        <div
+          className={styles.localeSwitcher}
+          role="group"
+          aria-label={t.header.languageSelectionLabel}
+        >
           <button
             type="button"
-            className={`${styles.localeButton} ${locale === "pt-BR" ? styles.localeButtonActive : ""}`}
+            className={`${styles.localeButton} ${
+              locale === "pt-BR" ? styles.localeButtonActive : ""
+            }`}
             onClick={() => setLocale("pt-BR")}
             aria-pressed={locale === "pt-BR"}
             aria-label={t.header.switchToPortuguese}
           >
             PT
           </button>
+
           <button
             type="button"
-            className={`${styles.localeButton} ${locale === "en-US" ? styles.localeButtonActive : ""}`}
+            className={`${styles.localeButton} ${
+              locale === "en-US" ? styles.localeButtonActive : ""
+            }`}
             onClick={() => setLocale("en-US")}
             aria-pressed={locale === "en-US"}
             aria-label={t.header.switchToEnglish}
