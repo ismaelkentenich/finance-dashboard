@@ -1,0 +1,65 @@
+.filterContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  background-color: var(--color-neutral-50);
+  border: var(--border-width-thin, 1px) solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (min-width: 768px) {
+  .filterContainer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+}
+
+.controlsGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .controlsGroup {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    width: auto;
+  }
+}
+
+.resetButton {
+  height: var(--size-button-height-sm, 36px);
+  padding: 0 var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  border: none;
+  background-color: transparent;
+  color: var(--color-status-error-200);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2xs);
+  align-self: flex-end;
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-easing-default),
+    color var(--motion-duration-fast) var(--motion-easing-default);
+}
+
+@media (min-width: 768px) {
+  .resetButton {
+    align-self: center;
+  }
+}
+
+.resetButton:hover {
+  background-color: var(--color-status-error-100);
+  color: var(--color-status-error-300);
+}

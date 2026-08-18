@@ -1,0 +1,54 @@
+import type { FinancialSummary } from "@/types";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { SummaryCards } from "./SummaryCards";
+
+const meta: Meta<typeof SummaryCards> = {
+  title: "Features/Dashboard/SummaryCards",
+  component: SummaryCards,
+  tags: ["autodocs"],
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "Financial summary metrics displaying Current Balance, Total Income, Total Expenses, and Savings Rate with dynamic locale formatting.",
+      },
+    },
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof SummaryCards>;
+
+const sampleSummary: FinancialSummary = {
+  currentBalance: 7001.8,
+  totalIncome: 10300.0,
+  totalExpenses: 3298.2,
+  savingsRate: 68.0,
+  periodComparison: {
+    balanceVariation: 12.5,
+    incomeVariation: 5.0,
+    expensesVariation: -8.2,
+  },
+};
+
+export const Default: Story = {
+  args: {
+    summary: sampleSummary,
+  },
+};
+
+export const NegativeBalance: Story = {
+  args: {
+    summary: {
+      currentBalance: -450.0,
+      totalIncome: 2000.0,
+      totalExpenses: 2450.0,
+      savingsRate: -22.5,
+      periodComparison: {
+        balanceVariation: -115.0,
+        incomeVariation: -10.0,
+        expensesVariation: 25.0,
+      },
+    },
+  },
+};

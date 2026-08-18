@@ -1,0 +1,180 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xs);
+  position: relative;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.selectWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.triggerButton {
+  height: var(--size-button-height-sm, 36px);
+  width: 100%;
+  padding: 0 var(--spacing-2xl) 0 var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  border: var(--border-width-thin, 1px) solid var(--border-color);
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-easing-default),
+    border-color var(--motion-duration-fast) var(--motion-easing-default),
+    box-shadow var(--motion-duration-fast) var(--motion-easing-default);
+}
+
+.triggerButton:hover:not(:disabled) {
+  background-color: var(--color-neutral-200);
+}
+
+.triggerButton:focus-visible,
+.triggerOpen {
+  border-color: var(--color-primary-green-100);
+  box-shadow: 0 0 0 2px var(--color-primary-green-alpha-25);
+  background-color: var(--color-neutral-50);
+}
+
+.triggerButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--color-neutral-200);
+}
+
+.triggerError {
+  border-color: var(--color-status-error-200);
+}
+
+.triggerError:focus-visible {
+  border-color: var(--color-status-error-200);
+  box-shadow: var(--shadow-focus-primary);
+}
+
+.selectedText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevronIcon {
+  position: absolute;
+  right: var(--spacing-md);
+  pointer-events: none;
+  color: var(--color-neutral-500);
+  transition: transform var(--motion-duration-normal) var(--motion-easing-default);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* Custom Floating Options Menu */
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background-color: var(--color-neutral-50, #ffffff);
+  border: var(--border-width-thin, 1px) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: var(--z-index-dropdown, 100);
+  padding: 4px;
+  list-style: none;
+  margin: 0;
+  animation: fadeIn var(--motion-duration-fast) var(--motion-easing-out);
+}
+
+.optionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-neutral-800);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-duration-instant) var(--motion-easing-default),
+    color var(--motion-duration-instant) var(--motion-easing-default);
+}
+
+.optionItem:hover:not(.optionDisabled) {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+}
+
+.optionSelected {
+  background-color: var(--color-primary-green-50) !important;
+  color: var(--color-primary-green-300) !important;
+  font-weight: 600;
+}
+
+.optionDisabled {
+  color: var(--color-neutral-300);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.checkIcon {
+  color: var(--color-primary-green-200);
+  flex-shrink: 0;
+}
+
+/* Hidden Select for React Hook Form & Accessibility */
+.nativeSelectHidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.errorMessage {
+  font-size: var(--font-size-xs);
+  color: var(--color-status-error-200);
+  font-weight: 500;
+}
+
+.helperText {
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-500);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

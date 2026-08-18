@@ -1,0 +1,96 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+  width: var(--max-width-full, 100%);
+  max-width: var(--max-width-lg, 768px);
+}
+
+.headerRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xs);
+}
+
+.pageTitle {
+  font-size: var(--font-size-xxl);
+  font-weight: 700;
+  color: var(--color-neutral-900);
+}
+
+.pageSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-500);
+}
+
+.settingsCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.optionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--color-neutral-100);
+  border: var(--border-width-thin, 1px) solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  transition: background-color var(--motion-duration-fast) var(--motion-easing-default);
+}
+
+.optionItem:hover {
+  background-color: var(--color-neutral-200);
+}
+
+.optionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xs);
+}
+
+.optionTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-neutral-900);
+}
+
+.optionDescription {
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-500);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  border-top: var(--border-width-thin, 1px) solid var(--border-color);
+  padding-top: var(--spacing-md);
+}
+
+.resetIconAnimated {
+  animation: rotateReset var(--motion-duration-slow, 300ms)
+    var(--motion-easing-out, cubic-bezier(0, 0, 0.2, 1)) 1;
+}
+
+@keyframes rotateReset {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resetIconAnimated {
+    animation: none !important;
+  }
+}

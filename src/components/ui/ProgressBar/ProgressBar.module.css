@@ -1,0 +1,32 @@
+.container {
+  width: 100%;
+  height: var(--size-progress-bar-height, 8px);
+  background-color: var(--color-neutral-100);
+  border-radius: var(--border-radius-full);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: var(--border-radius-full);
+}
+
+.variantPrimary {
+  background-color: var(--color-primary-green-100);
+}
+
+.variantSecondary {
+  background-color: var(--color-secondary-green-100);
+}
+
+.variantSuccess {
+  background-color: var(--color-status-success-200);
+}
+
+.variantDanger {
+  background-color: var(--color-status-error-200);
+}
+
+.variantInfo {
+  background-color: var(--color-status-info-200);
+}

@@ -1,26 +1,314 @@
-@import "tailwindcss";
-
+/* ==========================================
+   DESIGN SYSTEM TOKENS & CSS VARIABLES
+   ========================================== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ==========================================
+     COLORS
+     ========================================== */
+  /* Primary Green */
+  --color-primary-green-50: #dbf9ea;
+  --color-primary-green-100: #008f47;
+  --color-primary-green-200: #006633;
+  --color-primary-green-300: #003d1f;
+
+  /* Primary Green Alpha */
+  --color-primary-green-alpha-05: rgba(0, 143, 71, 0.05);
+  --color-primary-green-alpha-02: rgba(0, 143, 71, 0.02);
+  --color-primary-green-alpha-25: rgba(0, 152, 61, 0.25);
+
+  /* Secondary Green */
+  --color-secondary-green-100: #4bc445;
+  --color-secondary-green-200: #3aaa35;
+  --color-secondary-green-300: #2b7c27;
+
+  /* Blue */
+  --color-blue-50: #eef3fc;
+  --color-blue-200: #2f63c0;
+  --color-blue-400: #174290;
+  --color-blue-500: #123574;
+
+  /* Neutrals */
+  --color-neutral-50: #ffffff;
+  --color-neutral-100: #f2f2f2;
+  --color-neutral-200: #e6e6e6;
+  --color-neutral-300: #b3b3b3;
+  --color-neutral-350: #666666;
+  --color-neutral-500: #585858;
+  --color-neutral-700: #333333;
+  --color-neutral-800: #1a1a1a;
+  --color-neutral-900: #000000;
+
+  /* Status - Information */
+  --color-status-info-100: #d4e7fc;
+  --color-status-info-200: #2a89ef;
+  --color-status-info-300: #055bb8;
+
+  /* Status - Warning */
+  --color-status-warning-100: #ffeab4;
+  --color-status-warning-200: #ebbc46;
+  --color-status-warning-300: #b78302;
+
+  /* Status - Error */
+  --color-status-error-100: #ff8f8a;
+  --color-status-error-200: #de4841;
+  --color-status-error-300: #4b0401;
+  --color-status-error-350: #991b1b;
+  --color-status-error-alpha-25: rgba(222, 72, 65, 0.25);
+
+  /* Status - Success */
+  --color-status-success-100: #75dca8;
+  --color-status-success-200: #008f47;
+  --color-status-success-300: #003f1f;
+
+  /* Toast Notification Tokens */
+  --color-toast-success-bg: #f0fdf4;
+  --color-toast-success-border: #86efac;
+  --color-toast-success-icon: #22c55e;
+
+  --color-toast-info-bg: #eff6ff;
+  --color-toast-info-border: #93c5fd;
+  --color-toast-info-icon: #3b82f6;
+
+  --color-toast-warning-bg: #fffbeb;
+  --color-toast-warning-border: #fde68a;
+  --color-toast-warning-icon: #f59e0b;
+
+  --color-toast-error-bg: #fef2f2;
+  --color-toast-error-border: #fca5a5;
+  --color-toast-error-icon: #ef4444;
+
+  /* Accent Lights & Solids */
+  --color-accent-purple: #5530e8;
+  --color-accent-purple-light: #eae7ff;
+  --color-accent-pink: #e82ebf;
+  --color-accent-pink-light: #fad5f2;
+  --color-accent-red: #e61e32;
+  --color-accent-red-light: #fad2d6;
+  --color-accent-orange: #ff850a;
+  --color-accent-orange-light: #ffe7ce;
+  --color-accent-yellow: #f9ab10;
+  --color-accent-yellow-light: #feeecf;
+  --color-accent-green: #15be78;
+  --color-accent-green-light: #d0f2e4;
+  --color-accent-blue: #2a89ef;
+  --color-accent-blue-light: #d4e7fc;
+
+  /* Overlays & Alphas */
+  --color-overlay-backdrop: rgba(0, 0, 0, 0.45);
+  --color-overlay-light-green-30: rgba(219, 249, 234, 0.3);
+  --color-overlay-black-45: rgba(0, 0, 0, 0.45);
+  --color-white-alpha-30: rgba(255, 255, 255, 0.3);
+  --color-transparent: #00000000;
+  --border-color: var(--color-neutral-200);
+
+  /* ==========================================
+     SPACING & GAPS (Margin, Padding, Gap)
+     ========================================== */
+  --spacing-3xs: 2px;
+  --spacing-2xs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 40px;
+  --spacing-4xl: 48px;
+  --spacing-5xl: 64px;
+  --spacing-6xl: 80px;
+
+  /* ==========================================
+     LAYOUT DIMENSIONS & SHELL SIZES
+     ========================================== */
+  /* Sidebar & Header Sizing */
+  --layout-sidebar-width: 260px;
+  --layout-sidebar-collapsed-width: 72px;
+  --layout-header-height: 64px;
+
+  /* Elements Sizing (Avatars, Icons, Badges) */
+  --size-icon-xs: 16px;
+  --size-icon-sm: 20px;
+  --size-icon-md: 24px;
+  --size-icon-lg: 32px;
+  --size-icon-xl: 40px;
+
+  --size-avatar-sm: 28px;
+  --size-avatar-md: 36px;
+  --size-avatar-lg: 48px;
+
+  --size-progress-bar-height: 8px;
+  --size-button-height-sm: 32px;
+  --size-button-height-md: 40px;
+  --size-button-height-lg: 48px;
+
+  /* ==========================================
+     MAX WIDTHS (Containers, Modals, Cards)
+     ========================================== */
+  --max-width-xs: 320px;
+  --max-width-sm: 480px;
+  --max-width-md: 640px;
+  --max-width-lg: 768px;
+  --max-width-xl: 1024px;
+  --max-width-2xl: 1280px;
+  --max-width-3xl: 1440px;
+  --max-width-full: 100%;
+
+  /* ==========================================
+     TYPOGRAPHY - FONT SIZES
+     ========================================== */
+  --font-size-xxs: 8px;
+  --font-size-xxs2: 9px;
+  --font-size-xs: 10px;
+  --font-size-sm: 12px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-xxl: 20px;
+  --font-size-xxl2: 22px;
+  --font-size-xxxl: 24px;
+  --font-size-display-1: 32px;
+  --font-size-display-2: 40px;
+
+  /* ==========================================
+     TYPOGRAPHY - LINE HEIGHTS
+     ========================================== */
+  --line-height-xxs: 8px;
+  --line-height-xxs2: 9px;
+  --line-height-xs: 10px;
+  --line-height-sm: 12px;
+  --line-height-md: 14px;
+  --line-height-lg: 16px;
+  --line-height-xl: 18px;
+  --line-height-xxl: 20px;
+  --line-height-xxl2: 22px;
+  --line-height-xxxl: 24px;
+  --line-height-display-1: 36px;
+  --line-height-display-2: 48px;
+
+  /* ==========================================
+     BORDER RADII & BORDER WIDTHS
+     ========================================== */
+  --border-radius-xs: 2px;
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-2xl: 24px;
+  --border-radius-full: 9999px;
+
+  --border-width-thin: 1px;
+  --border-width-medium: 2px;
+  --border-width-thick: 4px;
+
+  /* ==========================================
+     ELEVATION SHADOWS & FOCUS RINGS
+     ========================================== */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-focus-primary: 0 0 0 2px var(--color-primary-green-alpha-25);
+  --shadow-focus-error: 0 0 0 2px var(--color-status-error-alpha-25);
+
+  /* ==========================================
+     MOTION & TRANSITIONS (Durations & Easings)
+     ========================================== */
+  /* Durations */
+  --motion-duration-instant: 50ms;
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 200ms;
+  --motion-duration-slow: 300ms;
+  --motion-duration-spin: 800ms;
+  --motion-duration-shimmer: 1500ms;
+
+  /* Easings */
+  --motion-easing-linear: linear;
+  --motion-easing-default: ease;
+  --motion-easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --motion-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --motion-easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ==========================================
+     Z-INDEX LAYERING
+     ========================================== */
+  --z-index-base: 0;
+  --z-index-raised: 10;
+  --z-index-dropdown: 100;
+  --z-index-sticky: 200;
+  --z-index-header: 300;
+  --z-index-sidebar: 400;
+  --z-index-backdrop: 500;
+  --z-index-modal: 600;
+  --z-index-toast: 700;
+  --z-index-tooltip: 800;
+
+  /* ==========================================
+     FONT FAMILIES
+     ========================================== */
+  --font-family-base:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+    sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ==========================================
+   MODERN CSS RESET
+   ========================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-base);
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-800);
+  line-height: var(--line-height-lg);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* ==========================================
+   ACCESSIBILITY UTILITIES & MOTION PREFERENCES
+   ========================================== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -1,0 +1,89 @@
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "desc amount"
+    "cat date";
+  gap: var(--spacing-2xs) var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
+  border-bottom: var(--border-width-thin, 1px) solid var(--border-color);
+  transition: background-color 0.15s ease-in-out;
+  align-items: center;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row:hover {
+  background-color: var(--color-neutral-100);
+}
+
+.td {
+  padding: 0;
+  border: none;
+  font-size: var(--font-size-sm);
+  vertical-align: middle;
+}
+
+.descriptionCell {
+  grid-area: desc;
+  font-weight: 600;
+  color: var(--color-neutral-900);
+  font-size: var(--font-size-sm);
+  line-height: 1.3;
+}
+
+.categoryCell {
+  grid-area: cat;
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.dateCell {
+  grid-area: date;
+  color: var(--color-neutral-500);
+  font-size: var(--font-size-xs);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.amountCell {
+  grid-area: amount;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.incomeAmount {
+  color: var(--color-primary-green-200);
+}
+
+.expenseAmount {
+  color: var(--color-status-error-200);
+}
+
+@media (min-width: 640px) {
+  .row {
+    display: table-row;
+    border-bottom: none;
+    padding: 0;
+  }
+
+  .td {
+    display: table-cell;
+    padding: var(--spacing-md) var(--spacing-md);
+    border-bottom: var(--border-width-thin, 1px) solid var(--border-color);
+  }
+
+  .dateCell {
+    text-align: left;
+    font-size: var(--font-size-sm);
+  }
+
+  .amountCell {
+    font-size: var(--font-size-sm);
+  }
+}

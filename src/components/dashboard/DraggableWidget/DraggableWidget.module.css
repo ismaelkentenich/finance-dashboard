@@ -1,0 +1,56 @@
+.item {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  list-style: none;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid transparent;
+  transition: border-color var(--motion-duration-fast) var(--motion-easing-default);
+}
+
+.dragging {
+  z-index: 50;
+}
+
+.dragHandleBar {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--spacing-2xs) var(--spacing-sm);
+  margin-bottom: -12px;
+  z-index: 10;
+}
+
+.dragHandleButton {
+  background: var(--color-neutral-50);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  padding: 4px 8px;
+  cursor: grab;
+  color: var(--color-neutral-500);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-3xs);
+  font-size: var(--font-size-xs);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-easing-default),
+    border-color var(--motion-duration-fast) var(--motion-easing-default),
+    color var(--motion-duration-fast) var(--motion-easing-default);
+}
+
+.dragHandleButton:hover {
+  color: var(--color-neutral-900);
+  border-color: var(--color-neutral-400);
+  background-color: var(--color-neutral-100);
+}
+
+.dragHandleButton:active,
+.dragHandleButton[data-dragging="true"] {
+  cursor: grabbing;
+  background-color: var(--color-primary-green-50);
+  color: var(--color-primary-green-200);
+  border-color: var(--color-primary-green-100);
+}

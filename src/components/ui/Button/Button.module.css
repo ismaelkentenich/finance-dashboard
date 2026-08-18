@@ -1,0 +1,108 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition:
+    background-color var(--motion-duration-fast) var(--motion-easing-in-out),
+    border-color var(--motion-duration-fast) var(--motion-easing-in-out),
+    color var(--motion-duration-fast) var(--motion-easing-in-out),
+    box-shadow var(--motion-duration-fast) var(--motion-easing-in-out),
+    opacity var(--motion-duration-fast) var(--motion-easing-in-out),
+    transform var(--motion-duration-fast) var(--motion-easing-in-out);
+  outline: none;
+  white-space: nowrap;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button:focus-visible {
+  box-shadow: var(--shadow-focus-primary);
+}
+
+.sizeSm {
+  height: var(--size-button-height-sm, 32px);
+  padding: 0 var(--spacing-sm);
+  font-size: var(--font-size-xs);
+}
+
+.sizeMd {
+  height: var(--size-button-height-md, 40px);
+  padding: 0 var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+.sizeLg {
+  height: var(--size-button-height-lg, 48px);
+  padding: 0 var(--spacing-xl);
+  font-size: var(--font-size-md);
+}
+
+/* Variants */
+.primary {
+  background-color: var(--color-primary-green-100);
+  color: var(--color-neutral-50);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--color-primary-green-200);
+}
+
+.secondary {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+  border-color: var(--border-color);
+}
+
+.secondary:hover:not(:disabled) {
+  background-color: var(--color-neutral-200);
+}
+
+.danger {
+  background-color: var(--color-status-error-200);
+  color: var(--color-neutral-50);
+}
+
+.danger:hover:not(:disabled) {
+  background-color: var(--color-status-error-300);
+}
+
+.ghost {
+  background-color: transparent;
+  color: var(--color-neutral-500);
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: var(--border-width-medium, 2px) solid var(--color-white-alpha-30);
+  border-radius: 50%;
+  border-top-color: currentColor;
+  animation: spin var(--motion-duration-spin) var(--motion-easing-linear) infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

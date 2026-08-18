@@ -1,0 +1,164 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3xs);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-neutral-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  border-radius: var(--border-radius-md);
+  color: var(--color-neutral-900);
+  font-weight: 500;
+  outline: none;
+  transition: all var(--motion-duration-fast) var(--motion-easing-default);
+}
+
+/* Sizing */
+.sizeSm {
+  height: 32px;
+  padding: 0 var(--spacing-sm);
+  font-size: var(--font-size-xs);
+}
+
+.sizeMd {
+  height: 38px;
+  padding: 0 var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+.sizeLg {
+  height: 44px;
+  padding: 0 var(--spacing-lg);
+  font-size: var(--font-size-md);
+}
+
+/* Variants */
+.variantFilled {
+  background-color: var(--color-neutral-100);
+  border: var(--border-width-thin, 1px) solid transparent;
+}
+.variantFilled:hover:not(:disabled) {
+  background-color: var(--color-neutral-200);
+}
+.variantFilled:focus-visible {
+  background-color: var(--color-neutral-50);
+  border-color: var(--color-primary-green-100);
+  box-shadow: var(--shadow-focus-primary);
+}
+
+.variantOutline {
+  background-color: var(--color-neutral-50);
+  border: var(--border-width-thin, 1px) solid var(--border-color);
+}
+.variantOutline:hover:not(:disabled) {
+  border-color: var(--color-neutral-400);
+}
+.variantOutline:focus-visible {
+  border-color: var(--color-primary-green-100);
+  box-shadow: var(--shadow-focus-primary);
+}
+
+.variantGhost {
+  background-color: transparent;
+  border: var(--border-width-thin, 1px) solid transparent;
+}
+.variantGhost:hover:not(:disabled) {
+  background-color: var(--color-neutral-100);
+}
+.variantGhost:focus-visible {
+  background-color: var(--color-neutral-50);
+  border-color: var(--color-primary-green-100);
+  box-shadow: var(--shadow-focus-primary);
+}
+
+/* Icon Padding Adjustments */
+.hasStartIcon.sizeSm {
+  padding-left: 28px;
+}
+.hasStartIcon.sizeMd {
+  padding-left: 36px;
+}
+.hasStartIcon.sizeLg {
+  padding-left: 42px;
+}
+
+.hasEndElement.sizeSm {
+  padding-right: 28px;
+}
+.hasEndElement.sizeMd {
+  padding-right: 36px;
+}
+.hasEndElement.sizeLg {
+  padding-right: 42px;
+}
+
+.startIconWrapper {
+  position: absolute;
+  left: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-neutral-500);
+  pointer-events: none;
+}
+
+.endIconWrapper {
+  position: absolute;
+  right: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clearButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 2px;
+  border-radius: var(--border-radius-full);
+  color: var(--color-neutral-500);
+  cursor: pointer;
+  transition: all var(--motion-duration-fast) var(--motion-easing-default);
+}
+.clearButton:hover {
+  color: var(--color-neutral-900);
+  background-color: var(--color-neutral-200);
+}
+
+.inputError {
+  border-color: var(--color-status-error-200) !important;
+}
+.inputError:focus-visible {
+  box-shadow: var(--shadow-focus-error) !important;
+}
+
+.errorMessage {
+  font-size: var(--font-size-xs);
+  color: var(--color-status-error-200);
+  font-weight: 500;
+}
+.helperText {
+  font-size: var(--font-size-xs);
+  color: var(--color-neutral-500);
+}
