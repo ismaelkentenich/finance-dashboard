@@ -202,4 +202,7 @@ export const pt: TranslationSchema = {
     balance: "Saldo",
     empty: "Sem dados suficientes para gerar o gráfico no período selecionado.",
   },
+  pwa: {
+    offlineMessage: "Você está offline. Alguns dados podem estar desatualizados.",
+  },
 };

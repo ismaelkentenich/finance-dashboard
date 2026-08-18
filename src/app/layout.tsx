@@ -1,4 +1,5 @@
 import { WebVitalsReporter } from "@/components/analytics/WebVitalsReporter";
+import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
 import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 import { DEFAULT_LOCALE, LOCALE_COOKIE_NAME } from "@/constants/locale.constants";
 import { LocaleProvider } from "@/contexts/LocaleContext";
@@ -57,6 +58,7 @@ export default async function RootLayout({
                   <ModalProvider>
                     <WebVitalsReporter />
                     <ServiceWorkerRegistration />
+                    <OfflineIndicator />
                     {children}
                   </ModalProvider>
                 </SettingsProvider>
