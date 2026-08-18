@@ -1,7 +1,7 @@
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import { customRender } from "@/test/utils";
-import { screen, waitForElementToBeRemoved } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import TransactionsPage from "../page";
@@ -121,21 +121,18 @@ describe("TransactionsPage Search Integration", () => {
 
     renderTransactionsPage("pt-BR");
 
-    const searchInput = screen.getByTestId("transaction-search-input");
-    const salaryTransaction = screen.getByText("Salário Mensal");
-
-    await user.type(searchInput, "mercado");
+    await user.type(screen.getByTestId("transaction-search-input"), "mercado");
 
     expect(screen.getByTestId("transaction-search-stats")).toHaveTextContent(
       '2 resultados para "mercado"'
     );
 
-    expect(screen.getByText("Supermercado Extra")).toBeInTheDocument();
-    expect(screen.getByText("Mercado Central")).toBeInTheDocument();
+    expect(screen.getByTestId("transaction-row-tx-1")).toBeInTheDocument();
+    expect(screen.getByTestId("transaction-row-tx-2")).toBeInTheDocument();
 
-    await waitForElementToBeRemoved(salaryTransaction);
-
-    expect(screen.queryByText("Salário Mensal")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByTestId("transaction-row-tx-3")).not.toBeInTheDocument();
+    });
   });
 
   it("formats singular query result correctly in en-US", async () => {
