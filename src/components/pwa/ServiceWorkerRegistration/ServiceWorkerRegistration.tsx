@@ -15,7 +15,9 @@ export function ServiceWorkerRegistration() {
           scope: "/",
         });
 
-        telemetryService.log("info", "Service Worker registered");
+        telemetryService.log("info", "Service Worker registered", {
+          feature: "pwa",
+        });
       } catch (error) {
         telemetryService.logError(
           error instanceof Error ? error : new Error("Service Worker registration failed"),
