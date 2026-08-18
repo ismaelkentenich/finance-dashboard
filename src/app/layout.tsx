@@ -8,6 +8,7 @@ import type { SupportedLocale } from "@/locales/types";
 import { MotionProvider } from "@/providers/MotionProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { isValidLocale } from "@/utils/locale";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import "./globals.css";
@@ -49,6 +50,8 @@ export default async function RootLayout({
             </LocaleProvider>
           </MotionProvider>
         </QueryProvider>
+
+        <Analytics />
       </body>
     </html>
   );
