@@ -117,6 +117,18 @@ describe("HTTP Security Hardening (SEC-002)", () => {
       const expectedString = CSP_DIRECTIVES.join("; ").trim();
       expect(CONTENT_SECURITY_POLICY).toBe(expectedString);
     });
+
+    it("should restrict web workers to same-origin", () => {
+      const directives = parseCspDirectives(CONTENT_SECURITY_POLICY);
+
+      expect(directives.get("worker-src")).toEqual(["'self'"]);
+    });
+
+    it("should restrict web app manifests to same-origin", () => {
+      const directives = parseCspDirectives(CONTENT_SECURITY_POLICY);
+
+      expect(directives.get("manifest-src")).toEqual(["'self'"]);
+    });
   });
 
   describe("Next.js Server Configuration Integration", () => {
