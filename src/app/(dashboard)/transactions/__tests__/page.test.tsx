@@ -1,7 +1,7 @@
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import { customRender } from "@/test/utils";
-import { screen, waitFor } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import TransactionsPage from "../page";
@@ -14,6 +14,15 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@/hooks/useDashboardData");
 vi.mock("@/hooks/useTransactionFilters");
+
+vi.mock("framer-motion", async () => {
+  const actual = await vi.importActual<typeof import("framer-motion")>("framer-motion");
+
+  return {
+    ...actual,
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  };
+});
 
 const mockTransactions = [
   {
@@ -129,10 +138,7 @@ describe("TransactionsPage Search Integration", () => {
 
     expect(screen.getByTestId("transaction-row-tx-1")).toBeInTheDocument();
     expect(screen.getByTestId("transaction-row-tx-2")).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(screen.queryByTestId("transaction-row-tx-3")).not.toBeInTheDocument();
-    });
+    expect(screen.queryByTestId("transaction-row-tx-3")).not.toBeInTheDocument();
   });
 
   it("formats singular query result correctly in en-US", async () => {

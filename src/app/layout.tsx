@@ -1,4 +1,6 @@
 import { WebVitalsReporter } from "@/components/analytics/WebVitalsReporter";
+import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
+import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 import { DEFAULT_LOCALE, LOCALE_COOKIE_NAME } from "@/constants/locale.constants";
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { ModalProvider } from "@/contexts/ModalContext";
@@ -8,17 +10,30 @@ import type { SupportedLocale } from "@/locales/types";
 import { MotionProvider } from "@/providers/MotionProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { isValidLocale } from "@/utils/locale";
-import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Fintech Dashboard — Financial Management",
+  applicationName: "FinFlow",
+  title: "FinFlow — Financial Management",
   description: "Track your personal finances with clarity and precision.",
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
+  appleWebApp: {
+    capable: true,
+    title: "FinFlow",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#008f47",
 };
 
 export default async function RootLayout({
@@ -42,6 +57,8 @@ export default async function RootLayout({
                 <SettingsProvider>
                   <ModalProvider>
                     <WebVitalsReporter />
+                    <ServiceWorkerRegistration />
+                    <OfflineIndicator />
                     {children}
                   </ModalProvider>
                 </SettingsProvider>
@@ -49,6 +66,8 @@ export default async function RootLayout({
             </LocaleProvider>
           </MotionProvider>
         </QueryProvider>
+
+        <Analytics />
       </body>
     </html>
   );

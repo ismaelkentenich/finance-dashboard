@@ -70,13 +70,7 @@ export function Sidebar({
         <div>
           <div className={styles.brandContainer}>
             <div className={styles.brandWrapper}>
-              <Image
-                src="/assets/logo-finflow.svg"
-                alt="FinFlow Logo"
-                width={32}
-                height={32}
-                priority
-              />
+              <Image src="/logo-finflow.svg" alt="FinFlow Logo" width={32} height={32} priority />
 
               <span className={styles.brandName}>{t.sidebar.brandName}</span>
             </div>
