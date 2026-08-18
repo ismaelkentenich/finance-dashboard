@@ -2,6 +2,31 @@
   "name": "finance-dashboard",
   "version": "0.1.0",
   "private": true,
+  "description": "Financial dashboard featuring revenue and expense metrics, interactive charts, and accessibility.",
+  "author": "Ismael Kentenich <ismaelkentenichm@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/ismaelkentenich/finance-dashboard.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ismaelkentenich/finance-dashboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ismaelkentenich/finance-dashboard/issues"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "typescript",
+    "dashboard",
+    "finance",
+    "recharts",
+    "storybook",
+    "accessibility"
+  ],
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
