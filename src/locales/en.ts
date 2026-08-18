@@ -199,4 +199,7 @@ export const en = {
     balance: "Balance",
     empty: "Not enough data to display the chart for this period.",
   },
+  pwa: {
+    offlineMessage: "You are offline. Some data may be out of date.",
+  },
 } as const;
