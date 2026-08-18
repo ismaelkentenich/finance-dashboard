@@ -15,6 +15,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Fintech Dashboard — Financial Management",
   description: "Track your personal finances with clarity and precision.",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default async function RootLayout({

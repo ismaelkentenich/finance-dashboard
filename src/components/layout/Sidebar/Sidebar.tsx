@@ -5,6 +5,7 @@ import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { motion } from "framer-motion";
 import { ArrowLeftRight, LayoutDashboard, Settings, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./Sidebar.module.css";
@@ -69,9 +70,13 @@ export function Sidebar({
         <div>
           <div className={styles.brandContainer}>
             <div className={styles.brandWrapper}>
-              <div className={styles.brandIcon} aria-hidden="true">
-                $
-              </div>
+              <Image
+                src="/assets/logo-finflow.svg"
+                alt="FinFlow Logo"
+                width={32}
+                height={32}
+                priority
+              />
 
               <span className={styles.brandName}>{t.sidebar.brandName}</span>
             </div>
