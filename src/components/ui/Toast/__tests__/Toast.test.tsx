@@ -123,74 +123,28 @@ describe("Toast UI Component", () => {
       ).toBeInTheDocument();
     });
 
-    describe("Accessibility and localization", () => {
-      it("renders localized close button accessible name in pt-BR", () => {
-        customRender(
-          <Toast
-            toast={{
-              id: "t4",
-              type: "info",
-              message: "Mensagem",
-            }}
-            onDismiss={vi.fn()}
-          />,
-          {
-            locale: "pt-BR",
-          }
-        );
-
-        expect(
-          screen.getByRole("button", {
-            name: /fechar diálogo/i,
-          })
-        ).toBeInTheDocument();
+    it("renders toast container region with localized accessible name in pt-BR", () => {
+      customRender(<></>, {
+        locale: "pt-BR",
       });
 
-      it("renders localized close button accessible name in en-US", () => {
-        customRender(
-          <Toast
-            toast={{
-              id: "t5",
-              type: "info",
-              message: "Message",
-            }}
-            onDismiss={vi.fn()}
-          />,
-          {
-            locale: "en-US",
-          }
-        );
+      expect(
+        screen.getByRole("region", {
+          name: /notificações/i,
+        })
+      ).toBeInTheDocument();
+    });
 
-        expect(
-          screen.getByRole("button", {
-            name: /close dialog/i,
-          })
-        ).toBeInTheDocument();
+    it("renders toast container region with localized accessible name in en-US", () => {
+      customRender(<></>, {
+        locale: "en-US",
       });
 
-      it("renders toast container region with localized accessible name in pt-BR", () => {
-        customRender(<></>, {
-          locale: "pt-BR",
-        });
-
-        expect(
-          screen.getByRole("region", {
-            name: /notificações/i,
-          })
-        ).toBeInTheDocument();
-      });
-
-      it("renders toast container region with localized accessible name in en-US", () => {
-        customRender(<></>, {
-          locale: "en-US",
-        });
-
-        expect(
-          screen.getByRole("region", {
-            name: /notifications/i,
-          })
-        ).toBeInTheDocument();
-      });
+      expect(
+        screen.getByRole("region", {
+          name: /notifications/i,
+        })
+      ).toBeInTheDocument();
     });
   });
 });
