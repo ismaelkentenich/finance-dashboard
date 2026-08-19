@@ -25,6 +25,32 @@ describe("formatters utility engine", () => {
       });
     });
 
+    describe("formatCurrency multi-currency", () => {
+      it("formats BRL using pt-BR locale", () => {
+        expect(formatCurrency(1000, "pt-BR", "BRL")).toMatch(/R\$\s*1\.000,00/);
+      });
+
+      it("formats USD using en-US locale", () => {
+        expect(formatCurrency(1000, "en-US", "USD")).toBe("$1,000.00");
+      });
+
+      it("formats USD while keeping pt-BR number formatting", () => {
+        const result = normalizeSpaces(formatCurrency(1000, "pt-BR", "USD"));
+
+        expect(result).toContain("1.000,00");
+      });
+
+      it("formats BRL while keeping en-US number formatting", () => {
+        const result = normalizeSpaces(formatCurrency(1000, "en-US", "BRL"));
+
+        expect(result).toContain("1,000.00");
+      });
+
+      it("formats EUR independently from locale", () => {
+        expect(formatCurrency(1000, "en-US", "EUR")).toContain("€");
+      });
+    });
+
     describe("boundary and extreme numeric amounts", () => {
       it("formats zero amount with standard currency sign and zero decimals", () => {
         const result = formatCurrency(0);
