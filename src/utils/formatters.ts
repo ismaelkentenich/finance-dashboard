@@ -1,16 +1,22 @@
 import type { SupportedLocale } from "@/locales/types";
+import { CurrencyCode } from "@/types";
 
 export function normalizeSpaces(value: string): string {
   return value.replace(/[\u00a0\u202f]/g, " ");
 }
 
-export function formatCurrency(value: number, locale: SupportedLocale = "pt-BR"): string {
+export function formatCurrency(
+  value: number,
+  locale: SupportedLocale = "pt-BR",
+  currency?: CurrencyCode
+): string {
   const sanitizedValue = Object.is(value, -0) || value === 0 ? 0 : value;
-  const currency = locale === "pt-BR" ? "BRL" : "USD";
+
+  const resolvedCurrency = currency ?? (locale === "pt-BR" ? "BRL" : "USD");
 
   return new Intl.NumberFormat(locale, {
     style: "currency",
-    currency,
+    currency: resolvedCurrency,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(sanitizedValue);
