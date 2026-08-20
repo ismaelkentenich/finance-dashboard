@@ -7,6 +7,7 @@ import type { ExchangeRateProvider } from "./exchangeRateProvider";
 export class FrankfurterExchangeRateProvider implements ExchangeRateProvider {
   async getRate({ from, to, date }: GetExchangeRateParams): Promise<ExchangeRate> {
     const resolvedDate = date ?? new Date().toISOString().slice(0, 10);
+
     if (from === to) {
       return {
         from,
@@ -65,7 +66,24 @@ export class FrankfurterExchangeRateProvider implements ExchangeRateProvider {
       throw error;
     }
 
-    const rawData: unknown = await response.json();
+    let rawData: unknown;
+
+    try {
+      rawData = await response.json();
+    } catch (error) {
+      const normalizedError = error instanceof Error ? error : new Error(String(error));
+
+      telemetryService.logError(normalizedError, {
+        operation: "FrankfurterExchangeRateProvider.getRate",
+        endpoint,
+        from,
+        to,
+        date,
+        reason: "invalid_json",
+      });
+
+      throw new Error("Invalid exchange rate provider response.");
+    }
 
     const parseResult = frankfurterRateResponseSchema.safeParse(rawData);
 
