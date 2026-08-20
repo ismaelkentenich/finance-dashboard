@@ -118,7 +118,7 @@ export const pt: TranslationSchema = {
     fields: {
       descriptionLabel: "Descrição",
       descriptionPlaceholder: "Ex: Compras no Supermercado",
-      amountLabel: "Valor (R$)",
+      amountLabel: "Valor",
       amountPlaceholder: "0.00",
       typeLabel: "Tipo de Movimentação",
       categoryLabel: "Categoria",
@@ -134,6 +134,11 @@ export const pt: TranslationSchema = {
     successMessage: "Transação criada com sucesso!",
     errorTitle: "Erro ao salvar",
     errorMessage: "Falha ao salvar a transação. Tente novamente.",
+    exchange: {
+      loading: "Consultando cotação...",
+      error: "Não foi possível obter a cotação no momento.",
+      rateDate: "Cotação de",
+    },
   },
   errors: {
     dashboardTitle: "Ocorreu um erro no Dashboard",

@@ -10,12 +10,6 @@
   gap: var(--spacing-md);
 }
 
-@media (min-width: 480px) {
-  .row {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
 .actions {
   display: flex;
   justify-content: flex-end;
@@ -31,4 +25,10 @@
   padding: var(--spacing-xs) var(--spacing-md);
   border-radius: var(--border-radius-md);
   font-weight: 500;
+}
+
+@media (min-width: 480px) {
+  .row {
+    grid-template-columns: 1fr 1fr;
+  }
 }
