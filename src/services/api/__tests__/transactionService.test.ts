@@ -17,6 +17,8 @@ describe("transactionService", () => {
           category: "salary",
           date: "2026-08-01",
           createdAt: "2026-08-01T00:00:00Z",
+          normalizedAmount: 5000,
+          normalizedCurrency: "BRL",
         },
       ],
       summary: {

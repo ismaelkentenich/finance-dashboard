@@ -1,4 +1,5 @@
 import { createTransactionSchema } from "@/schemas/transaction.schema";
+import { exchangeRateProvider } from "@/services/exchange";
 import {
   calculateCategoryBreakdown,
   calculateFinancialSummary,
@@ -8,8 +9,10 @@ import {
   filterTransactionsByEquivalentPreviousPeriod,
   filterTransactionsByPeriod,
 } from "@/services/financial/financialFilters";
+import { normalizeTransactions } from "@/services/financial/normalizeTransactions";
 import { getTransactionRepository } from "@/services/repository/transactionRepository";
 import type { PeriodFilter, Transaction, TransactionCategory, TransactionType } from "@/types";
+import { isSupportedCurrency } from "@/utils/currency";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -19,32 +22,60 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get("type") as "all" | TransactionType | null;
     const category = searchParams.get("category") as "all" | TransactionCategory | null;
 
-    const filterOptions = { type, category };
+    const currencyParam = searchParams.get("currency");
+
+    const currency = isSupportedCurrency(currencyParam) ? currencyParam : "BRL";
+    const filterOptions = {
+      type,
+      category,
+    };
+
     const repository = getTransactionRepository();
     const allTransactions = await repository.getAll();
-
     const currentPeriodTxs = filterTransactionsByPeriod(allTransactions, period);
     const filtered = applyTransactionFilters(currentPeriodTxs, filterOptions);
-
     const previousPeriodTxs = filterTransactionsByEquivalentPreviousPeriod(allTransactions, period);
     const previousPeriodFiltered = applyTransactionFilters(previousPeriodTxs, filterOptions);
 
-    const summary = calculateFinancialSummary(filtered, previousPeriodFiltered);
-    const categories = calculateCategoryBreakdown(filtered);
+    const normalizedTransactions = await normalizeTransactions({
+      transactions: filtered,
+      targetCurrency: currency,
+      exchangeRateProvider,
+    });
+
+    const normalizedPreviousPeriodTransactions = await normalizeTransactions({
+      transactions: previousPeriodFiltered,
+      targetCurrency: currency,
+      exchangeRateProvider,
+    });
+
+    const summary = calculateFinancialSummary(
+      normalizedTransactions,
+      normalizedPreviousPeriodTransactions
+    );
+
+    const categories = calculateCategoryBreakdown(normalizedTransactions);
 
     return NextResponse.json({
       data: {
-        transactions: filtered,
+        transactions: normalizedTransactions,
         summary,
         categories,
       },
       meta: {
-        totalCount: filtered.length,
+        totalCount: normalizedTransactions.length,
         period,
       },
     });
   } catch {
-    return NextResponse.json({ error: "Failed to load transactions." }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Failed to load transactions.",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }
 

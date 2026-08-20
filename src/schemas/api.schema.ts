@@ -47,8 +47,13 @@ export const categorySummarySchema = z.object({
   transactionCount: z.number(),
 });
 
+export const normalizedTransactionSchema = transactionSchema.extend({
+  normalizedAmount: z.number(),
+  normalizedCurrency: z.enum(SUPPORTED_CURRENCIES),
+});
+
 export const dashboardDataSchema = z.object({
-  transactions: z.array(transactionSchema),
+  transactions: z.array(normalizedTransactionSchema),
   summary: financialSummarySchema,
   categories: z.array(categorySummarySchema),
 });
@@ -67,5 +72,6 @@ export const createTransactionResponseSchema = z.object({
   data: transactionSchema,
 });
 
+export type NormalizedTransactionSchema = z.infer<typeof normalizedTransactionSchema>;
 export type GetDashboardDataResponseSchema = z.infer<typeof getDashboardDataResponseSchema>;
 export type CreateTransactionResponseSchema = z.infer<typeof createTransactionResponseSchema>;

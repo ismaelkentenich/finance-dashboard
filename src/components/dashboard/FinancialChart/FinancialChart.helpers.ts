@@ -4,8 +4,8 @@ import type {
   CategoryChartPoint,
   CategorySummary,
   ChartMetric,
+  NormalizedTransaction,
   TimeSeriesPoint,
-  Transaction,
 } from "@/types";
 import { formatDate } from "@/utils/formatters";
 
@@ -31,27 +31,39 @@ export function getMetricOptions(t: TranslationSchema): SelectOption[] {
 }
 
 export function buildTimeSeriesData(
-  transactions: Transaction[],
+  transactions: NormalizedTransaction[],
   locale: "pt-BR" | "en-US"
 ): TimeSeriesPoint[] {
-  const map = new Map<string, { income: number; expense: number }>();
+  const map = new Map<
+    string,
+    {
+      income: number;
+      expense: number;
+    }
+  >();
 
-  // Sort transactions chronologically
   const sorted = [...transactions].sort((a, b) => a.date.localeCompare(b.date));
 
   sorted.forEach((tx) => {
-    const current = map.get(tx.date) || { income: 0, expense: 0 };
+    const current = map.get(tx.date) ?? {
+      income: 0,
+      expense: 0,
+    };
+
     if (tx.type === "income") {
-      current.income += tx.amount;
+      current.income += tx.normalizedAmount;
     } else {
-      current.expense += tx.amount;
+      current.expense += tx.normalizedAmount;
     }
+
     map.set(tx.date, current);
   });
 
   let runningBalance = 0;
+
   return Array.from(map.entries()).map(([date, values]) => {
     runningBalance += values.income - values.expense;
+
     return {
       date,
       label: formatDate(date, locale),
