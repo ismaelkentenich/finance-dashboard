@@ -65,7 +65,6 @@ function focusFirstInvalidField(
 export function TransactionFormModal({
   isOpen,
   onClose,
-  onSuccess,
   "data-testid": testId = "transaction-form-modal",
 }: TransactionFormModalProps) {
   const { t, locale } = useLocale();
@@ -221,7 +220,6 @@ export function TransactionFormModal({
 
         resetForm();
 
-        onSuccess();
         onClose();
       },
 

@@ -245,14 +245,4 @@ describe("DashboardPage Component Integration", () => {
     await user.click(clearButton);
     expect(mockResetFilters).toHaveBeenCalledTimes(1);
   });
-
-  it("triggers refetch callback when TransactionFormModal fires onSuccess (Line 96)", async () => {
-    const user = userEvent.setup();
-    renderDashboardPage();
-
-    await user.click(screen.getByTestId("open-modal-btn"));
-    await user.click(screen.getByTestId("trigger-success-btn"));
-
-    expect(mockRefetch).toHaveBeenCalledTimes(1);
-  });
 });

@@ -51,7 +51,6 @@ function renderTransactionModal(
   const defaultProps: TransactionFormModalProps = {
     isOpen: true,
     onClose: vi.fn(),
-    onSuccess: vi.fn(),
     ...props,
   };
 
@@ -425,25 +424,6 @@ describe("TransactionFormModal Feature Component", () => {
         });
       });
     });
-
-    it("invokes onSuccess and onClose callbacks after successful submission", async () => {
-      const user = userEvent.setup();
-      const handleClose = vi.fn();
-      const handleSuccess = vi.fn();
-
-      vi.mocked(transactionService.createTransaction).mockResolvedValueOnce(
-        createMockTransaction()
-      );
-
-      renderTransactionModal({ onClose: handleClose, onSuccess: handleSuccess });
-
-      await fillAndSubmitForm(user);
-
-      await waitFor(() => {
-        expect(handleSuccess).toHaveBeenCalledTimes(1);
-        expect(handleClose).toHaveBeenCalledTimes(1);
-      });
-    });
   });
 
   describe("Toast feedback upon submission", () => {
@@ -493,13 +473,12 @@ describe("TransactionFormModal Feature Component", () => {
     it("displays error banner in modal and triggers error toast when service rejects request", async () => {
       const user = userEvent.setup();
       const handleClose = vi.fn();
-      const handleSuccess = vi.fn();
 
       vi.mocked(transactionService.createTransaction).mockRejectedValueOnce(
         new Error("Network Error")
       );
 
-      renderTransactionModal({ onClose: handleClose, onSuccess: handleSuccess });
+      renderTransactionModal({ onClose: handleClose });
 
       await user.type(screen.getByTestId("transaction-description-input"), "Gym Membership");
       await user.type(screen.getByTestId("transaction-amount-input"), "120");
@@ -520,7 +499,6 @@ describe("TransactionFormModal Feature Component", () => {
       });
 
       expect(screen.queryByTestId("toast-success")).not.toBeInTheDocument();
-      expect(handleSuccess).not.toHaveBeenCalled();
       expect(handleClose).not.toHaveBeenCalled();
     });
 

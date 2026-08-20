@@ -192,11 +192,7 @@ function DashboardContent() {
         </>
       )}
 
-      <TransactionFormModal
-        isOpen={isTransactionModalOpen}
-        onClose={closeTransactionModal}
-        onSuccess={() => refetch()}
-      />
+      <TransactionFormModal isOpen={isTransactionModalOpen} onClose={closeTransactionModal} />
     </div>
   );
 }
