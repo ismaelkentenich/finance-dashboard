@@ -100,6 +100,7 @@ export const pt: TranslationSchema = {
       amount: "Valor",
     },
     filtersAndSearchLabel: "Filtros e busca de transações",
+    convertedValue: "Valor convertido",
   },
   recentTransactions: {
     title: "Transações Recentes",

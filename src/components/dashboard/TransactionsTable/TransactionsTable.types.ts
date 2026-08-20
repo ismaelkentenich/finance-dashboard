@@ -1,7 +1,7 @@
-import type { Transaction } from "@/types";
+import type { NormalizedTransaction } from "@/types";
 
 export interface TransactionsTableProps {
-  transactions: Transaction[];
+  transactions: NormalizedTransaction[];
   title?: string;
   id?: string;
   className?: string;
