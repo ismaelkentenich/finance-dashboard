@@ -98,6 +98,7 @@ export const en = {
       amount: "Amount",
     },
     filtersAndSearchLabel: "Transaction filters and search",
+    convertedValue: "Converted value",
   },
   recentTransactions: {
     title: "Recent Transactions",

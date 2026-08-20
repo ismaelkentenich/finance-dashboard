@@ -1,4 +1,4 @@
-import type { Transaction } from "@/types";
+import type { NormalizedTransaction } from "@/types";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { TransactionsTable } from "./TransactionsTable";
 
@@ -19,12 +19,14 @@ const meta: Meta<typeof TransactionsTable> = {
 export default meta;
 type Story = StoryObj<typeof TransactionsTable>;
 
-const sampleTransactions: Transaction[] = [
+const sampleTransactions: NormalizedTransaction[] = [
   {
     id: "tx-001",
     description: "Salário Mensal",
     amount: 8500.0,
+    normalizedAmount: 8500.0,
     currency: "BRL",
+    normalizedCurrency: "BRL",
     type: "income",
     category: "salary",
     date: "2026-08-05",
@@ -34,7 +36,9 @@ const sampleTransactions: Transaction[] = [
     id: "tx-002",
     description: "Aluguel Apartamento",
     amount: 2200.0,
+    normalizedAmount: 2200.0,
     currency: "BRL",
+    normalizedCurrency: "BRL",
     type: "expense",
     category: "housing",
     date: "2026-08-06",
@@ -44,7 +48,9 @@ const sampleTransactions: Transaction[] = [
     id: "tx-003",
     description: "Supermercado Mensal",
     amount: 642.5,
+    normalizedAmount: 642.5,
     currency: "BRL",
+    normalizedCurrency: "BRL",
     type: "expense",
     category: "food",
     date: "2026-08-08",
@@ -54,7 +60,9 @@ const sampleTransactions: Transaction[] = [
     id: "tx-004",
     description: "Projeto Freelance UI",
     amount: 1800.0,
+    normalizedAmount: 1800.0,
     currency: "BRL",
+    normalizedCurrency: "BRL",
     type: "income",
     category: "freelance",
     date: "2026-08-10",
