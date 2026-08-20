@@ -1,10 +1,16 @@
-import type { SUPPORTED_CURRENCIES } from "@/constants/currency.constants";
+import type { SupportedCurrency } from "@/constants/currency.constants";
 
-export type CurrencyCode = (typeof SUPPORTED_CURRENCIES)[number];
+export type CurrencyCode = SupportedCurrency;
 
 export interface ExchangeRate {
   from: CurrencyCode;
   to: CurrencyCode;
   rate: number;
   date: string;
+}
+
+export interface GetExchangeRateParams {
+  from: CurrencyCode;
+  to: CurrencyCode;
+  date?: string;
 }
