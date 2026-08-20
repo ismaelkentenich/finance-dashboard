@@ -10,23 +10,26 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useToast } from "@/contexts/ToastContext";
 import { DASHBOARD_QUERY_KEY } from "@/hooks/useDashboardData";
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 import {
   createTransactionSchema,
   getTranslatedValidationMessage,
   type CreateTransactionFormData,
 } from "@/schemas/transaction.schema";
 import { transactionService } from "@/services/api/transactionService";
+import { convertAmount } from "@/services/financial/currencyConversion";
 import type { TransactionCategory, TransactionType } from "@/types";
 import { getLocalDateISOString } from "@/utils/date";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
-import { useForm, type FieldErrors, type UseFormSetFocus } from "react-hook-form";
+import { useForm, useWatch, type FieldErrors, type UseFormSetFocus } from "react-hook-form";
 import styles from "./TransactionFormModal.module.css";
 import type { TransactionFormModalProps } from "./TransactionFormModal.types";
 
 /**
- * Visual priority order of fields for focus transfer in the event of an error.
+ * Visual priority order of fields for focus transfer
+ * in the event of a validation error.
  */
 const FORM_VALIDATION_PRIORITY_ORDER: readonly (keyof CreateTransactionFormData)[] = [
   "description",
@@ -38,7 +41,8 @@ const FORM_VALIDATION_PRIORITY_ORDER: readonly (keyof CreateTransactionFormData)
 ];
 
 /**
- * Manages keyboard focus on the first invalid field, respecting WCAG and test environments (JSDOM).
+ * Manages keyboard focus on the first invalid field,
+ * respecting the visual order of the form.
  */
 function focusFirstInvalidField(
   formErrors: FieldErrors<CreateTransactionFormData>,
@@ -48,7 +52,9 @@ function focusFirstInvalidField(
     (fieldName) => formErrors[fieldName]
   );
 
-  if (!firstInvalidFieldName) return;
+  if (!firstInvalidFieldName) {
+    return;
+  }
 
   setFormFocus(firstInvalidFieldName, {
     shouldSelect: true,
@@ -63,17 +69,24 @@ export function TransactionFormModal({
 }: TransactionFormModalProps) {
   const { t, locale } = useLocale();
   const { showToast } = useToast();
-  const queryClient = useQueryClient();
   const { currencySettings } = useSettings();
 
+  const queryClient = useQueryClient();
+
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
+
   const firstFieldRef = useRef<HTMLInputElement | null>(null);
 
   /**
-   * Select options are the single source of truth for the available values
-   * and their ordering.
+   * Select options are the single source of truth
+   * for available categories and their localized labels.
    */
-  const categoryOptions = useMemo<{ value: TransactionCategory; label: string }[]>(
+  const categoryOptions = useMemo<
+    {
+      value: TransactionCategory;
+      label: string;
+    }[]
+  >(
     () =>
       ALL_CATEGORIES.map((categoryKey) => ({
         value: categoryKey,
@@ -82,14 +95,31 @@ export function TransactionFormModal({
     [t]
   );
 
-  const typeOptions = useMemo<{ value: TransactionType; label: string }[]>(
+  /**
+   * Localized transaction-type options.
+   */
+  const typeOptions = useMemo<
+    {
+      value: TransactionType;
+      label: string;
+    }[]
+  >(
     () => [
-      { value: "income", label: t.filters.types.income },
-      { value: "expense", label: t.filters.types.expense },
+      {
+        value: "income",
+        label: t.filters.types.income,
+      },
+      {
+        value: "expense",
+        label: t.filters.types.expense,
+      },
     ],
     [t]
   );
 
+  /**
+   * Localized currency options.
+   */
   const currencyOptions = useMemo(
     () =>
       SUPPORTED_CURRENCIES.map((currency) => ({
@@ -104,10 +134,13 @@ export function TransactionFormModal({
     handleSubmit,
     reset: resetForm,
     setFocus,
+    control,
     formState: { errors: formErrors, isSubmitting: isFormSubmitting },
   } = useForm<CreateTransactionFormData>({
     resolver: zodResolver(createTransactionSchema),
+
     shouldFocusError: false,
+
     defaultValues: {
       description: "",
       amount: undefined,
@@ -117,6 +150,30 @@ export function TransactionFormModal({
       date: getLocalDateISOString(),
     },
   });
+
+  const [amount, transactionCurrency, transactionDate] = useWatch({
+    control,
+    name: ["amount", "currency", "date"],
+  });
+
+  const displayCurrency = currencySettings.displayCurrency;
+
+  const shouldFetchExchangeRate =
+    Boolean(transactionDate) && transactionCurrency !== displayCurrency;
+
+  const exchangeRateQuery = useExchangeRate({
+    from: transactionCurrency,
+    to: displayCurrency,
+    date: transactionDate,
+    enabled: shouldFetchExchangeRate,
+  });
+
+  //TODO - ADD PREVIEW OF CONVERTED AMOUNT IN DISPLAY CURRENCY
+  const convertedAmount =
+    typeof amount === "number" && Number.isFinite(amount) && amount > 0 && exchangeRateQuery.data
+      ? convertAmount(amount, exchangeRateQuery.data.rate)
+      : undefined;
+  console.log("convertedAmount", convertedAmount);
 
   const descriptionRegister = register("description");
 
@@ -131,6 +188,7 @@ export function TransactionFormModal({
           category: formData.category,
           date: formData.date,
         }),
+
       onSuccess: async () => {
         await queryClient.invalidateQueries({
           queryKey: [DASHBOARD_QUERY_KEY],
@@ -143,9 +201,11 @@ export function TransactionFormModal({
         });
 
         resetForm();
+
         onSuccess();
         onClose();
       },
+
       onError: () => {
         setApiErrorMessage(t.transactionModal.errorMessage);
 
@@ -159,12 +219,13 @@ export function TransactionFormModal({
     queryClient
   );
 
-  async function handleValidSubmit(formData: CreateTransactionFormData) {
+  function handleValidSubmit(formData: CreateTransactionFormData): void {
     setApiErrorMessage(null);
+
     createTransactionMutation.mutate(formData);
   }
 
-  function handleInvalidSubmit(validationErrors: FieldErrors<CreateTransactionFormData>) {
+  function handleInvalidSubmit(validationErrors: FieldErrors<CreateTransactionFormData>): void {
     focusFirstInvalidField(validationErrors, setFocus);
   }
 
@@ -191,7 +252,7 @@ export function TransactionFormModal({
           </div>
         )}
 
-        {/* Description Field */}
+        {/* Description */}
         <Input
           label={t.transactionModal.fields.descriptionLabel}
           placeholder={t.transactionModal.fields.descriptionPlaceholder}
@@ -201,11 +262,12 @@ export function TransactionFormModal({
           {...descriptionRegister}
           ref={(node) => {
             descriptionRegister.ref(node);
+
             firstFieldRef.current = node;
           }}
         />
 
-        {/* Amount and Date Group */}
+        {/* Amount + currency */}
         <div className={styles.row}>
           <Input
             type="number"
@@ -230,6 +292,7 @@ export function TransactionFormModal({
           />
         </div>
 
+        {/* Date */}
         <div className={styles.row}>
           <Input
             type="date"
@@ -241,7 +304,7 @@ export function TransactionFormModal({
           />
         </div>
 
-        {/* Type and Category Group */}
+        {/* Type + category */}
         <div className={styles.row}>
           <Select
             label={t.transactionModal.fields.typeLabel}
@@ -262,7 +325,7 @@ export function TransactionFormModal({
           />
         </div>
 
-        {/* Actions Bar */}
+        {/* Actions */}
         <div className={styles.actions}>
           <Button
             type="button"

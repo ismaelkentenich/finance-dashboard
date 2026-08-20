@@ -116,7 +116,7 @@ export const en = {
     fields: {
       descriptionLabel: "Description",
       descriptionPlaceholder: "e.g. Supermarket Groceries",
-      amountLabel: "Amount ($)",
+      amountLabel: "Amount",
       amountPlaceholder: "0.00",
       typeLabel: "Transaction Type",
       categoryLabel: "Category",
@@ -132,6 +132,11 @@ export const en = {
     successMessage: "Transaction created successfully!",
     errorTitle: "Error saving transaction",
     errorMessage: "Failed to save transaction. Please try again.",
+    exchange: {
+      loading: "Fetching exchange rate...",
+      error: "Unable to retrieve the exchange rate right now.",
+      rateDate: "Rate date",
+    },
   },
   errors: {
     dashboardTitle: "An error occurred in the Dashboard",

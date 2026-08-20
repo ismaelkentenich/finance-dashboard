@@ -15,3 +15,8 @@ export interface Transaction {
   date: string;
   createdAt: string;
 }
+
+export interface NormalizedTransaction extends Transaction {
+  normalizedAmount: number;
+  normalizedCurrency: CurrencyCode;
+}
