@@ -147,10 +147,17 @@ function parseOverviewSettings(raw: string | null): OverviewWidgetPreferences {
  * explicitly persists another currency, that preference
  * takes precedence over the locale.
  */
+const DEFAULT_CURRENCY_SETTINGS_BY_LOCALE: Record<"pt-BR" | "en-US", CurrencyPreferences> = {
+  "pt-BR": {
+    displayCurrency: DEFAULT_CURRENCY_BY_LOCALE["pt-BR"],
+  },
+  "en-US": {
+    displayCurrency: DEFAULT_CURRENCY_BY_LOCALE["en-US"],
+  },
+};
+
 function getDefaultCurrencySettings(locale: "pt-BR" | "en-US"): CurrencyPreferences {
-  return {
-    displayCurrency: DEFAULT_CURRENCY_BY_LOCALE[locale],
-  };
+  return DEFAULT_CURRENCY_SETTINGS_BY_LOCALE[locale];
 }
 
 /**
@@ -203,11 +210,9 @@ let cachedOverviewSettings: OverviewWidgetPreferences = DEFAULT_OVERVIEW_SETTING
  */
 let cachedCurrencyStorageValue: string | null = null;
 
-const cachedCurrencySettingsByLocale: Record<"pt-BR" | "en-US", CurrencyPreferences> = {
-  "pt-BR": getDefaultCurrencySettings("pt-BR"),
-  "en-US": getDefaultCurrencySettings("en-US"),
-};
+let cachedCurrencyLocale: "pt-BR" | "en-US" | null = null;
 
+let cachedCurrencySettings: CurrencyPreferences = DEFAULT_CURRENCY_SETTINGS_BY_LOCALE["pt-BR"];
 /**
  * Returns the browser snapshot for dashboard overview
  * settings.
@@ -318,17 +323,17 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     try {
       const raw = window.localStorage.getItem(CURRENCY_STORAGE_KEY);
 
-      if (raw !== cachedCurrencyStorageValue) {
+      if (raw !== cachedCurrencyStorageValue || locale !== cachedCurrencyLocale) {
         cachedCurrencyStorageValue = raw;
-
-        cachedCurrencySettingsByLocale[locale] = parseCurrencySettings(raw, locale);
+        cachedCurrencyLocale = locale;
+        cachedCurrencySettings = parseCurrencySettings(raw, locale);
       }
 
-      return cachedCurrencySettingsByLocale[locale];
+      return cachedCurrencySettings;
     } catch (error) {
       reportSettingsStorageError("getCurrencyClientSnapshot", error);
 
-      return cachedCurrencySettingsByLocale[locale];
+      return cachedCurrencySettings;
     }
   }, [locale]);
 
@@ -382,12 +387,13 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         window.localStorage.setItem(CURRENCY_STORAGE_KEY, serialized);
 
         cachedCurrencyStorageValue = serialized;
-
-        cachedCurrencySettingsByLocale[locale] = nextSettings;
+        cachedCurrencyLocale = locale;
+        cachedCurrencySettings = nextSettings;
       } catch (error) {
         reportSettingsStorageError(`persistCurrencySettings:${action}`, error);
 
-        cachedCurrencySettingsByLocale[locale] = nextSettings;
+        cachedCurrencyLocale = locale;
+        cachedCurrencySettings = nextSettings;
       } finally {
         notifySettingsChange();
       }
@@ -476,23 +482,21 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
    * current locale.
    */
   const resetCurrencySettings = useCallback(() => {
-    const defaults = getDefaultCurrencySettings(locale);
-
     try {
       window.localStorage.removeItem(CURRENCY_STORAGE_KEY);
 
       cachedCurrencyStorageValue = null;
-
-      cachedCurrencySettingsByLocale[locale] = defaults;
+      cachedCurrencyLocale = locale;
+      cachedCurrencySettings = getDefaultCurrencySettings(locale);
     } catch (error) {
       reportSettingsStorageError("resetCurrencySettings", error);
 
-      cachedCurrencySettingsByLocale[locale] = defaults;
+      cachedCurrencyLocale = locale;
+      cachedCurrencySettings = getDefaultCurrencySettings(locale);
     } finally {
       notifySettingsChange();
     }
   }, [locale]);
-
   /**
    * Persists a sanitized widget order.
    */
