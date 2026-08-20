@@ -21,7 +21,7 @@ export function Badge({
       className={`${styles.badge} ${variantClassMap[variant]} ${className}`.trim()}
       {...props}
     >
-      {children}
+      <span className={styles.label}>{children}</span>
     </span>
   );
 }
