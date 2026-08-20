@@ -166,8 +166,11 @@ export const pt: TranslationSchema = {
   emptyStates: {
     noTransactionsTitle: "Nenhuma transação encontrada",
     noTransactionsDescription:
-      "Não encontramos registros para o período ou categoria selecionados.",
+      "Nenhum registro encontrado para o período ou categoria selecionada.",
     clearFilters: "Limpar Filtros",
+    noWidgetsTitle: "Todos os widgets do dashboard estão ocultos",
+    noWidgetsDescription: "Escolha quais widgets deseja exibir nas configurações do dashboard.",
+    openSettings: "Abrir configurações",
   },
   validation: {
     descriptionMin: "A descrição deve ter pelo menos 3 caracteres.",

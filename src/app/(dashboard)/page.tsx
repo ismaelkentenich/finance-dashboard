@@ -18,7 +18,8 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import type { WidgetId } from "@/types";
 import { Reorder } from "framer-motion";
-import { FilterX } from "lucide-react";
+import { FilterX, Settings as SettingsIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import styles from "./page.module.css";
 
@@ -44,6 +45,7 @@ function DashboardSkeleton() {
 
 function DashboardContent() {
   const { t } = useLocale();
+  const router = useRouter();
 
   const { overviewSettings, currencySettings, reorderWidgets } = useSettings();
 
@@ -181,58 +183,65 @@ function DashboardContent() {
               hasActiveFilters ? (
                 <Button variant="secondary" size="sm" onClick={resetFilters}>
                   <FilterX size={16} aria-hidden="true" />
-
                   {t.emptyStates.clearFilters}
                 </Button>
               ) : undefined
             }
           />
         </>
+      ) : !hasAnyWidgetVisible ? (
+        <EmptyState
+          title={t.emptyStates.noWidgetsTitle}
+          description={t.emptyStates.noWidgetsDescription}
+          data-testid="dashboard-no-widgets-empty-state"
+          action={
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => router.push("/settings")}
+              data-testid="dashboard-open-settings-button"
+            >
+              <SettingsIcon size={16} aria-hidden="true" />
+              {t.emptyStates.openSettings}
+            </Button>
+          }
+        />
       ) : (
-        <>
-          <Reorder.Group
-            axis="y"
-            values={overviewSettings.widgetOrder}
-            onReorder={reorderWidgets}
-            className={styles.dashboardContainer}
-            style={{
-              listStyle: "none",
-              padding: 0,
-              margin: 0,
-            }}
-          >
-            {overviewSettings.widgetOrder.map((widgetId, index) => {
-              const content = renderWidget(widgetId);
+        <Reorder.Group
+          axis="y"
+          values={overviewSettings.widgetOrder}
+          onReorder={reorderWidgets}
+          className={styles.dashboardContainer}
+          style={{
+            listStyle: "none",
+            padding: 0,
+            margin: 0,
+          }}
+        >
+          {overviewSettings.widgetOrder.map((widgetId, index) => {
+            const content = renderWidget(widgetId);
 
-              if (!content) {
-                return null;
-              }
+            if (!content) {
+              return null;
+            }
 
-              return (
-                <DraggableWidget
-                  key={widgetId}
-                  value={widgetId}
-                  widgetLabel={widgetLabels[widgetId]}
-                  position={index + 1}
-                  totalItems={overviewSettings.widgetOrder.length}
-                  canMoveUp={index > 0}
-                  canMoveDown={index < overviewSettings.widgetOrder.length - 1}
-                  onMoveUp={() => moveWidget(widgetId, -1)}
-                  onMoveDown={() => moveWidget(widgetId, 1)}
-                >
-                  {content}
-                </DraggableWidget>
-              );
-            })}
-          </Reorder.Group>
-
-          {!hasAnyWidgetVisible && (
-            <EmptyState
-              title={t.emptyStates.noTransactionsTitle}
-              description={t.settings.subtitle}
-            />
-          )}
-        </>
+            return (
+              <DraggableWidget
+                key={widgetId}
+                value={widgetId}
+                widgetLabel={widgetLabels[widgetId]}
+                position={index + 1}
+                totalItems={overviewSettings.widgetOrder.length}
+                canMoveUp={index > 0}
+                canMoveDown={index < overviewSettings.widgetOrder.length - 1}
+                onMoveUp={() => moveWidget(widgetId, -1)}
+                onMoveDown={() => moveWidget(widgetId, 1)}
+              >
+                {content}
+              </DraggableWidget>
+            );
+          })}
+        </Reorder.Group>
       )}
 
       <TransactionFormModal isOpen={isTransactionModalOpen} onClose={closeTransactionModal} />
