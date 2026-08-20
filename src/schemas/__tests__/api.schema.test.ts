@@ -1,6 +1,7 @@
 import {
   createTransactionResponseSchema,
   getDashboardDataResponseSchema,
+  transactionSchema,
 } from "@/schemas/api.schema";
 import { describe, expect, it } from "vitest";
 
@@ -12,6 +13,7 @@ describe("API Response Schemas (Runtime Contract Validation)", () => {
           id: "tx-001",
           description: "Salário Mensal",
           amount: 5000,
+          currency: "BRL",
           type: "income",
           category: "salary",
           date: "2026-08-01",
@@ -48,7 +50,9 @@ describe("API Response Schemas (Runtime Contract Validation)", () => {
   describe("getDashboardDataResponseSchema", () => {
     it("successfully parses valid dashboard response", () => {
       const result = getDashboardDataResponseSchema.safeParse(validDashboardPayload);
+
       expect(result.success).toBe(true);
+
       if (result.success) {
         expect(result.data).toEqual(validDashboardPayload);
       }
@@ -56,8 +60,12 @@ describe("API Response Schemas (Runtime Contract Validation)", () => {
 
     it("rejects payload missing the data envelope", () => {
       const result = getDashboardDataResponseSchema.safeParse({
-        meta: { totalCount: 0, period: "current-month" },
+        meta: {
+          totalCount: 0,
+          period: "current-month",
+        },
       });
+
       expect(result.success).toBe(false);
     });
 
@@ -70,7 +78,8 @@ describe("API Response Schemas (Runtime Contract Validation)", () => {
             {
               id: "tx-1",
               description: "Item",
-              amount: "not-a-number", // Type error
+              amount: "not-a-number",
+              currency: "BRL",
               type: "income",
               category: "salary",
               date: "2026-08-01",
@@ -79,7 +88,9 @@ describe("API Response Schemas (Runtime Contract Validation)", () => {
           ],
         },
       };
+
       const result = getDashboardDataResponseSchema.safeParse(invalid);
+
       expect(result.success).toBe(false);
     });
 
@@ -93,11 +104,12 @@ describe("API Response Schemas (Runtime Contract Validation)", () => {
             totalIncome: 5000,
             totalExpenses: 0,
             savingsRate: 100,
-            // periodComparison missing
           },
         },
       };
+
       const result = getDashboardDataResponseSchema.safeParse(invalid);
+
       expect(result.success).toBe(false);
     });
 
@@ -109,7 +121,33 @@ describe("API Response Schemas (Runtime Contract Validation)", () => {
           period: "invalid-period-key",
         },
       };
+
       const result = getDashboardDataResponseSchema.safeParse(invalid);
+
+      expect(result.success).toBe(false);
+    });
+
+    it("rejects dashboard transaction with missing currency", () => {
+      const invalid = {
+        ...validDashboardPayload,
+        data: {
+          ...validDashboardPayload.data,
+          transactions: [
+            {
+              id: "tx-001",
+              description: "Salário Mensal",
+              amount: 5000,
+              type: "income",
+              category: "salary",
+              date: "2026-08-01",
+              createdAt: "2026-08-01T00:00:00Z",
+            },
+          ],
+        },
+      };
+
+      const result = getDashboardDataResponseSchema.safeParse(invalid);
+
       expect(result.success).toBe(false);
     });
   });
@@ -121,6 +159,7 @@ describe("API Response Schemas (Runtime Contract Validation)", () => {
           id: "tx-new-123",
           description: "Supermercado",
           amount: 250,
+          currency: "BRL",
           type: "expense",
           category: "food",
           date: "2026-08-15",
@@ -129,11 +168,61 @@ describe("API Response Schemas (Runtime Contract Validation)", () => {
       };
 
       const result = createTransactionResponseSchema.safeParse(validCreation);
+
       expect(result.success).toBe(true);
     });
 
     it("rejects transaction creation response missing the data field", () => {
       const result = createTransactionResponseSchema.safeParse({});
+
+      expect(result.success).toBe(false);
+    });
+
+    it("rejects transaction response with unsupported currency", () => {
+      const result = transactionSchema.safeParse({
+        id: "tx-1",
+        description: "Salary",
+        amount: 5000,
+        currency: "DOGE",
+        type: "income",
+        category: "salary",
+        date: "2026-08-01",
+        createdAt: "2026-08-01T00:00:00.000Z",
+      });
+
+      expect(result.success).toBe(false);
+    });
+
+    it("accepts transaction response with supported foreign currency", () => {
+      const result = transactionSchema.safeParse({
+        id: "tx-1",
+        description: "Software Subscription",
+        amount: 25,
+        currency: "USD",
+        type: "expense",
+        category: "services",
+        date: "2026-08-01",
+        createdAt: "2026-08-01T00:00:00.000Z",
+      });
+
+      expect(result.success).toBe(true);
+
+      if (result.success) {
+        expect(result.data.currency).toBe("USD");
+      }
+    });
+
+    it("rejects transaction response missing currency", () => {
+      const result = transactionSchema.safeParse({
+        id: "tx-1",
+        description: "Salary",
+        amount: 5000,
+        type: "income",
+        category: "salary",
+        date: "2026-08-01",
+        createdAt: "2026-08-01T00:00:00.000Z",
+      });
+
       expect(result.success).toBe(false);
     });
   });

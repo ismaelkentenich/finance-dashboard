@@ -11,6 +11,7 @@ describe("createTransactionSchema (Domain validation)", () => {
   const validPayload = {
     description: "Salário Mensal",
     amount: 5000,
+    currency: "BRL",
     type: "income",
     category: "salary",
     date: "2026-08-15",
@@ -82,6 +83,53 @@ describe("createTransactionSchema (Domain validation)", () => {
     });
   });
 
+  describe("currency validation", () => {
+    it("rejects payload when currency is missing", () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { currency: _currency, ...payloadWithoutCurrency } = validPayload;
+
+      const result = createTransactionSchema.safeParse(payloadWithoutCurrency);
+
+      expect(result.success).toBe(false);
+
+      if (!result.success) {
+        expect(result.error.issues).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              path: ["currency"],
+              message: TRANSACTION_ISSUE_CODES.CURRENCY_REQUIRED,
+            }),
+          ])
+        );
+      }
+    });
+    it("rejects unsupported currency", () => {
+      const result = createTransactionSchema.safeParse({
+        ...validPayload,
+        currency: "DOGE",
+      });
+
+      expect(result.success).toBe(false);
+
+      if (!result.success) {
+        expect(result.error.issues[0].path).toContain("currency");
+      }
+    });
+
+    it("accepts supported foreign currency", () => {
+      const result = createTransactionSchema.safeParse({
+        ...validPayload,
+        currency: "USD",
+      });
+
+      expect(result.success).toBe(true);
+
+      if (result.success) {
+        expect(result.data.currency).toBe("USD");
+      }
+    });
+  });
+
   describe("type and category validation", () => {
     it("should return TYPE_REQUIRED when type is invalid", () => {
       const result = createTransactionSchema.safeParse({
@@ -133,24 +181,23 @@ describe("createTransactionSchema (Domain validation)", () => {
       }
     });
   });
-});
+  describe("getTranslatedValidationMessage (i18n mapping)", () => {
+    it("should correctly translate issue codes to Portuguese (pt-BR)", () => {
+      expect(getTranslatedValidationMessage(TRANSACTION_ISSUE_CODES.DESCRIPTION_MIN, pt)).toBe(
+        pt.validation.descriptionMin
+      );
+      expect(getTranslatedValidationMessage(TRANSACTION_ISSUE_CODES.AMOUNT_POSITIVE, pt)).toBe(
+        pt.validation.amountPositive
+      );
+    });
 
-describe("getTranslatedValidationMessage (i18n mapping)", () => {
-  it("should correctly translate issue codes to Portuguese (pt-BR)", () => {
-    expect(getTranslatedValidationMessage(TRANSACTION_ISSUE_CODES.DESCRIPTION_MIN, pt)).toBe(
-      pt.validation.descriptionMin
-    );
-    expect(getTranslatedValidationMessage(TRANSACTION_ISSUE_CODES.AMOUNT_POSITIVE, pt)).toBe(
-      pt.validation.amountPositive
-    );
-  });
-
-  it("should correctly translate issue codes to English (en-US)", () => {
-    expect(getTranslatedValidationMessage(TRANSACTION_ISSUE_CODES.DESCRIPTION_MIN, en)).toBe(
-      en.validation.descriptionMin
-    );
-    expect(getTranslatedValidationMessage(TRANSACTION_ISSUE_CODES.AMOUNT_POSITIVE, en)).toBe(
-      en.validation.amountPositive
-    );
+    it("should correctly translate issue codes to English (en-US)", () => {
+      expect(getTranslatedValidationMessage(TRANSACTION_ISSUE_CODES.DESCRIPTION_MIN, en)).toBe(
+        en.validation.descriptionMin
+      );
+      expect(getTranslatedValidationMessage(TRANSACTION_ISSUE_CODES.AMOUNT_POSITIVE, en)).toBe(
+        en.validation.amountPositive
+      );
+    });
   });
 });

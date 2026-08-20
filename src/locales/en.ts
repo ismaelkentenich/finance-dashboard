@@ -121,6 +121,7 @@ export const en = {
       typeLabel: "Transaction Type",
       categoryLabel: "Category",
       dateLabel: "Date",
+      currencyLabel: "Currency",
     },
     buttons: {
       cancel: "Cancel",
@@ -156,6 +157,7 @@ export const en = {
     dateRequired: "Please select a valid date.",
     dateFormat: "Invalid date format (YYYY-MM-DD).",
     dateInvalid: "Invalid date.",
+    currencyRequired: "Select a valid currency.",
   },
   settings: {
     title: "Customize Overview",

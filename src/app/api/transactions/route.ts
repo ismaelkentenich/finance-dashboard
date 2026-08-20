@@ -75,6 +75,7 @@ export async function POST(request: NextRequest) {
       id: `tx-${Date.now()}`,
       description: validData.description,
       amount: validData.amount,
+      currency: validData.currency,
       type: validData.type,
       category: validData.category,
       date: validData.date,

@@ -1,3 +1,4 @@
+import { SUPPORTED_CURRENCIES } from "@/constants/currency.constants";
 import { VALID_PERIODS } from "@/constants/filter.constants";
 import { ALL_CATEGORIES } from "@/constants/transaction.constants";
 import type { PeriodFilter, TransactionCategory, TransactionType } from "@/types";
@@ -17,6 +18,7 @@ export const transactionSchema = z.object({
   id: z.string().min(1),
   description: z.string(),
   amount: z.number(),
+  currency: z.enum(SUPPORTED_CURRENCIES),
   type: z.enum(TRANSACTION_TYPES),
   category: z.enum(TRANSACTION_CATEGORIES),
   date: z.string(),
