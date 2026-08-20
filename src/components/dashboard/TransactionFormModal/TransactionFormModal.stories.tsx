@@ -19,7 +19,6 @@ const meta: Meta<typeof TransactionFormModal> = {
   args: {
     isOpen: true,
     onClose: fn(),
-    onSuccess: fn(),
   },
 };
 
