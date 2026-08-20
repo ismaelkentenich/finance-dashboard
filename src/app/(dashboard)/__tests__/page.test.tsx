@@ -1,4 +1,5 @@
 import { useModal } from "@/contexts/ModalContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import { customRender } from "@/test/utils";
@@ -27,6 +28,17 @@ vi.mock("@/components/dashboard/TransactionFormModal", () => ({
     ) : null,
 }));
 
+vi.mock("@/contexts/SettingsContext", async () => {
+  const actual = await vi.importActual<typeof import("@/contexts/SettingsContext")>(
+    "@/contexts/SettingsContext"
+  );
+
+  return {
+    ...actual,
+    useSettings: vi.fn(),
+  };
+});
+
 function OpenModalTrigger() {
   const { openTransactionModal } = useModal();
   return (
@@ -49,9 +61,28 @@ describe("DashboardPage Component Integration", () => {
   const mockSetFilters = vi.fn();
   const mockResetFilters = vi.fn();
   const mockRefetch = vi.fn();
+  const mockReorderWidgets = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    vi.mocked(useSettings).mockReturnValue({
+      overviewSettings: {
+        showSummaryCards: true,
+        showFinancialChart: true,
+        showCategoryBreakdown: true,
+        showRecentTransactions: true,
+        widgetOrder: ["summaryCards", "financialChart", "categoryBreakdown", "recentTransactions"],
+      },
+      currencySettings: {
+        displayCurrency: "BRL",
+      },
+      updateOverviewSettings: vi.fn(),
+      updateCurrencySettings: vi.fn(),
+      resetOverviewSettings: vi.fn(),
+      resetCurrencySettings: vi.fn(),
+      reorderWidgets: mockReorderWidgets,
+    });
 
     vi.mocked(useTransactionFilters).mockReturnValue({
       filters: { period: "current-month", type: "all", category: "all" },
@@ -244,5 +275,24 @@ describe("DashboardPage Component Integration", () => {
 
     await user.click(clearButton);
     expect(mockResetFilters).toHaveBeenCalledTimes(1);
+  });
+
+  it("reorders widgets through keyboard using the same persisted reorder action", async () => {
+    const user = userEvent.setup();
+
+    renderDashboardPage();
+
+    const handle = screen.getByTestId("widget-drag-handle-financialChart");
+
+    handle.focus();
+
+    await user.keyboard("{ArrowUp}");
+
+    expect(mockReorderWidgets).toHaveBeenCalledWith([
+      "financialChart",
+      "summaryCards",
+      "categoryBreakdown",
+      "recentTransactions",
+    ]);
   });
 });

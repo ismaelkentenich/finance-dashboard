@@ -46,8 +46,11 @@ function DashboardContent() {
   const { t } = useLocale();
 
   const { overviewSettings, currencySettings, reorderWidgets } = useSettings();
+
   const { isTransactionModalOpen, closeTransactionModal } = useModal();
+
   const { filters, setFilters, resetFilters, hasActiveFilters } = useTransactionFilters();
+
   const { data, isLoading, isFetching, error, refetch } = useDashboardData(filters);
 
   const displayCurrency = currencySettings.displayCurrency;
@@ -59,6 +62,36 @@ function DashboardContent() {
     overviewSettings.showFinancialChart ||
     overviewSettings.showCategoryBreakdown ||
     overviewSettings.showRecentTransactions;
+
+  const widgetLabels: Record<WidgetId, string> = {
+    summaryCards: t.settings.cards.summary.title,
+    financialChart: t.settings.cards.chart.title,
+    categoryBreakdown: t.settings.cards.categories.title,
+    recentTransactions: t.settings.cards.transactions.title,
+  };
+
+  const moveWidget = (widgetId: WidgetId, direction: -1 | 1) => {
+    const currentIndex = overviewSettings.widgetOrder.indexOf(widgetId);
+
+    const targetIndex = currentIndex + direction;
+
+    if (
+      currentIndex === -1 ||
+      targetIndex < 0 ||
+      targetIndex >= overviewSettings.widgetOrder.length
+    ) {
+      return;
+    }
+
+    const nextOrder = [...overviewSettings.widgetOrder];
+
+    [nextOrder[currentIndex], nextOrder[targetIndex]] = [
+      nextOrder[targetIndex],
+      nextOrder[currentIndex],
+    ];
+
+    reorderWidgets(nextOrder);
+  };
 
   const renderWidget = (widgetId: WidgetId): ReactNode => {
     if (!data) {
@@ -168,7 +201,7 @@ function DashboardContent() {
               margin: 0,
             }}
           >
-            {overviewSettings.widgetOrder.map((widgetId) => {
+            {overviewSettings.widgetOrder.map((widgetId, index) => {
               const content = renderWidget(widgetId);
 
               if (!content) {
@@ -176,7 +209,17 @@ function DashboardContent() {
               }
 
               return (
-                <DraggableWidget key={widgetId} value={widgetId}>
+                <DraggableWidget
+                  key={widgetId}
+                  value={widgetId}
+                  widgetLabel={widgetLabels[widgetId]}
+                  position={index + 1}
+                  totalItems={overviewSettings.widgetOrder.length}
+                  canMoveUp={index > 0}
+                  canMoveDown={index < overviewSettings.widgetOrder.length - 1}
+                  onMoveUp={() => moveWidget(widgetId, -1)}
+                  onMoveDown={() => moveWidget(widgetId, 1)}
+                >
                   {content}
                 </DraggableWidget>
               );
