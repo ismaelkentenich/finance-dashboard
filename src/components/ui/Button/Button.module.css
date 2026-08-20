@@ -38,19 +38,19 @@
 .sizeSm {
   height: var(--size-button-height-sm, 32px);
   padding: 0 var(--spacing-sm);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
 }
 
 .sizeMd {
   height: var(--size-button-height-md, 40px);
   padding: 0 var(--spacing-md);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
 }
 
 .sizeLg {
   height: var(--size-button-height-lg, 48px);
   padding: 0 var(--spacing-xl);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-lg);
 }
 
 /* Variants */

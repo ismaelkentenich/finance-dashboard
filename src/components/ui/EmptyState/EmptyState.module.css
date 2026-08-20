@@ -31,10 +31,10 @@
 }
 
 .description {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-xl);
   color: var(--color-neutral-500);
   max-width: 400px;
-  line-height: 1.5;
 }
 
 .actionWrapper {

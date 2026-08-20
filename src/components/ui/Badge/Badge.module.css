@@ -1,11 +1,13 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  font-size: var(--font-size-xs);
-  line-height: var(--line-height-sm);
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-2xs) var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-lg);
   font-weight: 600;
+  text-align: center;
   border-radius: var(--border-radius-full);
 }
 
