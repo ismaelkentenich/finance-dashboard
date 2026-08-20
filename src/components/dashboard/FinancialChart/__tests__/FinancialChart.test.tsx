@@ -10,6 +10,7 @@ function renderFinancialChart(props = {}) {
   const defaultProps = {
     transactions: normalizedTransactions,
     categories: mockCategories,
+    currency: "BRL" as const,
     ...props,
   };
 

@@ -11,24 +11,29 @@ import type { SummaryCardsProps } from "./SummaryCards.types";
 
 export function SummaryCards({
   summary,
+  currency,
   "data-testid": testId = "summary-cards-grid",
 }: SummaryCardsProps) {
   const { t, locale } = useLocale();
 
   const formatVariationAriaLabel = (variation: number) => {
     const formatted = formatPercentage(variation);
+
     const template =
       variation >= 0 ? t.summary.increaseVsPreviousMonth : t.summary.decreaseVsPreviousMonth;
+
     return template.replace("{value}", formatted);
   };
+
+  const currencyFormatter = (value: number) => formatCurrency(value, locale, currency);
 
   const cardsData = [
     {
       id: "balance",
       title: t.summary.balance,
       numericValue: summary.currentBalance,
-      formatter: (val: number) => formatCurrency(val, locale),
-      value: formatCurrency(summary.currentBalance, locale),
+      formatter: currencyFormatter,
+      value: currencyFormatter(summary.currentBalance),
       icon: <Wallet size={16} aria-hidden="true" />,
       iconVariant: "balance" as const,
       badge: {
@@ -45,8 +50,8 @@ export function SummaryCards({
       id: "income",
       title: t.summary.income,
       numericValue: summary.totalIncome,
-      formatter: (val: number) => formatCurrency(val, locale),
-      value: formatCurrency(summary.totalIncome, locale),
+      formatter: currencyFormatter,
+      value: currencyFormatter(summary.totalIncome),
       icon: <TrendingUp size={16} aria-hidden="true" />,
       iconVariant: "income" as const,
       badge: {
@@ -63,8 +68,8 @@ export function SummaryCards({
       id: "expenses",
       title: t.summary.expenses,
       numericValue: summary.totalExpenses,
-      formatter: (val: number) => formatCurrency(val, locale),
-      value: formatCurrency(summary.totalExpenses, locale),
+      formatter: currencyFormatter,
+      value: currencyFormatter(summary.totalExpenses),
       icon: <TrendingDown size={16} aria-hidden="true" />,
       iconVariant: "expense" as const,
       badge: {
@@ -81,7 +86,7 @@ export function SummaryCards({
       id: "savings",
       title: t.summary.savingsRate,
       numericValue: summary.savingsRate,
-      formatter: (val: number) => `${val.toFixed(1)}%`,
+      formatter: (value: number) => `${value.toFixed(1)}%`,
       value: `${summary.savingsRate}%`,
       icon: <PiggyBank size={16} aria-hidden="true" />,
       iconVariant: "savings" as const,

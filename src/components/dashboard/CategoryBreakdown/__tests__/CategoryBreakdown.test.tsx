@@ -16,7 +16,7 @@ function renderWithLocale(ui: React.ReactElement) {
 describe("CategoryBreakdown Component", () => {
   describe("header and container rendering", () => {
     it("renders the component title inside a level 2 heading matching locale", () => {
-      renderWithLocale(<CategoryBreakdown categories={[]} />);
+      renderWithLocale(<CategoryBreakdown categories={[]} currency="BRL" />);
 
       const heading = screen.getByRole("heading", {
         level: 2,
@@ -26,7 +26,7 @@ describe("CategoryBreakdown Component", () => {
     });
 
     it("applies the default data-testid on the root card element", () => {
-      renderWithLocale(<CategoryBreakdown categories={[]} />);
+      renderWithLocale(<CategoryBreakdown categories={[]} currency="BRL" />);
 
       expect(screen.getByTestId("category-breakdown")).toBeInTheDocument();
     });
@@ -51,11 +51,30 @@ describe("CategoryBreakdown Component", () => {
     ];
 
     it("renders animated category items inside stagger container", () => {
-      renderWithLocale(<CategoryBreakdown categories={mockCategories} />);
+      renderWithLocale(<CategoryBreakdown categories={mockCategories} currency="BRL" />);
 
       expect(screen.getByTestId("category-list")).toBeInTheDocument();
       expect(screen.getByTestId("category-item-housing")).toBeInTheDocument();
       expect(screen.getByTestId("category-item-food")).toBeInTheDocument();
     });
+  });
+
+  it("uses explicit USD currency with pt-BR locale", () => {
+    renderWithLocale(
+      <CategoryBreakdown
+        categories={[
+          {
+            category: "food",
+            categoryLabel: "Food",
+            totalAmount: 1000,
+            percentage: 100,
+            transactionCount: 1,
+          },
+        ]}
+        currency="USD"
+      />
+    );
+
+    expect(screen.getByTestId("category-amount-food")).toHaveTextContent("US$");
   });
 });

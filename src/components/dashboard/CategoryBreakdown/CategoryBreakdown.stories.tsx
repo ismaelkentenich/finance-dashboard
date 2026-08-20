@@ -6,71 +6,59 @@ const meta: Meta<typeof CategoryBreakdown> = {
   title: "Features/Dashboard/CategoryBreakdown",
   component: CategoryBreakdown,
   tags: ["autodocs"],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          "Visual breakdown showing percentage distribution of expenses across categories with accessible progress bars and dynamic currency formatting.",
-      },
-    },
-  },
 };
 
 export default meta;
+
 type Story = StoryObj<typeof CategoryBreakdown>;
 
 const sampleCategories: CategorySummary[] = [
   {
     category: "housing",
     categoryLabel: "Housing",
-    totalAmount: 2200.0,
-    percentage: 66.7,
+    totalAmount: 2200,
+    percentage: 55,
     transactionCount: 1,
   },
   {
     category: "food",
-    categoryLabel: "Food & Groceries",
-    totalAmount: 642.5,
-    percentage: 19.5,
-    transactionCount: 2,
+    categoryLabel: "Food",
+    totalAmount: 1000,
+    percentage: 25,
+    transactionCount: 4,
   },
   {
     category: "transportation",
     categoryLabel: "Transportation",
-    totalAmount: 230.0,
-    percentage: 7.0,
-    transactionCount: 1,
-  },
-  {
-    category: "utilities",
-    categoryLabel: "Utilities & Bills",
-    totalAmount: 179.9,
-    percentage: 5.5,
-    transactionCount: 1,
-  },
-  {
-    category: "healthcare",
-    categoryLabel: "Healthcare",
-    totalAmount: 145.8,
-    percentage: 4.4,
-    transactionCount: 1,
+    totalAmount: 800,
+    percentage: 20,
+    transactionCount: 3,
   },
 ];
 
 export const Default: Story = {
   args: {
     categories: sampleCategories,
+    currency: "BRL",
+  },
+};
+
+export const USD: Story = {
+  args: {
+    categories: sampleCategories,
+    currency: "USD",
   },
 };
 
 export const SingleCategory: Story = {
   args: {
+    currency: "BRL",
     categories: [
       {
         category: "housing",
         categoryLabel: "Housing",
-        totalAmount: 1500.0,
-        percentage: 100.0,
+        totalAmount: 1500,
+        percentage: 100,
         transactionCount: 1,
       },
     ],
@@ -80,5 +68,6 @@ export const SingleCategory: Story = {
 export const EmptyState: Story = {
   args: {
     categories: [],
+    currency: "BRL",
   },
 };
