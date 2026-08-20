@@ -7,6 +7,7 @@ function createTransaction(overrides: Partial<Transaction> = {}): Transaction {
     id: "tx-test-id",
     description: "Sample Description",
     amount: 100,
+    currency: "BRL",
     type: "expense",
     category: "other",
     date: "2026-08-14",

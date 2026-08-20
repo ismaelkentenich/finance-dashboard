@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { Select } from "@/components/ui/Select";
+import { CURRENCY_LABELS, SUPPORTED_CURRENCIES } from "@/constants/currency.constants";
 import { ALL_CATEGORIES } from "@/constants/transaction.constants";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { useToast } from "@/contexts/ToastContext";
 import { DASHBOARD_QUERY_KEY } from "@/hooks/useDashboardData";
 import {
@@ -29,10 +31,11 @@ import type { TransactionFormModalProps } from "./TransactionFormModal.types";
 const FORM_VALIDATION_PRIORITY_ORDER: readonly (keyof CreateTransactionFormData)[] = [
   "description",
   "amount",
+  "currency",
   "date",
   "type",
   "category",
-] as const;
+];
 
 /**
  * Manages keyboard focus on the first invalid field, respecting WCAG and test environments (JSDOM).
@@ -58,9 +61,10 @@ export function TransactionFormModal({
   onSuccess,
   "data-testid": testId = "transaction-form-modal",
 }: TransactionFormModalProps) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { showToast } = useToast();
   const queryClient = useQueryClient();
+  const { currencySettings } = useSettings();
 
   const [apiErrorMessage, setApiErrorMessage] = useState<string | null>(null);
   const firstFieldRef = useRef<HTMLInputElement | null>(null);
@@ -86,6 +90,15 @@ export function TransactionFormModal({
     [t]
   );
 
+  const currencyOptions = useMemo(
+    () =>
+      SUPPORTED_CURRENCIES.map((currency) => ({
+        value: currency,
+        label: `${currency} — ${CURRENCY_LABELS[currency][locale]}`,
+      })),
+    [locale]
+  );
+
   const {
     register,
     handleSubmit,
@@ -98,6 +111,7 @@ export function TransactionFormModal({
     defaultValues: {
       description: "",
       amount: undefined,
+      currency: currencySettings.displayCurrency,
       type: typeOptions[0].value,
       category: categoryOptions[0].value,
       date: getLocalDateISOString(),
@@ -112,6 +126,7 @@ export function TransactionFormModal({
         transactionService.createTransaction({
           description: formData.description,
           amount: formData.amount,
+          currency: formData.currency,
           type: formData.type,
           category: formData.category,
           date: formData.date,
@@ -200,9 +215,22 @@ export function TransactionFormModal({
             error={getTranslatedValidationMessage(formErrors.amount?.message, t)}
             disabled={isPending}
             data-testid="transaction-amount-input"
-            {...register("amount", { valueAsNumber: true })}
+            {...register("amount", {
+              valueAsNumber: true,
+            })}
           />
 
+          <Select
+            label={t.transactionModal.fields.currencyLabel}
+            options={currencyOptions}
+            error={getTranslatedValidationMessage(formErrors.currency?.message, t)}
+            disabled={isPending}
+            data-testid="transaction-currency-select"
+            {...register("currency")}
+          />
+        </div>
+
+        <div className={styles.row}>
           <Input
             type="date"
             label={t.transactionModal.fields.dateLabel}

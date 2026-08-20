@@ -1,3 +1,4 @@
+import { SUPPORTED_CURRENCIES } from "@/constants/currency.constants";
 import { ALL_CATEGORIES } from "@/constants/transaction.constants";
 import type { TranslationSchema } from "@/locales/types";
 import type { TransactionCategory, TransactionType } from "@/types";
@@ -8,6 +9,7 @@ export const TRANSACTION_ISSUE_CODES = {
   DESCRIPTION_MAX: "validation.descriptionMax",
   AMOUNT_INVALID: "validation.amountInvalid",
   AMOUNT_POSITIVE: "validation.amountPositive",
+  CURRENCY_REQUIRED: "validation.currencyRequired",
   TYPE_REQUIRED: "validation.typeRequired",
   CATEGORY_REQUIRED: "validation.categoryRequired",
   DATE_REQUIRED: "validation.dateRequired",
@@ -34,6 +36,10 @@ export const createTransactionSchema = z
     amount: z
       .number({ message: TRANSACTION_ISSUE_CODES.AMOUNT_INVALID })
       .positive({ message: TRANSACTION_ISSUE_CODES.AMOUNT_POSITIVE }),
+
+    currency: z.enum(SUPPORTED_CURRENCIES, {
+      message: TRANSACTION_ISSUE_CODES.CURRENCY_REQUIRED,
+    }),
 
     type: z.enum(TRANSACTION_TYPES, {
       message: TRANSACTION_ISSUE_CODES.TYPE_REQUIRED,
@@ -91,6 +97,8 @@ export function getTranslatedValidationMessage(
       return t.validation.amountInvalid;
     case TRANSACTION_ISSUE_CODES.AMOUNT_POSITIVE:
       return t.validation.amountPositive;
+    case TRANSACTION_ISSUE_CODES.CURRENCY_REQUIRED:
+      return t.validation.currencyRequired;
     case TRANSACTION_ISSUE_CODES.TYPE_REQUIRED:
       return t.validation.typeRequired;
     case TRANSACTION_ISSUE_CODES.CATEGORY_REQUIRED:

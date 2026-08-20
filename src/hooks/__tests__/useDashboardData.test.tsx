@@ -93,6 +93,7 @@ describe("useDashboardData Hook", () => {
             id: "tx-1",
             description: "Salário",
             amount: 5000,
+            currency: "BRL",
             type: "income",
             category: "salary",
             date: "2026-08-01",

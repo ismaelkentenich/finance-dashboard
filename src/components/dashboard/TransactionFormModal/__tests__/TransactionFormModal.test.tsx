@@ -1,7 +1,7 @@
 import { DASHBOARD_QUERY_KEY } from "@/hooks/useDashboardData";
 import { transactionService } from "@/services/api/transactionService";
 import { createTestQueryClient, customRender } from "@/test/utils";
-import type { Transaction, TransactionCategory, TransactionType } from "@/types";
+import type { CurrencyCode, Transaction, TransactionCategory, TransactionType } from "@/types";
 import { getLocalDateISOString } from "@/utils/date";
 import { QueryClient } from "@tanstack/react-query";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
@@ -29,6 +29,7 @@ function createMockTransaction(overrides: Partial<Transaction> = {}): Transactio
     id: `tx-${Math.random().toString(36).substring(2, 9)}`,
     description: "Consulting Service",
     amount: 1500,
+    currency: "BRL",
     type: "income",
     category: "freelance",
     date: "2026-08-14",
@@ -64,6 +65,7 @@ async function fillAndSubmitForm(
   overrides?: {
     description?: string;
     amount?: string;
+    currency?: CurrencyCode;
     type?: TransactionType;
     category?: TransactionCategory;
     date?: string;
@@ -71,6 +73,7 @@ async function fillAndSubmitForm(
 ) {
   const description = overrides?.description ?? "Monthly Rent";
   const amount = overrides?.amount ?? "2200";
+  const currency = overrides?.currency ?? "BRL";
   const type = overrides?.type ?? "expense";
   const category = overrides?.category ?? "housing";
   const date = overrides?.date ?? "2026-08-05";
@@ -86,6 +89,13 @@ async function fillAndSubmitForm(
 
   const dateInput = screen.getByTestId("transaction-date-input");
   fireEvent.change(dateInput, { target: { value: date } });
+
+  const currencySelect = screen.getByTestId("transaction-currency-select");
+  fireEvent.change(currencySelect, {
+    target: {
+      value: currency,
+    },
+  });
 
   await user.click(screen.getByTestId("transaction-submit-button"));
 }
@@ -316,6 +326,7 @@ describe("TransactionFormModal Feature Component", () => {
       await fillAndSubmitForm(user, {
         description: "Monthly Rent",
         amount: "2200",
+        currency: "BRL",
         type: "expense",
         category: "housing",
         date: "2026-08-05",
@@ -325,8 +336,41 @@ describe("TransactionFormModal Feature Component", () => {
         expect(transactionService.createTransaction).toHaveBeenCalledWith({
           description: "Monthly Rent",
           amount: 2200,
+          currency: "BRL",
           type: "expense",
           category: "housing",
+          date: "2026-08-05",
+        });
+      });
+    });
+
+    it("submits transaction using selected foreign currency", async () => {
+      const user = userEvent.setup();
+
+      vi.mocked(transactionService.createTransaction).mockResolvedValueOnce(
+        createMockTransaction({
+          currency: "USD",
+        })
+      );
+
+      renderTransactionModal();
+
+      await fillAndSubmitForm(user, {
+        description: "Software Subscription",
+        amount: "25",
+        currency: "USD",
+        type: "expense",
+        category: "services",
+        date: "2026-08-05",
+      });
+
+      await waitFor(() => {
+        expect(transactionService.createTransaction).toHaveBeenCalledWith({
+          description: "Software Subscription",
+          amount: 25,
+          currency: "USD",
+          type: "expense",
+          category: "services",
           date: "2026-08-05",
         });
       });
@@ -343,6 +387,7 @@ describe("TransactionFormModal Feature Component", () => {
       await fillAndSubmitForm(user, {
         description: "Salary Payment",
         amount: "9000",
+        currency: "BRL",
         type: "income",
         category: "salary",
         date: "2026-08-01",
@@ -352,6 +397,7 @@ describe("TransactionFormModal Feature Component", () => {
         expect(transactionService.createTransaction).toHaveBeenCalledWith({
           description: "Salary Payment",
           amount: 9000,
+          currency: "BRL",
           type: "income",
           category: "salary",
           date: "2026-08-01",

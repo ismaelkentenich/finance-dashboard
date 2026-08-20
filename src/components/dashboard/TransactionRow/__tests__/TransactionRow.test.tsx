@@ -9,6 +9,7 @@ function createMockTransaction(overrides: Partial<Transaction> = {}): Transactio
     id: "tx-test-1",
     description: "Sample Description",
     amount: 150,
+    currency: "BRL",
     type: "expense",
     category: "food",
     date: "2026-08-14",

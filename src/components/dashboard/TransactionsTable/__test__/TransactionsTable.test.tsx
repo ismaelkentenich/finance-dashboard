@@ -10,6 +10,7 @@ function createTransaction(overrides: Partial<Transaction> = {}): Transaction {
     id: `tx-${Math.random().toString(36).substring(2, 9)}`,
     description: "Sample Description",
     amount: 100,
+    currency: "BRL",
     type: "expense",
     category: "food",
     date: "2026-08-14",

@@ -123,6 +123,7 @@ export const pt: TranslationSchema = {
       typeLabel: "Tipo de Movimentação",
       categoryLabel: "Categoria",
       dateLabel: "Data",
+      currencyLabel: "Moeda",
     },
     buttons: {
       cancel: "Cancelar",
@@ -159,6 +160,7 @@ export const pt: TranslationSchema = {
     dateRequired: "Selecione uma data válida.",
     dateFormat: "Formato de data inválido (AAAA-MM-DD).",
     dateInvalid: "Data inválida.",
+    currencyRequired: "Selecione uma moeda válida.",
   },
   settings: {
     title: "Personalizar Visão Geral",

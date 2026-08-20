@@ -9,6 +9,7 @@ export function createTransactionFixture(overrides: Partial<Transaction> = {}): 
     id: `tx-test-${transactionSequence}`,
     description: "Sample Transaction",
     amount: 100,
+    currency: "BRL",
     type: "expense",
     category: "food",
     date: "2026-08-14",
