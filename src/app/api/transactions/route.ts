@@ -1,4 +1,5 @@
 import { createTransactionSchema } from "@/schemas/transaction.schema";
+import { transactionQuerySchema } from "@/schemas/transactionQuery.schema";
 import { exchangeRateProvider } from "@/services/exchange";
 import {
   calculateCategoryBreakdown,
@@ -11,31 +12,36 @@ import {
 } from "@/services/financial/financialFilters";
 import { normalizeTransactions } from "@/services/financial/normalizeTransactions";
 import { getTransactionRepository } from "@/services/repository/transactionRepository";
-import type { PeriodFilter, Transaction, TransactionCategory, TransactionType } from "@/types";
-import { isSupportedCurrency } from "@/utils/currency";
+import type { Transaction } from "@/types";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
+  const { searchParams } = request.nextUrl;
+
+  const parseResult = transactionQuerySchema.safeParse({
+    period: searchParams.get("period") ?? undefined,
+    type: searchParams.get("type") ?? undefined,
+    category: searchParams.get("category") ?? undefined,
+    currency: searchParams.get("currency") ?? undefined,
+  });
+
+  if (!parseResult.success) {
+    return NextResponse.json(
+      {
+        error: "Invalid transaction query parameters.",
+        issues: parseResult.error.issues.map((issue) => ({
+          field: issue.path.join(".") || "unknown",
+          message: issue.message,
+        })),
+      },
+      {
+        status: 400,
+      }
+    );
+  }
+
   try {
-    const { searchParams } = new URL(request.url);
-    const period = (searchParams.get("period") as PeriodFilter) || "current-month";
-    const type = searchParams.get("type") as "all" | TransactionType | null;
-    const category = searchParams.get("category") as "all" | TransactionCategory | null;
-
-    const currencyParam = searchParams.get("currency");
-
-    if (currencyParam !== null && !isSupportedCurrency(currencyParam)) {
-      return NextResponse.json(
-        {
-          error: "Invalid currency.",
-        },
-        {
-          status: 400,
-        }
-      );
-    }
-
-    const currency = currencyParam ?? "BRL";
+    const { period, type, category, currency } = parseResult.data;
 
     const filterOptions = {
       type,
@@ -43,10 +49,15 @@ export async function GET(request: NextRequest) {
     };
 
     const repository = getTransactionRepository();
+
     const allTransactions = await repository.getAll();
+
     const currentPeriodTxs = filterTransactionsByPeriod(allTransactions, period);
+
     const filtered = applyTransactionFilters(currentPeriodTxs, filterOptions);
+
     const previousPeriodTxs = filterTransactionsByEquivalentPreviousPeriod(allTransactions, period);
+
     const previousPeriodFiltered = applyTransactionFilters(previousPeriodTxs, filterOptions);
 
     const normalizedTransactions = await normalizeTransactions({
@@ -74,6 +85,7 @@ export async function GET(request: NextRequest) {
         summary,
         categories,
       },
+
       meta: {
         totalCount: normalizedTransactions.length,
         period,
@@ -105,7 +117,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json(
         {
-          error: "Payload de transação inválido.",
+          error: "Invalid transaction payload.",
           issues,
         },
         { status: 400 }
@@ -128,8 +140,22 @@ export async function POST(request: NextRequest) {
     const repository = getTransactionRepository();
     const savedTransaction = await repository.add(newTransaction);
 
-    return NextResponse.json({ data: savedTransaction }, { status: 201 });
+    return NextResponse.json(
+      {
+        data: savedTransaction,
+      },
+      {
+        status: 201,
+      }
+    );
   } catch {
-    return NextResponse.json({ error: "Falha ao processar a requisição." }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Failed to process the request.",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }

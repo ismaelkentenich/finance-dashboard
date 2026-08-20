@@ -50,7 +50,7 @@ describe("POST /api/transactions - Server-Side Validation", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json.error).toBe("Payload de transação inválido.");
+    expect(json.error).toBe("Invalid transaction payload.");
     expect(json.issues.length).toBeGreaterThan(0);
   });
 
