@@ -1,7 +1,7 @@
-import type { CategorySummary, Transaction } from "@/types";
+import type { CategorySummary, NormalizedTransaction } from "@/types";
 
 export interface FinancialChartProps {
-  transactions: Transaction[];
+  transactions: NormalizedTransaction[];
   categories: CategorySummary[];
   className?: string;
   "data-testid"?: string;

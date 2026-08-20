@@ -1,10 +1,15 @@
+import { CurrencyCode } from "./currency.types";
 import type { PeriodFilter } from "./filter.types";
 import type { CategorySummary, FinancialSummary } from "./financial.types";
-import type { Transaction, TransactionType } from "./transaction.types";
+import type {
+  NormalizedTransaction,
+  TransactionCategory,
+  TransactionType,
+} from "./transaction.types";
 
 export interface GetDashboardDataResponse {
   data: {
-    transactions: Transaction[];
+    transactions: NormalizedTransaction[];
     summary: FinancialSummary;
     categories: CategorySummary[];
   };
@@ -17,5 +22,6 @@ export interface GetDashboardDataResponse {
 export interface FetchTransactionsParams {
   period?: PeriodFilter;
   type?: "all" | TransactionType;
-  category?: string;
+  category?: TransactionCategory | "all";
+  currency?: CurrencyCode;
 }

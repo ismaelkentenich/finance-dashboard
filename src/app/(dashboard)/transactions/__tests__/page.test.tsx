@@ -1,7 +1,7 @@
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import { customRender } from "@/test/utils";
-import type { Transaction } from "@/types";
+import type { NormalizedTransaction } from "@/types";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -25,7 +25,7 @@ vi.mock("framer-motion", async () => {
   };
 });
 
-const mockTransactions: Transaction[] = [
+const mockTransactions: NormalizedTransaction[] = [
   {
     id: "tx-1",
     description: "Supermercado Extra",
@@ -35,6 +35,8 @@ const mockTransactions: Transaction[] = [
     category: "food" as const,
     date: "2026-08-01",
     createdAt: "2026-08-01T00:00:00Z",
+    normalizedAmount: 350,
+    normalizedCurrency: "BRL",
   },
   {
     id: "tx-2",
@@ -45,6 +47,8 @@ const mockTransactions: Transaction[] = [
     category: "food" as const,
     date: "2026-08-02",
     createdAt: "2026-08-02T00:00:00Z",
+    normalizedAmount: 120,
+    normalizedCurrency: "BRL",
   },
   {
     id: "tx-3",
@@ -55,6 +59,8 @@ const mockTransactions: Transaction[] = [
     category: "salary" as const,
     date: "2026-08-03",
     createdAt: "2026-08-03T00:00:00Z",
+    normalizedAmount: 5000,
+    normalizedCurrency: "BRL",
   },
 ];
 
