@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3xs);
+  gap: var(--spacing-xs);
 }
 
 .fullWidth {
@@ -9,7 +9,7 @@
 }
 
 .label {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-neutral-500);
   text-transform: uppercase;
@@ -36,19 +36,19 @@
 .sizeSm {
   height: 32px;
   padding: 0 var(--spacing-sm);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
 }
 
 .sizeMd {
   height: 38px;
   padding: 0 var(--spacing-md);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
 }
 
 .sizeLg {
   height: 44px;
   padding: 0 var(--spacing-lg);
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-lg);
 }
 
 /* Variants */
@@ -154,11 +154,13 @@
 }
 
 .errorMessage {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
   color: var(--color-status-error-200);
   font-weight: 500;
+  line-height: var(--line-height-xl);
 }
 .helperText {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-xl);
   color: var(--color-neutral-500);
 }

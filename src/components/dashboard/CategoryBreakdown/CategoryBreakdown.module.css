@@ -1,8 +1,10 @@
 .cardTitle {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-xxl2);
   font-weight: 700;
   color: var(--color-neutral-900);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+  padding-top: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
 }
 
 .categoryList {
@@ -14,7 +16,8 @@
 .categoryItem {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2xs);
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
 }
 
 .categoryHeader {
@@ -28,6 +31,7 @@
 
 .categoryLabel {
   font-weight: 600;
+  font-size: var(--font-size-md);
   color: var(--color-neutral-800);
   flex: 1;
   min-width: 120px;
@@ -37,13 +41,7 @@
   font-weight: 700;
   color: var(--color-neutral-900);
   white-space: nowrap;
-  font-size: var(--font-size-xs);
-}
-
-@media (min-width: 640px) {
-  .categoryAmount {
-    font-size: var(--font-size-sm);
-  }
+  font-size: var(--font-size-sm);
 }
 
 .emptyText {

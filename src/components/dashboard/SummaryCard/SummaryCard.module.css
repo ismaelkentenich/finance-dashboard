@@ -22,12 +22,12 @@
 }
 
 .title {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-neutral-500);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  line-height: var(--line-height-sm);
+  line-height: var(--line-height-lg);
 }
 
 .iconWrapper {
@@ -82,8 +82,8 @@
   align-items: center;
   gap: var(--spacing-xs);
   min-height: 24px;
-  font-size: var(--font-size-xs);
-  line-height: var(--line-height-sm);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-lg);
   color: var(--color-neutral-500);
   flex-wrap: wrap;
 }
