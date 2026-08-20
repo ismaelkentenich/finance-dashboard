@@ -1,11 +1,13 @@
 import type { SupportedLocale } from "@/locales/types";
 
+export const SUPPORTED_CURRENCIES = ["BRL", "USD", "EUR", "GBP", "JPY", "CAD", "AUD"] as const;
+
+export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
+
 export const DEFAULT_CURRENCY_BY_LOCALE = {
   "pt-BR": "BRL",
   "en-US": "USD",
-} as const satisfies Record<SupportedLocale, (typeof SUPPORTED_CURRENCIES)[number]>;
-
-export const SUPPORTED_CURRENCIES = ["BRL", "USD", "EUR", "GBP", "JPY", "CAD", "AUD"] as const;
+} as const satisfies Record<SupportedLocale, SupportedCurrency>;
 
 export const CURRENCY_LABELS = {
   BRL: {
@@ -36,4 +38,6 @@ export const CURRENCY_LABELS = {
     "pt-BR": "Dólar australiano",
     "en-US": "Australian Dollar",
   },
-} as const;
+} as const satisfies Record<SupportedCurrency, Record<SupportedLocale, string>>;
+
+export const FRANKFURTER_API_BASE_URL = "https://api.frankfurter.dev/v2";
