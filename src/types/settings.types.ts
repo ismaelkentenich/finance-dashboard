@@ -1,3 +1,5 @@
+import type { CurrencyCode } from "./currency.types";
+
 export type WidgetId =
   "summaryCards" | "financialChart" | "categoryBreakdown" | "recentTransactions";
 
@@ -7,6 +9,10 @@ export interface OverviewWidgetPreferences {
   showRecentTransactions: boolean;
   showFinancialChart: boolean;
   widgetOrder: WidgetId[];
+}
+
+export interface CurrencyPreferences {
+  displayCurrency: CurrencyCode;
 }
 
 export const DEFAULT_WIDGET_ORDER: WidgetId[] = [
