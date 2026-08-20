@@ -164,6 +164,9 @@ export const en = {
     noTransactionsTitle: "No transactions found",
     noTransactionsDescription: "No records found for the selected period or category.",
     clearFilters: "Clear Filters",
+    noWidgetsTitle: "All dashboard widgets are hidden",
+    noWidgetsDescription: "Choose which widgets you want to display in your dashboard settings.",
+    openSettings: "Open settings",
   },
   validation: {
     descriptionMin: "Description must be at least 3 characters long.",
