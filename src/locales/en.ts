@@ -124,6 +124,16 @@ export const en = {
       dateLabel: "Date",
       currencyLabel: "Currency",
     },
+    conversion: {
+      title: "Currency conversion",
+      loading: "Loading exchange rate...",
+      error: "Unable to retrieve the exchange rate for this transaction.",
+      originalAmount: "Original amount",
+      convertedAmount: "Estimated converted amount",
+      rate: "Exchange rate",
+      rateDate: "Rate date",
+      approximateIndicator: "Estimated conversion",
+    },
     buttons: {
       cancel: "Cancel",
       submit: "Save Transaction",

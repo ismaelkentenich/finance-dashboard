@@ -20,6 +20,7 @@ import { transactionService } from "@/services/api/transactionService";
 import { convertAmount } from "@/services/financial/currencyConversion";
 import type { TransactionCategory, TransactionType } from "@/types";
 import { getLocalDateISOString } from "@/utils/date";
+import { formatCurrency, formatDate } from "@/utils/formatters";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
@@ -158,8 +159,10 @@ export function TransactionFormModal({
 
   const displayCurrency = currencySettings.displayCurrency;
 
+  const hasValidAmount = typeof amount === "number" && Number.isFinite(amount) && amount > 0;
+
   const shouldFetchExchangeRate =
-    Boolean(transactionDate) && transactionCurrency !== displayCurrency;
+    hasValidAmount && Boolean(transactionDate) && transactionCurrency !== displayCurrency;
 
   const exchangeRateQuery = useExchangeRate({
     from: transactionCurrency,
@@ -168,12 +171,28 @@ export function TransactionFormModal({
     enabled: shouldFetchExchangeRate,
   });
 
-  //TODO - ADD PREVIEW OF CONVERTED AMOUNT IN DISPLAY CURRENCY
   const convertedAmount =
-    typeof amount === "number" && Number.isFinite(amount) && amount > 0 && exchangeRateQuery.data
+    hasValidAmount && exchangeRateQuery.data
       ? convertAmount(amount, exchangeRateQuery.data.rate)
       : undefined;
-  console.log("convertedAmount", convertedAmount);
+
+  const formattedOriginalAmount = hasValidAmount
+    ? formatCurrency(amount, locale, transactionCurrency)
+    : null;
+
+  const formattedConvertedAmount =
+    convertedAmount !== undefined ? formatCurrency(convertedAmount, locale, displayCurrency) : null;
+
+  const formattedRate = exchangeRateQuery.data
+    ? `1 ${exchangeRateQuery.data.from} = ${exchangeRateQuery.data.rate.toLocaleString(locale, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 6,
+      })} ${exchangeRateQuery.data.to}`
+    : null;
+
+  const formattedRateDate = exchangeRateQuery.data
+    ? formatDate(exchangeRateQuery.data.date, locale)
+    : null;
 
   const descriptionRegister = register("description");
 
@@ -230,6 +249,10 @@ export function TransactionFormModal({
   }
 
   const isPending = isFormSubmitting || createTransactionMutation.isPending;
+
+  const isExchangeRateLoading = shouldFetchExchangeRate && exchangeRateQuery.isFetching;
+
+  const hasExchangeRateError = shouldFetchExchangeRate && exchangeRateQuery.isError;
 
   return (
     <Modal
@@ -324,6 +347,91 @@ export function TransactionFormModal({
             {...register("category")}
           />
         </div>
+
+        {/* Conversion Preview */}
+        {shouldFetchExchangeRate && (
+          <section
+            className={styles.conversionPreview}
+            aria-labelledby="transaction-conversion-title"
+            data-testid="transaction-conversion-preview"
+          >
+            <h3 id="transaction-conversion-title" className={styles.conversionTitle}>
+              {t.transactionModal.conversion.title}
+            </h3>
+
+            <div
+              className={styles.conversionStatus}
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              data-testid="transaction-conversion-status"
+            >
+              {isExchangeRateLoading && (
+                <div
+                  className={styles.conversionLoading}
+                  data-testid="transaction-conversion-loading"
+                >
+                  <span className={styles.conversionSpinner} aria-hidden="true" />
+
+                  <span>{t.transactionModal.conversion.loading}</span>
+                </div>
+              )}
+
+              {hasExchangeRateError && (
+                <p className={styles.conversionError} data-testid="transaction-conversion-error">
+                  {t.transactionModal.conversion.error}
+                </p>
+              )}
+
+              {!isExchangeRateLoading &&
+                !hasExchangeRateError &&
+                exchangeRateQuery.data &&
+                formattedOriginalAmount &&
+                formattedConvertedAmount &&
+                formattedRate &&
+                formattedRateDate && (
+                  <div
+                    className={styles.conversionContent}
+                    data-testid="transaction-conversion-result"
+                  >
+                    <div className={styles.conversionAmounts}>
+                      <span
+                        className={styles.originalAmount}
+                        data-testid="transaction-original-amount"
+                      >
+                        {formattedOriginalAmount}
+                      </span>
+
+                      <span className={styles.conversionArrow} aria-hidden="true">
+                        ≈
+                      </span>
+
+                      <strong
+                        className={styles.convertedAmount}
+                        data-testid="transaction-converted-amount"
+                      >
+                        {formattedConvertedAmount}
+                      </strong>
+                    </div>
+
+                    <div className={styles.conversionMetadata}>
+                      <span data-testid="transaction-exchange-rate">
+                        {t.transactionModal.conversion.rate}: {formattedRate}
+                      </span>
+
+                      <span data-testid="transaction-exchange-rate-date">
+                        {t.transactionModal.conversion.rateDate}: {formattedRateDate}
+                      </span>
+                    </div>
+
+                    <span className="sr-only">
+                      {t.transactionModal.conversion.approximateIndicator}
+                    </span>
+                  </div>
+                )}
+            </div>
+          </section>
+        )}
 
         {/* Actions */}
         <div className={styles.actions}>
