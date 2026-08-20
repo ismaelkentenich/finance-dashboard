@@ -6,12 +6,15 @@ export const pt: TranslationSchema = {
     updating: "Atualizando",
     noData: "Nenhum dado disponível.",
     closeDialog: "Fechar diálogo",
-    dragLabel: "Arrastar para reordenar",
     search: "Buscar",
     clear: "Limpar",
     cancel: "Cancelar",
     confirm: "Confirmar",
     notifications: "Notificações",
+    dragLabel: "Reordenar widget",
+    dragInstructions:
+      "Arraste para reordenar. Use Seta para Cima ou Seta para Baixo para mover este widget.",
+    widgetMoved: "{widget} movido para a posição {position} de {total}.",
   },
   header: {
     title: "Visão Geral Financeira",
