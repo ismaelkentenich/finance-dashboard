@@ -179,6 +179,12 @@ export const en = {
         description: "Display the list of most recent transactions in the period.",
       },
     },
+    currency: {
+      title: "Currency",
+      displayCurrency: "Display currency",
+      description: "Choose the currency used to display financial values throughout the dashboard.",
+      resetDescription: "The default currency is initially determined by the selected language.",
+    },
   },
   charts: {
     title: "Chart Analytics",

@@ -182,6 +182,12 @@ export const pt: TranslationSchema = {
         description: "Exibe a tabela com as últimas movimentações do período.",
       },
     },
+    currency: {
+      title: "Moeda",
+      displayCurrency: "Moeda de exibição",
+      description: "Escolha a moeda usada para exibir os valores financeiros no dashboard.",
+      resetDescription: "A moeda padrão é definida inicialmente com base no idioma selecionado.",
+    },
   },
   charts: {
     title: "Análise Gráfica",
