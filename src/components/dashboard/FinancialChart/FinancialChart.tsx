@@ -29,7 +29,9 @@ import type { FinancialChartProps } from "./FinancialChart.types";
 interface ChartRendererProps {
   preferences: ChartPreferences;
   timeSeriesData: TimeSeriesPoint[];
-  categoryData: (CategoryChartPoint & { fill: string })[];
+  categoryData: (CategoryChartPoint & {
+    fill: string;
+  })[];
   t: TranslationSchema;
   valueFormatter: (value: unknown) => string;
 }
@@ -51,6 +53,7 @@ function renderActiveChart({
         />
       );
     }
+
     return (
       <BarChart
         data={categoryData}
@@ -92,6 +95,7 @@ function renderActiveChart({
         />
       );
     }
+
     return (
       <AreaChart
         data={timeSeriesData}
@@ -114,7 +118,6 @@ function renderActiveChart({
     );
   }
 
-  // balance_trend
   if (preferences.chartType === "bar") {
     return (
       <BarChart
@@ -153,6 +156,7 @@ function renderActiveChart({
 export function FinancialChart({
   transactions,
   categories,
+  currency,
   className = "",
   "data-testid": testId = "financial-chart-container",
 }: FinancialChartProps) {
@@ -171,6 +175,7 @@ export function FinancialChart({
 
   const categoryData = useMemo(() => {
     const rawData = buildCategoryChartData(categories, t);
+
     return rawData.map((item, index) => ({
       ...item,
       fill: CATEGORY_COLORS[index % CATEGORY_COLORS.length],
@@ -178,15 +183,24 @@ export function FinancialChart({
   }, [categories, t]);
 
   const typeOptions = useMemo(() => getTypeOptions(t, preferences.metric), [t, preferences.metric]);
+
   const metricOptions = useMemo(() => getMetricOptions(t), [t]);
 
   const handleMetricChange = (metric: ChartMetric) => {
     const defaultType: ChartType = metric === "category_breakdown" ? "pie" : "bar";
-    setPreferences((prev) => ({ ...prev, metric, chartType: defaultType }));
+
+    setPreferences((previous) => ({
+      ...previous,
+      metric,
+      chartType: defaultType,
+    }));
   };
 
   const handleTypeChange = (chartType: ChartType) => {
-    setPreferences((prev) => ({ ...prev, chartType }));
+    setPreferences((previous) => ({
+      ...previous,
+      chartType,
+    }));
   };
 
   const hasData =
@@ -195,10 +209,14 @@ export function FinancialChart({
       : timeSeriesData.length > 0;
 
   const valueFormatter = (value: unknown): string => {
-    if (typeof value === "number") return formatCurrency(value, locale);
-    if (typeof value === "string" && !isNaN(Number(value))) {
-      return formatCurrency(Number(value), locale);
+    if (typeof value === "number") {
+      return formatCurrency(value, locale, currency);
     }
+
+    if (typeof value === "string" && value.trim() !== "" && !Number.isNaN(Number(value))) {
+      return formatCurrency(Number(value), locale, currency);
+    }
+
     return String(value ?? "");
   };
 
@@ -214,7 +232,7 @@ export function FinancialChart({
             <Select
               options={metricOptions}
               value={preferences.metric}
-              onChange={(e) => handleMetricChange(e.target.value as ChartMetric)}
+              onChange={(event) => handleMetricChange(event.target.value as ChartMetric)}
               aria-label={t.charts.metricLabel}
               data-testid="chart-metric-select"
             />
@@ -224,7 +242,7 @@ export function FinancialChart({
             <Select
               options={typeOptions}
               value={preferences.chartType}
-              onChange={(e) => handleTypeChange(e.target.value as ChartType)}
+              onChange={(event) => handleTypeChange(event.target.value as ChartType)}
               aria-label={t.charts.typeLabel}
               data-testid="chart-type-select"
             />

@@ -44,10 +44,13 @@ function DashboardSkeleton() {
 
 function DashboardContent() {
   const { t } = useLocale();
-  const { overviewSettings, reorderWidgets } = useSettings();
+
+  const { overviewSettings, currencySettings, reorderWidgets } = useSettings();
   const { isTransactionModalOpen, closeTransactionModal } = useModal();
   const { filters, setFilters, resetFilters, hasActiveFilters } = useTransactionFilters();
   const { data, isLoading, isFetching, error, refetch } = useDashboardData(filters);
+
+  const displayCurrency = currencySettings.displayCurrency;
 
   const isUpdating = isFetching && !isLoading;
 
@@ -58,20 +61,28 @@ function DashboardContent() {
     overviewSettings.showRecentTransactions;
 
   const renderWidget = (widgetId: WidgetId): ReactNode => {
-    if (!data) return null;
+    if (!data) {
+      return null;
+    }
 
     switch (widgetId) {
       case "summaryCards":
-        return overviewSettings.showSummaryCards ? <SummaryCards summary={data.summary} /> : null;
+        return overviewSettings.showSummaryCards ? (
+          <SummaryCards summary={data.summary} currency={displayCurrency} />
+        ) : null;
 
       case "financialChart":
         return overviewSettings.showFinancialChart ? (
-          <FinancialChart transactions={data.transactions} categories={data.categories} />
+          <FinancialChart
+            transactions={data.transactions}
+            categories={data.categories}
+            currency={displayCurrency}
+          />
         ) : null;
 
       case "categoryBreakdown":
         return overviewSettings.showCategoryBreakdown ? (
-          <CategoryBreakdown categories={data.categories} />
+          <CategoryBreakdown categories={data.categories} currency={displayCurrency} />
         ) : null;
 
       case "recentTransactions":
@@ -109,6 +120,7 @@ function DashboardContent() {
           data-testid="dashboard-updating-status"
         >
           <span className={styles.updatingSpinner} aria-hidden="true" />
+
           {t.common.updating}
         </div>
       )}
@@ -126,8 +138,9 @@ function DashboardContent() {
       ) : !data || data.transactions.length === 0 ? (
         <>
           {overviewSettings.showSummaryCards && data?.summary && (
-            <SummaryCards summary={data.summary} />
+            <SummaryCards summary={data.summary} currency={displayCurrency} />
           )}
+
           <EmptyState
             title={t.emptyStates.noTransactionsTitle}
             description={t.emptyStates.noTransactionsDescription}
@@ -135,6 +148,7 @@ function DashboardContent() {
               hasActiveFilters ? (
                 <Button variant="secondary" size="sm" onClick={resetFilters}>
                   <FilterX size={16} aria-hidden="true" />
+
                   {t.emptyStates.clearFilters}
                 </Button>
               ) : undefined
@@ -148,11 +162,18 @@ function DashboardContent() {
             values={overviewSettings.widgetOrder}
             onReorder={reorderWidgets}
             className={styles.dashboardContainer}
-            style={{ listStyle: "none", padding: 0, margin: 0 }}
+            style={{
+              listStyle: "none",
+              padding: 0,
+              margin: 0,
+            }}
           >
             {overviewSettings.widgetOrder.map((widgetId) => {
               const content = renderWidget(widgetId);
-              if (!content) return null;
+
+              if (!content) {
+                return null;
+              }
 
               return (
                 <DraggableWidget key={widgetId} value={widgetId}>

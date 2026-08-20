@@ -11,6 +11,7 @@ import type { CategoryBreakdownProps } from "./CategoryBreakdown.types";
 
 export function CategoryBreakdown({
   categories,
+  currency,
   className = "",
   "data-testid": testId = "category-breakdown",
 }: CategoryBreakdownProps) {
@@ -34,27 +35,35 @@ export function CategoryBreakdown({
           initial="initial"
           animate="animate"
         >
-          {categories.map((cat, index) => {
-            const label = t.categories.labels[cat.category] || cat.categoryLabel || cat.category;
-            const formattedAmount = `${formatCurrency(cat.totalAmount, locale)} (${cat.percentage}%)`;
+          {categories.map((category, index) => {
+            const label =
+              t.categories.labels[category.category] || category.categoryLabel || category.category;
+
+            const formattedAmount = `${formatCurrency(
+              category.totalAmount,
+              locale,
+              currency
+            )} (${category.percentage}%)`;
+
             const staggerDelay = index * 0.1;
 
             return (
               <motion.div
-                key={cat.category}
+                key={category.category}
                 className={styles.categoryItem}
-                data-testid={`category-item-${cat.category}`}
+                data-testid={`category-item-${category.category}`}
                 variants={summaryCardItemVariants}
               >
                 <div className={styles.categoryHeader}>
                   <span
-                    data-testid={`category-label-${cat.category}`}
+                    data-testid={`category-label-${category.category}`}
                     className={styles.categoryLabel}
                   >
                     {label}
                   </span>
+
                   <span
-                    data-testid={`category-amount-${cat.category}`}
+                    data-testid={`category-amount-${category.category}`}
                     className={styles.categoryAmount}
                   >
                     {formattedAmount}
@@ -62,10 +71,10 @@ export function CategoryBreakdown({
                 </div>
 
                 <ProgressBar
-                  value={cat.percentage}
-                  label={`${label}: ${cat.percentage}%`}
+                  value={category.percentage}
+                  label={`${label}: ${category.percentage}%`}
                   delay={staggerDelay}
-                  data-testid={`category-progress-${cat.category}`}
+                  data-testid={`category-progress-${category.category}`}
                 />
               </motion.div>
             );

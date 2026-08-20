@@ -23,7 +23,7 @@ describe("SummaryCards Feature Grid Component", () => {
   it("renders all four primary financial summary cards inside motion section", () => {
     const summary = createFinancialSummary();
 
-    customRender(<SummaryCards summary={summary} />);
+    customRender(<SummaryCards summary={summary} currency="BRL" />);
 
     expect(screen.getByTestId("summary-cards-grid")).toBeInTheDocument();
 
@@ -40,7 +40,7 @@ describe("SummaryCards Feature Grid Component", () => {
     it("renders summary region with localized accessible name in pt-BR", () => {
       const summary = createFinancialSummary();
 
-      customRender(<SummaryCards summary={summary} />, {
+      customRender(<SummaryCards summary={summary} currency="BRL" />, {
         locale: "pt-BR",
       });
 
@@ -54,7 +54,7 @@ describe("SummaryCards Feature Grid Component", () => {
     it("renders summary region with localized accessible name in en-US", () => {
       const summary = createFinancialSummary();
 
-      customRender(<SummaryCards summary={summary} />, {
+      customRender(<SummaryCards summary={summary} currency="BRL" />, {
         locale: "en-US",
       });
 
@@ -71,7 +71,7 @@ describe("SummaryCards Feature Grid Component", () => {
       currentBalance: 7001.8,
     });
 
-    customRender(<SummaryCards summary={summary} />, {
+    customRender(<SummaryCards summary={summary} currency="BRL" />, {
       locale: "pt-BR",
     });
 
@@ -89,7 +89,7 @@ describe("SummaryCards Feature Grid Component", () => {
       currentBalance: 7001.8,
     });
 
-    customRender(<SummaryCards summary={summary} />, {
+    customRender(<SummaryCards summary={summary} currency="BRL" />, {
       locale: "en-US",
     });
 
@@ -109,10 +109,34 @@ describe("SummaryCards Feature Grid Component", () => {
       },
     });
 
-    customRender(<SummaryCards summary={summary} />);
+    customRender(<SummaryCards summary={summary} currency="BRL" />);
 
     expect(screen.getByText("+12.5%")).toBeInTheDocument();
     expect(screen.getByText("+5.0%")).toBeInTheDocument();
     expect(screen.getByText("-8.2%")).toBeInTheDocument();
+  });
+
+  it("formats USD independently from pt-BR locale", () => {
+    const summary = createFinancialSummary({
+      currentBalance: 1000,
+    });
+
+    customRender(<SummaryCards summary={summary} currency="USD" />, {
+      locale: "pt-BR",
+    });
+
+    expect(screen.getByTestId("summary-card-balance")).toHaveTextContent("US$");
+  });
+
+  it("formats BRL independently from en-US locale", () => {
+    const summary = createFinancialSummary({
+      currentBalance: 1000,
+    });
+
+    customRender(<SummaryCards summary={summary} currency="BRL" />, {
+      locale: "en-US",
+    });
+
+    expect(screen.getByTestId("summary-card-balance")).toHaveTextContent(/R\$/);
   });
 });

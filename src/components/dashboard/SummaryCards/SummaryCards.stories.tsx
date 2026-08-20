@@ -10,23 +10,24 @@ const meta: Meta<typeof SummaryCards> = {
     docs: {
       description: {
         component:
-          "Financial summary metrics displaying Current Balance, Total Income, Total Expenses, and Savings Rate with dynamic locale formatting.",
+          "Financial summary metrics displaying Current Balance, Total Income, Total Expenses, and Savings Rate with independent locale and currency formatting.",
       },
     },
   },
 };
 
 export default meta;
+
 type Story = StoryObj<typeof SummaryCards>;
 
 const sampleSummary: FinancialSummary = {
   currentBalance: 7001.8,
-  totalIncome: 10300.0,
+  totalIncome: 10300,
   totalExpenses: 3298.2,
-  savingsRate: 68.0,
+  savingsRate: 68,
   periodComparison: {
     balanceVariation: 12.5,
-    incomeVariation: 5.0,
+    incomeVariation: 5,
     expensesVariation: -8.2,
   },
 };
@@ -34,20 +35,36 @@ const sampleSummary: FinancialSummary = {
 export const Default: Story = {
   args: {
     summary: sampleSummary,
+    currency: "BRL",
+  },
+};
+
+export const USD: Story = {
+  args: {
+    summary: sampleSummary,
+    currency: "USD",
+  },
+};
+
+export const EUR: Story = {
+  args: {
+    summary: sampleSummary,
+    currency: "EUR",
   },
 };
 
 export const NegativeBalance: Story = {
   args: {
+    currency: "BRL",
     summary: {
-      currentBalance: -450.0,
-      totalIncome: 2000.0,
-      totalExpenses: 2450.0,
+      currentBalance: -450,
+      totalIncome: 2000,
+      totalExpenses: 2450,
       savingsRate: -22.5,
       periodComparison: {
-        balanceVariation: -115.0,
-        incomeVariation: -10.0,
-        expensesVariation: 25.0,
+        balanceVariation: -115,
+        incomeVariation: -10,
+        expensesVariation: 25,
       },
     },
   },
