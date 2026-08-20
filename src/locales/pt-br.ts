@@ -126,6 +126,16 @@ export const pt: TranslationSchema = {
       dateLabel: "Data",
       currencyLabel: "Moeda",
     },
+    conversion: {
+      title: "Conversão de moeda",
+      loading: "Carregando cotação...",
+      error: "Não foi possível obter a cotação para esta transação.",
+      originalAmount: "Valor original",
+      convertedAmount: "Valor convertido estimado",
+      rate: "Taxa de câmbio",
+      rateDate: "Data da cotação",
+      approximateIndicator: "Conversão estimada",
+    },
     buttons: {
       cancel: "Cancelar",
       submit: "Salvar Transação",

@@ -24,7 +24,19 @@ export async function GET(request: NextRequest) {
 
     const currencyParam = searchParams.get("currency");
 
-    const currency = isSupportedCurrency(currencyParam) ? currencyParam : "BRL";
+    if (currencyParam !== null && !isSupportedCurrency(currencyParam)) {
+      return NextResponse.json(
+        {
+          error: "Invalid currency.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const currency = currencyParam ?? "BRL";
+
     const filterOptions = {
       type,
       category,

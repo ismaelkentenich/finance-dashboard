@@ -1,4 +1,5 @@
 import { DASHBOARD_QUERY_KEY } from "@/hooks/useDashboardData";
+import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { transactionService } from "@/services/api/transactionService";
 import { createTestQueryClient, customRender } from "@/test/utils";
 import type { CurrencyCode, Transaction, TransactionCategory, TransactionType } from "@/types";
@@ -23,6 +24,10 @@ vi.mock("framer-motion", async () => {
     AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   };
 });
+
+vi.mock("@/hooks/useExchangeRate", () => ({
+  useExchangeRate: vi.fn(),
+}));
 
 function createMockTransaction(overrides: Partial<Transaction> = {}): Transaction {
   return {
@@ -100,9 +105,25 @@ async function fillAndSubmitForm(
   await user.click(screen.getByTestId("transaction-submit-button"));
 }
 
+function mockExchangeRateQuery(overrides: Partial<ReturnType<typeof useExchangeRate>> = {}) {
+  vi.mocked(useExchangeRate).mockReturnValue({
+    data: undefined,
+    error: null,
+    isError: false,
+    isFetching: false,
+    isLoading: false,
+    isPending: false,
+    isSuccess: false,
+    status: "pending",
+    fetchStatus: "idle",
+    ...overrides,
+  } as ReturnType<typeof useExchangeRate>);
+}
+
 describe("TransactionFormModal Feature Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockExchangeRateQuery();
   });
 
   describe("modal rendering and form controls", () => {
@@ -586,6 +607,149 @@ describe("TransactionFormModal Feature Component", () => {
         expect(amountInput).toHaveAttribute("aria-invalid", "true");
         expect(descriptionInput).toHaveAttribute("aria-invalid", "false");
       });
+    });
+  });
+
+  describe("Currency conversion preview", () => {
+    it("does not request exchange rate when transaction and display currencies are equal", async () => {
+      const user = userEvent.setup();
+
+      renderTransactionModal({}, "pt-BR");
+
+      await user.type(screen.getByTestId("transaction-amount-input"), "100");
+
+      expect(useExchangeRate).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          from: "BRL",
+          to: "BRL",
+          enabled: false,
+        })
+      );
+
+      expect(screen.queryByTestId("transaction-conversion-preview")).not.toBeInTheDocument();
+    });
+
+    it("renders accessible loading state while exchange rate is being fetched", async () => {
+      mockExchangeRateQuery({
+        isFetching: true,
+        fetchStatus: "fetching",
+      });
+
+      const user = userEvent.setup();
+
+      renderTransactionModal({}, "pt-BR");
+
+      await user.type(screen.getByTestId("transaction-amount-input"), "100");
+
+      fireEvent.change(screen.getByTestId("transaction-currency-select"), {
+        target: {
+          value: "USD",
+        },
+      });
+
+      const status = screen.getByTestId("transaction-conversion-status");
+
+      expect(status).toHaveAttribute("role", "status");
+      expect(status).toHaveAttribute("aria-live", "polite");
+      expect(status).toHaveTextContent("Carregando cotação");
+
+      expect(screen.getByTestId("transaction-conversion-loading")).toBeInTheDocument();
+    });
+
+    it("renders original amount, converted amount, rate and rate date", async () => {
+      mockExchangeRateQuery({
+        data: {
+          from: "USD",
+          to: "BRL",
+          rate: 5.42,
+          date: "2026-08-20",
+        },
+        isSuccess: true,
+        status: "success",
+      });
+
+      const user = userEvent.setup();
+
+      renderTransactionModal({}, "pt-BR");
+
+      await user.type(screen.getByTestId("transaction-amount-input"), "100");
+
+      fireEvent.change(screen.getByTestId("transaction-currency-select"), {
+        target: {
+          value: "USD",
+        },
+      });
+
+      expect(screen.getByTestId("transaction-original-amount")).toHaveTextContent(/US\$\s*100,00/);
+
+      expect(screen.getByTestId("transaction-converted-amount")).toHaveTextContent(/R\$\s*542,00/);
+
+      expect(screen.getByTestId("transaction-exchange-rate")).toHaveTextContent(/1 USD = 5,42 BRL/);
+
+      expect(screen.getByTestId("transaction-exchange-rate-date")).toHaveTextContent(
+        /20.*ago.*2026/i
+      );
+    });
+
+    it("renders localized non-blocking exchange rate error", async () => {
+      mockExchangeRateQuery({
+        error: new Error("Provider unavailable"),
+        isError: true,
+        status: "error",
+      });
+
+      const user = userEvent.setup();
+
+      renderTransactionModal({}, "pt-BR");
+
+      await user.type(screen.getByTestId("transaction-amount-input"), "100");
+
+      fireEvent.change(screen.getByTestId("transaction-currency-select"), {
+        target: {
+          value: "USD",
+        },
+      });
+
+      expect(screen.getByTestId("transaction-conversion-error")).toHaveTextContent(
+        "Não foi possível obter a cotação para esta transação."
+      );
+
+      expect(screen.queryByTestId("transaction-converted-amount")).not.toBeInTheDocument();
+
+      expect(screen.getByTestId("transaction-submit-button")).not.toBeDisabled();
+    });
+
+    it("localizes conversion preview metadata in en-US", async () => {
+      mockExchangeRateQuery({
+        data: {
+          from: "BRL",
+          to: "USD",
+          rate: 0.2,
+          date: "2026-08-20",
+        },
+        isSuccess: true,
+        status: "success",
+      });
+
+      const user = userEvent.setup();
+
+      renderTransactionModal({}, "en-US");
+
+      await user.type(screen.getByTestId("transaction-amount-input"), "500");
+
+      fireEvent.change(screen.getByTestId("transaction-currency-select"), {
+        target: {
+          value: "BRL",
+        },
+      });
+
+      expect(screen.getByTestId("transaction-conversion-preview")).toHaveTextContent(
+        "Currency conversion"
+      );
+
+      expect(screen.getByTestId("transaction-exchange-rate")).toHaveTextContent("Exchange rate");
+
+      expect(screen.getByTestId("transaction-exchange-rate-date")).toHaveTextContent("Rate date");
     });
   });
 });
