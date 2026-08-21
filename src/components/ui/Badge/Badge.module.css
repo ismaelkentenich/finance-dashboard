@@ -34,10 +34,9 @@
   color: var(--color-status-info-300);
 }
 
-@media (max-width: 639px) {
+@media (max-width: 768px) {
   .badge {
-    /* max-width: var(--max-width-badge); */
-    max-width: 30vw;
+    max-width: var(--max-width-badge);
   }
 
   .label {
