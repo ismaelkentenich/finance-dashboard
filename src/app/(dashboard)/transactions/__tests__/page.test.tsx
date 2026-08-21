@@ -236,4 +236,26 @@ describe("TransactionsPage Search Integration", () => {
 
     expect(screen.queryByTestId("transactions-loading")).not.toBeInTheDocument();
   });
+
+  it("does not activate filtered state when search query contains only whitespace", async () => {
+    const user = userEvent.setup();
+
+    renderTransactionsPage();
+
+    const searchInput = screen.getByTestId("transaction-search-input");
+
+    await user.type(searchInput, "   ");
+
+    expect(searchInput).toHaveValue("   ");
+
+    expect(screen.getByTestId("transaction-search-stats")).toHaveTextContent(
+      "3 transações encontradas"
+    );
+
+    expect(screen.getByTestId("transaction-row-tx-1")).toBeInTheDocument();
+    expect(screen.getByTestId("transaction-row-tx-2")).toBeInTheDocument();
+    expect(screen.getByTestId("transaction-row-tx-3")).toBeInTheDocument();
+
+    expect(screen.queryByTestId("reset-filters-button")).not.toBeInTheDocument();
+  });
 });
