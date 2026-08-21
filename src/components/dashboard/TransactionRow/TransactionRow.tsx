@@ -18,8 +18,14 @@ export function TransactionRow({
   const isIncome = transaction.type === "income";
 
   const categoryLabel = t.categories.labels[transaction.category] || transaction.category;
-  const formattedAmount = `${isIncome ? "+" : "-"} ${formatCurrency(transaction.amount, locale)}`;
+
   const accessibleTypeLabel = isIncome ? t.filters.types.income : t.filters.types.expense;
+
+  const normalizedAmount = `${isIncome ? "+" : "-"} ${formatCurrency(
+    transaction.normalizedAmount,
+    locale,
+    transaction.normalizedCurrency
+  )}`;
 
   return (
     <motion.tr
@@ -61,7 +67,7 @@ export function TransactionRow({
         }`}
       >
         <span className="sr-only">{accessibleTypeLabel}: </span>
-        {formattedAmount}
+        {normalizedAmount}
       </td>
     </motion.tr>
   );

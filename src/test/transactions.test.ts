@@ -17,6 +17,7 @@ describe("POST /api/transactions - Server-Side Validation", () => {
     const validPayload = {
       description: "Supermercado Mensal",
       amount: 450.75,
+      currency: "BRL",
       type: "expense",
       category: "food",
       date: "2026-08-15",
@@ -30,6 +31,7 @@ describe("POST /api/transactions - Server-Side Validation", () => {
     expect(json.data).toMatchObject({
       description: "Supermercado Mensal",
       amount: 450.75,
+      currency: "BRL",
       type: "expense",
       category: "food",
       date: "2026-08-15",
@@ -48,8 +50,57 @@ describe("POST /api/transactions - Server-Side Validation", () => {
     const json = await response.json();
 
     expect(response.status).toBe(400);
-    expect(json.error).toBe("Payload de transação inválido.");
+    expect(json.error).toBe("Invalid transaction payload.");
     expect(json.issues.length).toBeGreaterThan(0);
+  });
+
+  it("returns 400 when currency is missing", async () => {
+    const invalidPayload = {
+      description: "Supermercado Mensal",
+      amount: 450.75,
+      type: "expense",
+      category: "food",
+      date: "2026-08-15",
+    };
+
+    const response = await POST(createPostRequest(invalidPayload));
+
+    const json = await response.json();
+
+    expect(response.status).toBe(400);
+
+    expect(json.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          field: "currency",
+        }),
+      ])
+    );
+  });
+
+  it("returns 400 when currency is unsupported", async () => {
+    const invalidPayload = {
+      description: "Supermercado Mensal",
+      amount: 450.75,
+      currency: "DOGE",
+      type: "expense",
+      category: "food",
+      date: "2026-08-15",
+    };
+
+    const response = await POST(createPostRequest(invalidPayload));
+
+    const json = await response.json();
+
+    expect(response.status).toBe(400);
+
+    expect(json.issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          field: "currency",
+        }),
+      ])
+    );
   });
 
   it("returns 400 when type is not 'income' or 'expense'", async () => {

@@ -1,4 +1,5 @@
 import { useModal } from "@/contexts/ModalContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import { customRender } from "@/test/utils";
@@ -7,8 +8,12 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import DashboardPage from "../page";
 
+const mockRouterPush = vi.fn();
+
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({
+    push: mockRouterPush,
+  }),
   usePathname: () => "/",
   useSearchParams: () => new URLSearchParams(),
 }));
@@ -26,6 +31,17 @@ vi.mock("@/components/dashboard/TransactionFormModal", () => ({
       </div>
     ) : null,
 }));
+
+vi.mock("@/contexts/SettingsContext", async () => {
+  const actual = await vi.importActual<typeof import("@/contexts/SettingsContext")>(
+    "@/contexts/SettingsContext"
+  );
+
+  return {
+    ...actual,
+    useSettings: vi.fn(),
+  };
+});
 
 function OpenModalTrigger() {
   const { openTransactionModal } = useModal();
@@ -49,9 +65,28 @@ describe("DashboardPage Component Integration", () => {
   const mockSetFilters = vi.fn();
   const mockResetFilters = vi.fn();
   const mockRefetch = vi.fn();
+  const mockReorderWidgets = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    vi.mocked(useSettings).mockReturnValue({
+      overviewSettings: {
+        showSummaryCards: true,
+        showFinancialChart: true,
+        showCategoryBreakdown: true,
+        showRecentTransactions: true,
+        widgetOrder: ["summaryCards", "financialChart", "categoryBreakdown", "recentTransactions"],
+      },
+      currencySettings: {
+        displayCurrency: "BRL",
+      },
+      updateOverviewSettings: vi.fn(),
+      updateCurrencySettings: vi.fn(),
+      resetOverviewSettings: vi.fn(),
+      resetCurrencySettings: vi.fn(),
+      reorderWidgets: mockReorderWidgets,
+    });
 
     vi.mocked(useTransactionFilters).mockReturnValue({
       filters: { period: "current-month", type: "all", category: "all" },
@@ -67,6 +102,9 @@ describe("DashboardPage Component Integration", () => {
             id: "tx-1",
             description: "Salário",
             amount: 5000,
+            normalizedAmount: 5000,
+            currency: "BRL",
+            normalizedCurrency: "BRL",
             type: "income",
             category: "salary",
             date: "2026-08-01",
@@ -116,6 +154,9 @@ describe("DashboardPage Component Integration", () => {
             id: "tx-1",
             description: "Salário",
             amount: 5000,
+            normalizedAmount: 5000,
+            currency: "BRL",
+            normalizedCurrency: "BRL",
             type: "income",
             category: "salary",
             date: "2026-08-01",
@@ -240,13 +281,123 @@ describe("DashboardPage Component Integration", () => {
     expect(mockResetFilters).toHaveBeenCalledTimes(1);
   });
 
-  it("triggers refetch callback when TransactionFormModal fires onSuccess (Line 96)", async () => {
+  it("reorders widgets through keyboard using the same persisted reorder action", async () => {
     const user = userEvent.setup();
+
     renderDashboardPage();
 
-    await user.click(screen.getByTestId("open-modal-btn"));
-    await user.click(screen.getByTestId("trigger-success-btn"));
+    const handle = screen.getByTestId("widget-drag-handle-financialChart");
 
-    expect(mockRefetch).toHaveBeenCalledTimes(1);
+    handle.focus();
+
+    await user.keyboard("{ArrowUp}");
+
+    expect(mockReorderWidgets).toHaveBeenCalledWith([
+      "financialChart",
+      "summaryCards",
+      "categoryBreakdown",
+      "recentTransactions",
+    ]);
+  });
+
+  it("renders widgets-hidden empty state when transactions exist but all dashboard widgets are disabled", () => {
+    vi.mocked(useSettings).mockReturnValue({
+      overviewSettings: {
+        showSummaryCards: false,
+        showFinancialChart: false,
+        showCategoryBreakdown: false,
+        showRecentTransactions: false,
+        widgetOrder: ["summaryCards", "financialChart", "categoryBreakdown", "recentTransactions"],
+      },
+      currencySettings: {
+        displayCurrency: "BRL",
+      },
+      updateOverviewSettings: vi.fn(),
+      updateCurrencySettings: vi.fn(),
+      resetOverviewSettings: vi.fn(),
+      resetCurrencySettings: vi.fn(),
+      reorderWidgets: mockReorderWidgets,
+    });
+
+    renderDashboardPage();
+
+    const emptyState = screen.getByTestId("dashboard-no-widgets-empty-state");
+
+    expect(emptyState).toBeInTheDocument();
+
+    expect(
+      within(emptyState).getByTestId("dashboard-no-widgets-empty-state-title")
+    ).toHaveTextContent("Todos os widgets do dashboard estão ocultos");
+
+    expect(
+      within(emptyState).getByTestId("dashboard-no-widgets-empty-state-description")
+    ).toHaveTextContent("Escolha quais widgets deseja exibir nas configurações do dashboard.");
+
+    expect(screen.queryByText("Nenhuma transação encontrada")).not.toBeInTheDocument();
+  });
+
+  it("navigates to settings from the widgets-hidden empty state action", async () => {
+    const user = userEvent.setup();
+
+    vi.mocked(useSettings).mockReturnValue({
+      overviewSettings: {
+        showSummaryCards: false,
+        showFinancialChart: false,
+        showCategoryBreakdown: false,
+        showRecentTransactions: false,
+        widgetOrder: ["summaryCards", "financialChart", "categoryBreakdown", "recentTransactions"],
+      },
+      currencySettings: {
+        displayCurrency: "BRL",
+      },
+      updateOverviewSettings: vi.fn(),
+      updateCurrencySettings: vi.fn(),
+      resetOverviewSettings: vi.fn(),
+      resetCurrencySettings: vi.fn(),
+      reorderWidgets: mockReorderWidgets,
+    });
+
+    renderDashboardPage();
+
+    await user.click(screen.getByTestId("dashboard-open-settings-button"));
+
+    expect(mockRouterPush).toHaveBeenCalledTimes(1);
+    expect(mockRouterPush).toHaveBeenCalledWith("/settings");
+  });
+
+  it("renders widgets-hidden empty state in en-US", () => {
+    vi.mocked(useSettings).mockReturnValue({
+      overviewSettings: {
+        showSummaryCards: false,
+        showFinancialChart: false,
+        showCategoryBreakdown: false,
+        showRecentTransactions: false,
+        widgetOrder: ["summaryCards", "financialChart", "categoryBreakdown", "recentTransactions"],
+      },
+      currencySettings: {
+        displayCurrency: "USD",
+      },
+      updateOverviewSettings: vi.fn(),
+      updateCurrencySettings: vi.fn(),
+      resetOverviewSettings: vi.fn(),
+      resetCurrencySettings: vi.fn(),
+      reorderWidgets: mockReorderWidgets,
+    });
+
+    customRender(<DashboardPage />, {
+      locale: "en-US",
+    });
+
+    expect(screen.getByText("All dashboard widgets are hidden")).toBeInTheDocument();
+
+    expect(
+      screen.getByText("Choose which widgets you want to display in your dashboard settings.")
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole("button", {
+        name: "Open settings",
+      })
+    ).toBeInTheDocument();
   });
 });

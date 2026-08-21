@@ -1,15 +1,18 @@
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { MotionProvider } from "@/providers/MotionProvider";
-import type { Transaction } from "@/types";
+import type { NormalizedTransaction } from "@/types";
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { TransactionsTable } from "../TransactionsTable";
 
-function createTransaction(overrides: Partial<Transaction> = {}): Transaction {
+function createTransaction(overrides: Partial<NormalizedTransaction> = {}): NormalizedTransaction {
   return {
     id: `tx-${Math.random().toString(36).substring(2, 9)}`,
     description: "Sample Description",
     amount: 100,
+    normalizedAmount: 100,
+    currency: "BRL",
+    normalizedCurrency: "BRL",
     type: "expense",
     category: "food",
     date: "2026-08-14",
@@ -102,7 +105,7 @@ describe("TransactionsTable Component", () => {
 
   describe("transaction list rendering", () => {
     it("renders the exact number of rows corresponding to the provided transactions", () => {
-      const mockList: Transaction[] = [
+      const mockList: NormalizedTransaction[] = [
         createTransaction({ id: "tx-1", description: "Monthly Salary" }),
         createTransaction({ id: "tx-2", description: "Apartment Rent" }),
         createTransaction({ id: "tx-3", description: "Supermarket" }),
@@ -126,7 +129,7 @@ describe("TransactionsTable Component", () => {
     });
 
     it("renders distinct items with their respective descriptions inside table cells", () => {
-      const mockList: Transaction[] = [
+      const mockList: NormalizedTransaction[] = [
         createTransaction({ id: "tx-income", description: "Freelance Project" }),
         createTransaction({ id: "tx-expense", description: "Gym Membership" }),
       ];

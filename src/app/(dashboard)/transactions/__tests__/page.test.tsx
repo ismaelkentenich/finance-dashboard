@@ -1,6 +1,7 @@
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import { customRender } from "@/test/utils";
+import type { NormalizedTransaction } from "@/types";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -24,33 +25,42 @@ vi.mock("framer-motion", async () => {
   };
 });
 
-const mockTransactions = [
+const mockTransactions: NormalizedTransaction[] = [
   {
     id: "tx-1",
     description: "Supermercado Extra",
     amount: 350,
+    currency: "BRL",
     type: "expense" as const,
     category: "food" as const,
     date: "2026-08-01",
     createdAt: "2026-08-01T00:00:00Z",
+    normalizedAmount: 350,
+    normalizedCurrency: "BRL",
   },
   {
     id: "tx-2",
     description: "Mercado Central",
     amount: 120,
+    currency: "BRL",
     type: "expense" as const,
     category: "food" as const,
     date: "2026-08-02",
     createdAt: "2026-08-02T00:00:00Z",
+    normalizedAmount: 120,
+    normalizedCurrency: "BRL",
   },
   {
     id: "tx-3",
     description: "Salário Mensal",
     amount: 5000,
+    currency: "BRL",
     type: "income" as const,
     category: "salary" as const,
     date: "2026-08-03",
     createdAt: "2026-08-03T00:00:00Z",
+    normalizedAmount: 5000,
+    normalizedCurrency: "BRL",
   },
 ];
 
@@ -225,5 +235,27 @@ describe("TransactionsPage Search Integration", () => {
     expect(screen.getByText("Salário Mensal")).toBeInTheDocument();
 
     expect(screen.queryByTestId("transactions-loading")).not.toBeInTheDocument();
+  });
+
+  it("does not activate filtered state when search query contains only whitespace", async () => {
+    const user = userEvent.setup();
+
+    renderTransactionsPage();
+
+    const searchInput = screen.getByTestId("transaction-search-input");
+
+    await user.type(searchInput, "   ");
+
+    expect(searchInput).toHaveValue("   ");
+
+    expect(screen.getByTestId("transaction-search-stats")).toHaveTextContent(
+      "3 transações encontradas"
+    );
+
+    expect(screen.getByTestId("transaction-row-tx-1")).toBeInTheDocument();
+    expect(screen.getByTestId("transaction-row-tx-2")).toBeInTheDocument();
+    expect(screen.getByTestId("transaction-row-tx-3")).toBeInTheDocument();
+
+    expect(screen.queryByTestId("reset-filters-button")).not.toBeInTheDocument();
   });
 });

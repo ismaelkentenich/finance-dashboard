@@ -4,12 +4,14 @@ export const en = {
     updating: "Updating",
     noData: "No data available.",
     closeDialog: "Close Dialog",
-    dragLabel: "Drag to reorder",
     search: "Search",
     clear: "Clear",
     cancel: "Cancel",
     confirm: "Confirm",
     notifications: "Notifications",
+    dragLabel: "Reorder widget",
+    dragInstructions: "Drag to reorder. Use Arrow Up or Arrow Down to move this widget.",
+    widgetMoved: "{widget} moved to position {position} of {total}.",
   },
   header: {
     title: "Financial Overview",
@@ -98,6 +100,7 @@ export const en = {
       amount: "Amount",
     },
     filtersAndSearchLabel: "Transaction filters and search",
+    convertedValue: "Converted value",
   },
   recentTransactions: {
     title: "Recent Transactions",
@@ -116,11 +119,22 @@ export const en = {
     fields: {
       descriptionLabel: "Description",
       descriptionPlaceholder: "e.g. Supermarket Groceries",
-      amountLabel: "Amount ($)",
+      amountLabel: "Amount",
       amountPlaceholder: "0.00",
       typeLabel: "Transaction Type",
       categoryLabel: "Category",
       dateLabel: "Date",
+      currencyLabel: "Currency",
+    },
+    conversion: {
+      title: "Currency conversion",
+      loading: "Loading exchange rate...",
+      error: "Unable to retrieve the exchange rate for this transaction.",
+      originalAmount: "Original amount",
+      convertedAmount: "Estimated converted amount",
+      rate: "Exchange rate",
+      rateDate: "Rate date",
+      approximateIndicator: "Estimated conversion",
     },
     buttons: {
       cancel: "Cancel",
@@ -131,6 +145,11 @@ export const en = {
     successMessage: "Transaction created successfully!",
     errorTitle: "Error saving transaction",
     errorMessage: "Failed to save transaction. Please try again.",
+    exchange: {
+      loading: "Fetching exchange rate...",
+      error: "Unable to retrieve the exchange rate right now.",
+      rateDate: "Rate date",
+    },
   },
   errors: {
     dashboardTitle: "An error occurred in the Dashboard",
@@ -145,6 +164,9 @@ export const en = {
     noTransactionsTitle: "No transactions found",
     noTransactionsDescription: "No records found for the selected period or category.",
     clearFilters: "Clear Filters",
+    noWidgetsTitle: "All dashboard widgets are hidden",
+    noWidgetsDescription: "Choose which widgets you want to display in your dashboard settings.",
+    openSettings: "Open settings",
   },
   validation: {
     descriptionMin: "Description must be at least 3 characters long.",
@@ -156,6 +178,7 @@ export const en = {
     dateRequired: "Please select a valid date.",
     dateFormat: "Invalid date format (YYYY-MM-DD).",
     dateInvalid: "Invalid date.",
+    currencyRequired: "Select a valid currency.",
   },
   settings: {
     title: "Customize Overview",
@@ -178,6 +201,12 @@ export const en = {
         title: "Recent Transactions",
         description: "Display the list of most recent transactions in the period.",
       },
+    },
+    currency: {
+      title: "Currency",
+      displayCurrency: "Display currency",
+      description: "Choose the currency used to display financial values throughout the dashboard.",
+      resetDescription: "The default currency is initially determined by the selected language.",
     },
   },
   charts: {

@@ -6,12 +6,15 @@ export const pt: TranslationSchema = {
     updating: "Atualizando",
     noData: "Nenhum dado disponível.",
     closeDialog: "Fechar diálogo",
-    dragLabel: "Arrastar para reordenar",
     search: "Buscar",
     clear: "Limpar",
     cancel: "Cancelar",
     confirm: "Confirmar",
     notifications: "Notificações",
+    dragLabel: "Reordenar widget",
+    dragInstructions:
+      "Arraste para reordenar. Use Seta para Cima ou Seta para Baixo para mover este widget.",
+    widgetMoved: "{widget} movido para a posição {position} de {total}.",
   },
   header: {
     title: "Visão Geral Financeira",
@@ -100,6 +103,7 @@ export const pt: TranslationSchema = {
       amount: "Valor",
     },
     filtersAndSearchLabel: "Filtros e busca de transações",
+    convertedValue: "Valor convertido",
   },
   recentTransactions: {
     title: "Transações Recentes",
@@ -118,11 +122,22 @@ export const pt: TranslationSchema = {
     fields: {
       descriptionLabel: "Descrição",
       descriptionPlaceholder: "Ex: Compras no Supermercado",
-      amountLabel: "Valor (R$)",
+      amountLabel: "Valor",
       amountPlaceholder: "0.00",
       typeLabel: "Tipo de Movimentação",
       categoryLabel: "Categoria",
       dateLabel: "Data",
+      currencyLabel: "Moeda",
+    },
+    conversion: {
+      title: "Conversão de moeda",
+      loading: "Carregando cotação...",
+      error: "Não foi possível obter a cotação para esta transação.",
+      originalAmount: "Valor original",
+      convertedAmount: "Valor convertido estimado",
+      rate: "Taxa de câmbio",
+      rateDate: "Data da cotação",
+      approximateIndicator: "Conversão estimada",
     },
     buttons: {
       cancel: "Cancelar",
@@ -133,6 +148,11 @@ export const pt: TranslationSchema = {
     successMessage: "Transação criada com sucesso!",
     errorTitle: "Erro ao salvar",
     errorMessage: "Falha ao salvar a transação. Tente novamente.",
+    exchange: {
+      loading: "Consultando cotação...",
+      error: "Não foi possível obter a cotação no momento.",
+      rateDate: "Cotação de",
+    },
   },
   errors: {
     dashboardTitle: "Ocorreu um erro no Dashboard",
@@ -146,8 +166,11 @@ export const pt: TranslationSchema = {
   emptyStates: {
     noTransactionsTitle: "Nenhuma transação encontrada",
     noTransactionsDescription:
-      "Não encontramos registros para o período ou categoria selecionados.",
+      "Nenhum registro encontrado para o período ou categoria selecionada.",
     clearFilters: "Limpar Filtros",
+    noWidgetsTitle: "Todos os widgets do dashboard estão ocultos",
+    noWidgetsDescription: "Escolha quais widgets deseja exibir nas configurações do dashboard.",
+    openSettings: "Abrir configurações",
   },
   validation: {
     descriptionMin: "A descrição deve ter pelo menos 3 caracteres.",
@@ -159,6 +182,7 @@ export const pt: TranslationSchema = {
     dateRequired: "Selecione uma data válida.",
     dateFormat: "Formato de data inválido (AAAA-MM-DD).",
     dateInvalid: "Data inválida.",
+    currencyRequired: "Selecione uma moeda válida.",
   },
   settings: {
     title: "Personalizar Visão Geral",
@@ -181,6 +205,12 @@ export const pt: TranslationSchema = {
         title: "Transações Recentes",
         description: "Exibe a tabela com as últimas movimentações do período.",
       },
+    },
+    currency: {
+      title: "Moeda",
+      displayCurrency: "Moeda de exibição",
+      description: "Escolha a moeda usada para exibir os valores financeiros no dashboard.",
+      resetDescription: "A moeda padrão é definida inicialmente com base no idioma selecionado.",
     },
   },
   charts: {

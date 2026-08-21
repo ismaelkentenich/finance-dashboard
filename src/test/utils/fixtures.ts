@@ -1,4 +1,9 @@
-import type { CategorySummary, FinancialSummary, Transaction } from "@/types";
+import type {
+  CategorySummary,
+  FinancialSummary,
+  NormalizedTransaction,
+  Transaction,
+} from "@/types";
 
 let transactionSequence = 0;
 
@@ -9,6 +14,7 @@ export function createTransactionFixture(overrides: Partial<Transaction> = {}): 
     id: `tx-test-${transactionSequence}`,
     description: "Sample Transaction",
     amount: 100,
+    currency: "BRL",
     type: "expense",
     category: "food",
     date: "2026-08-14",
@@ -106,5 +112,52 @@ export const mockCategories: CategorySummary[] = [
     totalAmount: 642.5,
     percentage: 22.6,
     transactionCount: 1,
+  }),
+];
+
+export function createNormalizedTransaction(
+  overrides: Partial<NormalizedTransaction> = {}
+): NormalizedTransaction {
+  const amount = overrides.amount ?? 100;
+  const currency = overrides.currency ?? "BRL";
+  return {
+    id: overrides.id ?? "tx-test",
+    description: overrides.description ?? "Test transaction",
+    amount,
+    currency,
+    normalizedAmount: overrides.normalizedAmount ?? amount,
+    normalizedCurrency: overrides.normalizedCurrency ?? currency,
+    type: overrides.type ?? "expense",
+    category: overrides.category ?? "other",
+    date: overrides.date ?? "2026-08-20",
+    createdAt: overrides.createdAt ?? "2026-08-20T10:00:00.000Z",
+  };
+}
+
+export const normalizedTransactions = [
+  createNormalizedTransaction({
+    id: "tx-001",
+    description: "Salário Principal",
+    amount: 8500,
+    currency: "BRL",
+    normalizedAmount: 8500,
+    normalizedCurrency: "BRL",
+    type: "income",
+    category: "salary",
+    date: "2026-08-05",
+    createdAt: "2026-08-05T09:00:00.000Z",
+  }),
+
+  createNormalizedTransaction({
+    id: "tx-002",
+    description: "Aluguel",
+    amount: 2200,
+    currency: "BRL",
+    normalizedAmount: 2200,
+    normalizedCurrency: "BRL",
+    type: "expense",
+    category: "housing",
+    date: "2026-08-06",
+    createdAt: "2026-08-06T14:30:00.000Z",
   }),
 ];

@@ -50,7 +50,13 @@ export function AreaChart<T extends Record<string, unknown>>({
           {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />}
 
           <XAxis dataKey={xAxisKey} stroke="var(--color-neutral-500)" fontSize={12} />
-          <YAxis stroke="var(--color-neutral-500)" fontSize={12} tickFormatter={valueFormatter} />
+          <YAxis
+            width="auto"
+            stroke="var(--color-neutral-500)"
+            fontSize={12}
+            tickFormatter={valueFormatter}
+          />
+
           <Tooltip formatter={valueFormatter} />
           {series.length > 1 && <Legend />}
 

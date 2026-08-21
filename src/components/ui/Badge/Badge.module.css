@@ -1,12 +1,17 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  font-size: var(--font-size-xs);
-  line-height: var(--line-height-sm);
+  justify-content: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-lg);
   font-weight: 600;
-  border-radius: var(--border-radius-full);
+  border-radius: var(--border-radius-sm);
+}
+
+.label {
+  min-width: 0;
+  text-align: start;
 }
 
 .badgeSuccess {
@@ -27,4 +32,19 @@
 .badgeInfo {
   background-color: var(--color-status-info-100);
   color: var(--color-status-info-300);
+}
+
+@media (max-width: 768px) {
+  .badge {
+    max-width: var(--max-width-badge);
+  }
+
+  .label {
+    max-width: 100%;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
 }

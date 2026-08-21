@@ -24,7 +24,7 @@
 }
 
 .statsBadge {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--color-neutral-500);
   background-color: var(--color-neutral-200);
@@ -38,7 +38,7 @@
   align-self: flex-end;
   gap: var(--spacing-xs);
   min-height: 20px;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--color-neutral-500);
 }
@@ -109,7 +109,7 @@
   border: 1px solid var(--border-color);
   background-color: var(--color-neutral-100);
   color: var(--color-status-error-200);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;

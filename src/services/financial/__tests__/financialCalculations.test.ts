@@ -1,19 +1,8 @@
-import type { Transaction, TransactionCategory } from "@/types";
+import { createNormalizedTransaction } from "@/test/utils";
+import type { NormalizedTransaction, TransactionCategory } from "@/types";
 import { describe, expect, it } from "vitest";
 import { calculateCategoryBreakdown, calculateFinancialSummary } from "../financialCalculations";
-
-function createTransaction(overrides: Partial<Transaction> = {}): Transaction {
-  return {
-    id: "tx-test-id",
-    description: "Sample Description",
-    amount: 100,
-    type: "expense",
-    category: "other",
-    date: "2026-08-14",
-    createdAt: "2026-08-14T00:00:00.000Z",
-    ...overrides,
-  };
-}
+import { buildTimeSeriesData } from "@/components/dashboard/FinancialChart/FinancialChart.helpers";
 
 describe("Financial Calculations Engine", () => {
   describe("calculateFinancialSummary Function", () => {
@@ -28,9 +17,9 @@ describe("Financial Calculations Engine", () => {
       });
 
       it("aggregates exclusively income transactions when no expenses exist", () => {
-        const transactions: Transaction[] = [
-          createTransaction({ type: "income", amount: 3000 }),
-          createTransaction({ type: "income", amount: 1500 }),
+        const transactions: NormalizedTransaction[] = [
+          createNormalizedTransaction({ type: "income", amount: 3000 }),
+          createNormalizedTransaction({ type: "income", amount: 1500 }),
         ];
 
         const summary = calculateFinancialSummary(transactions);
@@ -42,9 +31,9 @@ describe("Financial Calculations Engine", () => {
       });
 
       it("aggregates exclusively expense transactions when no income exists", () => {
-        const transactions: Transaction[] = [
-          createTransaction({ type: "expense", amount: 450 }),
-          createTransaction({ type: "expense", amount: 550 }),
+        const transactions: NormalizedTransaction[] = [
+          createNormalizedTransaction({ type: "expense", amount: 450 }),
+          createNormalizedTransaction({ type: "expense", amount: 550 }),
         ];
 
         const summary = calculateFinancialSummary(transactions);
@@ -56,9 +45,9 @@ describe("Financial Calculations Engine", () => {
       });
 
       it("calculates net balance and rounds savings rate to one decimal place", () => {
-        const transactions: Transaction[] = [
-          createTransaction({ type: "income", amount: 3333.33 }),
-          createTransaction({ type: "expense", amount: 1111.11 }),
+        const transactions: NormalizedTransaction[] = [
+          createNormalizedTransaction({ type: "income", amount: 3333.33 }),
+          createNormalizedTransaction({ type: "expense", amount: 1111.11 }),
         ];
 
         const summary = calculateFinancialSummary(transactions);
@@ -70,9 +59,9 @@ describe("Financial Calculations Engine", () => {
       });
 
       it("computes negative savings rate when expenses exceed income", () => {
-        const transactions: Transaction[] = [
-          createTransaction({ type: "income", amount: 2000 }),
-          createTransaction({ type: "expense", amount: 3000 }),
+        const transactions: NormalizedTransaction[] = [
+          createNormalizedTransaction({ type: "income", amount: 2000 }),
+          createNormalizedTransaction({ type: "expense", amount: 3000 }),
         ];
 
         const summary = calculateFinancialSummary(transactions);
@@ -84,11 +73,11 @@ describe("Financial Calculations Engine", () => {
 
     describe("period comparisons and variations", () => {
       it("returns 100% variation when previous period value was 0 and current is positive", () => {
-        const currentTransactions: Transaction[] = [
-          createTransaction({ type: "income", amount: 5000 }),
-          createTransaction({ type: "expense", amount: 2000 }),
+        const currentTransactions: NormalizedTransaction[] = [
+          createNormalizedTransaction({ type: "income", amount: 5000 }),
+          createNormalizedTransaction({ type: "expense", amount: 2000 }),
         ];
-        const previousTransactions: Transaction[] = [];
+        const previousTransactions: NormalizedTransaction[] = [];
 
         const summary = calculateFinancialSummary(currentTransactions, previousTransactions);
 
@@ -106,13 +95,13 @@ describe("Financial Calculations Engine", () => {
       });
 
       it("calculates percentage growth between previous and current period", () => {
-        const previousTransactions: Transaction[] = [
-          createTransaction({ type: "income", amount: 4000 }),
-          createTransaction({ type: "expense", amount: 2000 }),
+        const previousTransactions: NormalizedTransaction[] = [
+          createNormalizedTransaction({ type: "income", amount: 4000 }),
+          createNormalizedTransaction({ type: "expense", amount: 2000 }),
         ];
-        const currentTransactions: Transaction[] = [
-          createTransaction({ type: "income", amount: 6000 }),
-          createTransaction({ type: "expense", amount: 1500 }),
+        const currentTransactions: NormalizedTransaction[] = [
+          createNormalizedTransaction({ type: "income", amount: 6000 }),
+          createNormalizedTransaction({ type: "expense", amount: 1500 }),
         ];
 
         const summary = calculateFinancialSummary(currentTransactions, previousTransactions);
@@ -123,13 +112,13 @@ describe("Financial Calculations Engine", () => {
       });
 
       it("handles variation calculation when previous balance was negative", () => {
-        const previousTransactions: Transaction[] = [
-          createTransaction({ type: "income", amount: 1000 }),
-          createTransaction({ type: "expense", amount: 2000 }),
+        const previousTransactions: NormalizedTransaction[] = [
+          createNormalizedTransaction({ type: "income", amount: 1000 }),
+          createNormalizedTransaction({ type: "expense", amount: 2000 }),
         ];
-        const currentTransactions: Transaction[] = [
-          createTransaction({ type: "income", amount: 3000 }),
-          createTransaction({ type: "expense", amount: 1000 }),
+        const currentTransactions: NormalizedTransaction[] = [
+          createNormalizedTransaction({ type: "income", amount: 3000 }),
+          createNormalizedTransaction({ type: "expense", amount: 1000 }),
         ];
 
         const summary = calculateFinancialSummary(currentTransactions, previousTransactions);
@@ -140,8 +129,8 @@ describe("Financial Calculations Engine", () => {
   });
   describe("calculateCategoryBreakdown Function", () => {
     it("returns an empty array when transaction list has no expenses", () => {
-      const transactions: Transaction[] = [
-        createTransaction({ type: "income", amount: 5000, category: "salary" }),
+      const transactions: NormalizedTransaction[] = [
+        createNormalizedTransaction({ type: "income", amount: 5000, category: "salary" }),
       ];
 
       const breakdown = calculateCategoryBreakdown(transactions);
@@ -150,9 +139,9 @@ describe("Financial Calculations Engine", () => {
     });
 
     it("ignores income transactions and processes only expenses", () => {
-      const transactions: Transaction[] = [
-        createTransaction({ type: "income", amount: 10000, category: "salary" }),
-        createTransaction({ type: "expense", amount: 500, category: "food" }),
+      const transactions: NormalizedTransaction[] = [
+        createNormalizedTransaction({ type: "income", amount: 10000, category: "salary" }),
+        createNormalizedTransaction({ type: "expense", amount: 500, category: "food" }),
       ];
 
       const breakdown = calculateCategoryBreakdown(transactions);
@@ -165,10 +154,10 @@ describe("Financial Calculations Engine", () => {
     });
 
     it("aggregates multiple expenses belonging to the same category", () => {
-      const transactions: Transaction[] = [
-        createTransaction({ type: "expense", amount: 120.5, category: "food" }),
-        createTransaction({ type: "expense", amount: 79.5, category: "food" }),
-        createTransaction({ type: "expense", amount: 100, category: "food" }),
+      const transactions: NormalizedTransaction[] = [
+        createNormalizedTransaction({ type: "expense", amount: 120.5, category: "food" }),
+        createNormalizedTransaction({ type: "expense", amount: 79.5, category: "food" }),
+        createNormalizedTransaction({ type: "expense", amount: 100, category: "food" }),
       ];
 
       const breakdown = calculateCategoryBreakdown(transactions);
@@ -181,10 +170,10 @@ describe("Financial Calculations Engine", () => {
     });
 
     it("sorts categories in descending order based on total spent", () => {
-      const transactions: Transaction[] = [
-        createTransaction({ type: "expense", amount: 100, category: "entertainment" }),
-        createTransaction({ type: "expense", amount: 1200, category: "housing" }),
-        createTransaction({ type: "expense", amount: 300, category: "food" }),
+      const transactions: NormalizedTransaction[] = [
+        createNormalizedTransaction({ type: "expense", amount: 100, category: "entertainment" }),
+        createNormalizedTransaction({ type: "expense", amount: 1200, category: "housing" }),
+        createNormalizedTransaction({ type: "expense", amount: 300, category: "food" }),
       ];
 
       const breakdown = calculateCategoryBreakdown(transactions);
@@ -199,9 +188,9 @@ describe("Financial Calculations Engine", () => {
     it("maps presentation labels from CATEGORY_LABELS or falls back to raw key", () => {
       const unmappedCategory = "custom-unmapped" as unknown as TransactionCategory;
 
-      const transactions: Transaction[] = [
-        createTransaction({ type: "expense", amount: 200, category: "housing" }),
-        createTransaction({ type: "expense", amount: 100, category: unmappedCategory }),
+      const transactions: NormalizedTransaction[] = [
+        createNormalizedTransaction({ type: "expense", amount: 200, category: "housing" }),
+        createNormalizedTransaction({ type: "expense", amount: 100, category: unmappedCategory }),
       ];
 
       const breakdown = calculateCategoryBreakdown(transactions);
@@ -216,9 +205,13 @@ describe("Financial Calculations Engine", () => {
     });
 
     it("formats percentages and total amounts with fixed decimal precision", () => {
-      const transactions: Transaction[] = [
-        createTransaction({ type: "expense", amount: 33.333, category: "food" }),
-        createTransaction({ type: "expense", amount: 66.666, category: "transportation" }),
+      const transactions: NormalizedTransaction[] = [
+        createNormalizedTransaction({ type: "expense", amount: 33.333, category: "food" }),
+        createNormalizedTransaction({
+          type: "expense",
+          amount: 66.666,
+          category: "transportation",
+        }),
       ];
 
       const breakdown = calculateCategoryBreakdown(transactions);
@@ -231,5 +224,88 @@ describe("Financial Calculations Engine", () => {
       expect(food?.totalAmount).toBe(33.33);
       expect(food?.percentage).toBe(33.3);
     });
+  });
+
+  it("calculates totals using normalized amounts instead of original amounts", () => {
+    const transactions = [
+      createNormalizedTransaction({
+        id: "tx-income",
+        amount: 100,
+        currency: "USD",
+        normalizedAmount: 500,
+        normalizedCurrency: "BRL",
+        type: "income",
+      }),
+
+      createNormalizedTransaction({
+        id: "tx-expense",
+        amount: 50,
+        currency: "EUR",
+        normalizedAmount: 300,
+        normalizedCurrency: "BRL",
+        type: "expense",
+      }),
+    ];
+
+    const result = calculateFinancialSummary(transactions);
+
+    expect(result.totalIncome).toBe(500);
+    expect(result.totalExpenses).toBe(300);
+    expect(result.currentBalance).toBe(200);
+  });
+
+  it("aggregates category totals using normalized amounts", () => {
+    const transactions = [
+      createNormalizedTransaction({
+        amount: 100,
+        currency: "USD",
+        normalizedAmount: 500,
+        category: "food",
+        type: "expense",
+      }),
+
+      createNormalizedTransaction({
+        id: "tx-2",
+        amount: 50,
+        currency: "EUR",
+        normalizedAmount: 300,
+        category: "food",
+        type: "expense",
+      }),
+    ];
+
+    const result = calculateCategoryBreakdown(transactions);
+
+    expect(result.find((item) => item.category === "food")?.totalAmount).toBe(800);
+  });
+
+  it("builds time series using normalized amounts", () => {
+    const transactions = [
+      createNormalizedTransaction({
+        amount: 100,
+        normalizedAmount: 500,
+        type: "income",
+        date: "2026-08-20",
+      }),
+
+      createNormalizedTransaction({
+        id: "tx-2",
+        amount: 20,
+        normalizedAmount: 100,
+        type: "expense",
+        date: "2026-08-20",
+      }),
+    ];
+
+    const result = buildTimeSeriesData(transactions, "en-US");
+
+    expect(result).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          income: 500,
+          expense: 100,
+        }),
+      ])
+    );
   });
 });

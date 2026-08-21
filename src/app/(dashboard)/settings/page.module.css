@@ -6,10 +6,47 @@
   max-width: var(--max-width-lg, 768px);
 }
 
+.settingsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-neutral-900);
+}
+
+.sectionDescription {
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--color-neutral-500);
+}
+
+.currencyField {
+  width: 100%;
+  max-width: 360px;
+}
+
+.widgetsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding-top: var(--spacing-lg);
+  border-top: var(--border-width-thin, 1px) solid var(--border-color);
+}
+
 .headerRow {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3xs);
+  gap: var(--spacing-xs);
 }
 
 .pageTitle {
@@ -19,7 +56,7 @@
 }
 
 .pageSubtitle {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
   color: var(--color-neutral-500);
 }
 
@@ -54,7 +91,7 @@
 .optionInfo {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3xs);
+  gap: var(--spacing-xs);
 }
 
 .optionTitle {
@@ -64,7 +101,7 @@
 }
 
 .optionDescription {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
   color: var(--color-neutral-500);
 }
 

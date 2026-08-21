@@ -14,6 +14,9 @@ export const transactionService = {
     if (params.category && params.category !== "all") {
       searchParams.set("category", params.category);
     }
+    if (params.currency) {
+      searchParams.set("currency", params.currency);
+    }
 
     const queryString = searchParams.toString();
     const endpoint = `/api/transactions${queryString ? `?${queryString}` : ""}`;

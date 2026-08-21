@@ -18,7 +18,8 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import type { WidgetId } from "@/types";
 import { Reorder } from "framer-motion";
-import { FilterX } from "lucide-react";
+import { FilterX, Settings as SettingsIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import styles from "./page.module.css";
 
@@ -44,10 +45,17 @@ function DashboardSkeleton() {
 
 function DashboardContent() {
   const { t } = useLocale();
-  const { overviewSettings, reorderWidgets } = useSettings();
+  const router = useRouter();
+
+  const { overviewSettings, currencySettings, reorderWidgets } = useSettings();
+
   const { isTransactionModalOpen, closeTransactionModal } = useModal();
+
   const { filters, setFilters, resetFilters, hasActiveFilters } = useTransactionFilters();
+
   const { data, isLoading, isFetching, error, refetch } = useDashboardData(filters);
+
+  const displayCurrency = currencySettings.displayCurrency;
 
   const isUpdating = isFetching && !isLoading;
 
@@ -57,21 +65,59 @@ function DashboardContent() {
     overviewSettings.showCategoryBreakdown ||
     overviewSettings.showRecentTransactions;
 
+  const widgetLabels: Record<WidgetId, string> = {
+    summaryCards: t.settings.cards.summary.title,
+    financialChart: t.settings.cards.chart.title,
+    categoryBreakdown: t.settings.cards.categories.title,
+    recentTransactions: t.settings.cards.transactions.title,
+  };
+
+  const moveWidget = (widgetId: WidgetId, direction: -1 | 1) => {
+    const currentIndex = overviewSettings.widgetOrder.indexOf(widgetId);
+
+    const targetIndex = currentIndex + direction;
+
+    if (
+      currentIndex === -1 ||
+      targetIndex < 0 ||
+      targetIndex >= overviewSettings.widgetOrder.length
+    ) {
+      return;
+    }
+
+    const nextOrder = [...overviewSettings.widgetOrder];
+
+    [nextOrder[currentIndex], nextOrder[targetIndex]] = [
+      nextOrder[targetIndex],
+      nextOrder[currentIndex],
+    ];
+
+    reorderWidgets(nextOrder);
+  };
+
   const renderWidget = (widgetId: WidgetId): ReactNode => {
-    if (!data) return null;
+    if (!data) {
+      return null;
+    }
 
     switch (widgetId) {
       case "summaryCards":
-        return overviewSettings.showSummaryCards ? <SummaryCards summary={data.summary} /> : null;
+        return overviewSettings.showSummaryCards ? (
+          <SummaryCards summary={data.summary} currency={displayCurrency} />
+        ) : null;
 
       case "financialChart":
         return overviewSettings.showFinancialChart ? (
-          <FinancialChart transactions={data.transactions} categories={data.categories} />
+          <FinancialChart
+            transactions={data.transactions}
+            categories={data.categories}
+            currency={displayCurrency}
+          />
         ) : null;
 
       case "categoryBreakdown":
         return overviewSettings.showCategoryBreakdown ? (
-          <CategoryBreakdown categories={data.categories} />
+          <CategoryBreakdown categories={data.categories} currency={displayCurrency} />
         ) : null;
 
       case "recentTransactions":
@@ -109,6 +155,7 @@ function DashboardContent() {
           data-testid="dashboard-updating-status"
         >
           <span className={styles.updatingSpinner} aria-hidden="true" />
+
           {t.common.updating}
         </div>
       )}
@@ -126,8 +173,9 @@ function DashboardContent() {
       ) : !data || data.transactions.length === 0 ? (
         <>
           {overviewSettings.showSummaryCards && data?.summary && (
-            <SummaryCards summary={data.summary} />
+            <SummaryCards summary={data.summary} currency={displayCurrency} />
           )}
+
           <EmptyState
             title={t.emptyStates.noTransactionsTitle}
             description={t.emptyStates.noTransactionsDescription}
@@ -141,41 +189,62 @@ function DashboardContent() {
             }
           />
         </>
+      ) : !hasAnyWidgetVisible ? (
+        <EmptyState
+          title={t.emptyStates.noWidgetsTitle}
+          description={t.emptyStates.noWidgetsDescription}
+          data-testid="dashboard-no-widgets-empty-state"
+          action={
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => router.push("/settings")}
+              data-testid="dashboard-open-settings-button"
+            >
+              <SettingsIcon size={16} aria-hidden="true" />
+              {t.emptyStates.openSettings}
+            </Button>
+          }
+        />
       ) : (
-        <>
-          <Reorder.Group
-            axis="y"
-            values={overviewSettings.widgetOrder}
-            onReorder={reorderWidgets}
-            className={styles.dashboardContainer}
-            style={{ listStyle: "none", padding: 0, margin: 0 }}
-          >
-            {overviewSettings.widgetOrder.map((widgetId) => {
-              const content = renderWidget(widgetId);
-              if (!content) return null;
+        <Reorder.Group
+          axis="y"
+          values={overviewSettings.widgetOrder}
+          onReorder={reorderWidgets}
+          className={styles.dashboardContainer}
+          style={{
+            listStyle: "none",
+            padding: 0,
+            margin: 0,
+          }}
+        >
+          {overviewSettings.widgetOrder.map((widgetId, index) => {
+            const content = renderWidget(widgetId);
 
-              return (
-                <DraggableWidget key={widgetId} value={widgetId}>
-                  {content}
-                </DraggableWidget>
-              );
-            })}
-          </Reorder.Group>
+            if (!content) {
+              return null;
+            }
 
-          {!hasAnyWidgetVisible && (
-            <EmptyState
-              title={t.emptyStates.noTransactionsTitle}
-              description={t.settings.subtitle}
-            />
-          )}
-        </>
+            return (
+              <DraggableWidget
+                key={widgetId}
+                value={widgetId}
+                widgetLabel={widgetLabels[widgetId]}
+                position={index + 1}
+                totalItems={overviewSettings.widgetOrder.length}
+                canMoveUp={index > 0}
+                canMoveDown={index < overviewSettings.widgetOrder.length - 1}
+                onMoveUp={() => moveWidget(widgetId, -1)}
+                onMoveDown={() => moveWidget(widgetId, 1)}
+              >
+                {content}
+              </DraggableWidget>
+            );
+          })}
+        </Reorder.Group>
       )}
 
-      <TransactionFormModal
-        isOpen={isTransactionModalOpen}
-        onClose={closeTransactionModal}
-        onSuccess={() => refetch()}
-      />
+      <TransactionFormModal isOpen={isTransactionModalOpen} onClose={closeTransactionModal} />
     </div>
   );
 }

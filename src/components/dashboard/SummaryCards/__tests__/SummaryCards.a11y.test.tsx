@@ -20,7 +20,7 @@ describe("SummaryCards Metric Badges A11y and Screen Reader Context", () => {
   it("provides informative aria-label on positive balance variation badge", () => {
     render(
       <LocaleProvider>
-        <SummaryCards summary={mockSummary} />
+        <SummaryCards summary={mockSummary} currency="BRL" />
       </LocaleProvider>
     );
 
@@ -33,7 +33,7 @@ describe("SummaryCards Metric Badges A11y and Screen Reader Context", () => {
   it("provides informative aria-label on negative expense variation badge", () => {
     render(
       <LocaleProvider>
-        <SummaryCards summary={mockSummary} />
+        <SummaryCards summary={mockSummary} currency="BRL" />
       </LocaleProvider>
     );
 

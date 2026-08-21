@@ -21,7 +21,7 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3xs);
+  gap: var(--spacing-xs);
   flex: 1;
 }
 
@@ -32,7 +32,7 @@
 }
 
 .message {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
   color: var(--color-neutral-700);
   line-height: 1.5;
 }

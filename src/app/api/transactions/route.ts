@@ -1,4 +1,6 @@
 import { createTransactionSchema } from "@/schemas/transaction.schema";
+import { transactionQuerySchema } from "@/schemas/transactionQuery.schema";
+import { exchangeRateProvider } from "@/services/exchange";
 import {
   calculateCategoryBreakdown,
   calculateFinancialSummary,
@@ -8,43 +10,96 @@ import {
   filterTransactionsByEquivalentPreviousPeriod,
   filterTransactionsByPeriod,
 } from "@/services/financial/financialFilters";
+import { normalizeTransactions } from "@/services/financial/normalizeTransactions";
 import { getTransactionRepository } from "@/services/repository/transactionRepository";
-import type { PeriodFilter, Transaction, TransactionCategory, TransactionType } from "@/types";
+import type { Transaction } from "@/types";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const period = (searchParams.get("period") as PeriodFilter) || "current-month";
-    const type = searchParams.get("type") as "all" | TransactionType | null;
-    const category = searchParams.get("category") as "all" | TransactionCategory | null;
+  const { searchParams } = request.nextUrl;
 
-    const filterOptions = { type, category };
+  const parseResult = transactionQuerySchema.safeParse({
+    period: searchParams.get("period") ?? undefined,
+    type: searchParams.get("type") ?? undefined,
+    category: searchParams.get("category") ?? undefined,
+    currency: searchParams.get("currency") ?? undefined,
+  });
+
+  if (!parseResult.success) {
+    return NextResponse.json(
+      {
+        error: "Invalid transaction query parameters.",
+        issues: parseResult.error.issues.map((issue) => ({
+          field: issue.path.join(".") || "unknown",
+          message: issue.message,
+        })),
+      },
+      {
+        status: 400,
+      }
+    );
+  }
+
+  try {
+    const { period, type, category, currency } = parseResult.data;
+
+    const filterOptions = {
+      type,
+      category,
+    };
+
     const repository = getTransactionRepository();
+
     const allTransactions = await repository.getAll();
 
     const currentPeriodTxs = filterTransactionsByPeriod(allTransactions, period);
+
     const filtered = applyTransactionFilters(currentPeriodTxs, filterOptions);
 
     const previousPeriodTxs = filterTransactionsByEquivalentPreviousPeriod(allTransactions, period);
+
     const previousPeriodFiltered = applyTransactionFilters(previousPeriodTxs, filterOptions);
 
-    const summary = calculateFinancialSummary(filtered, previousPeriodFiltered);
-    const categories = calculateCategoryBreakdown(filtered);
+    const normalizedTransactions = await normalizeTransactions({
+      transactions: filtered,
+      targetCurrency: currency,
+      exchangeRateProvider,
+    });
+
+    const normalizedPreviousPeriodTransactions = await normalizeTransactions({
+      transactions: previousPeriodFiltered,
+      targetCurrency: currency,
+      exchangeRateProvider,
+    });
+
+    const summary = calculateFinancialSummary(
+      normalizedTransactions,
+      normalizedPreviousPeriodTransactions
+    );
+
+    const categories = calculateCategoryBreakdown(normalizedTransactions);
 
     return NextResponse.json({
       data: {
-        transactions: filtered,
+        transactions: normalizedTransactions,
         summary,
         categories,
       },
+
       meta: {
-        totalCount: filtered.length,
+        totalCount: normalizedTransactions.length,
         period,
       },
     });
   } catch {
-    return NextResponse.json({ error: "Failed to load transactions." }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Failed to load transactions.",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }
 
@@ -62,7 +117,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json(
         {
-          error: "Payload de transação inválido.",
+          error: "Invalid transaction payload.",
           issues,
         },
         { status: 400 }
@@ -75,6 +130,7 @@ export async function POST(request: NextRequest) {
       id: `tx-${Date.now()}`,
       description: validData.description,
       amount: validData.amount,
+      currency: validData.currency,
       type: validData.type,
       category: validData.category,
       date: validData.date,
@@ -84,8 +140,22 @@ export async function POST(request: NextRequest) {
     const repository = getTransactionRepository();
     const savedTransaction = await repository.add(newTransaction);
 
-    return NextResponse.json({ data: savedTransaction }, { status: 201 });
+    return NextResponse.json(
+      {
+        data: savedTransaction,
+      },
+      {
+        status: 201,
+      }
+    );
   } catch {
-    return NextResponse.json({ error: "Falha ao processar a requisição." }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Failed to process the request.",
+      },
+      {
+        status: 500,
+      }
+    );
   }
 }

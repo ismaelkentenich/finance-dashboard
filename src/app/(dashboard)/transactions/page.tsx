@@ -45,31 +45,36 @@ function TransactionsContent() {
   const categoryOptions = useMemo(() => getCategoryOptions(t), [t]);
 
   const transactions = data?.transactions;
+  const hasSearchQuery = searchQuery.trim().length > 0;
 
   const filteredTransactions = useMemo(() => {
     if (!transactions) return [];
-    if (!searchQuery.trim()) return transactions;
+    if (!hasSearchQuery) return transactions;
 
-    const queryLower = searchQuery.toLowerCase().trim();
+    const queryLower = searchQuery.trim().toLowerCase();
+
     return transactions.filter((tx) => tx.description.toLowerCase().includes(queryLower));
-  }, [transactions, searchQuery]);
+  }, [transactions, searchQuery, hasSearchQuery]);
 
   const searchStatsMessage = useMemo(() => {
     if (!transactions) return "";
+
     const count = filteredTransactions.length;
     const trimmedQuery = searchQuery.trim();
 
     if (trimmedQuery) {
       const template =
         count === 1 ? t.transactions.resultsForQuery : t.transactions.resultsForQueryPlural;
+
       return template.replace("{count}", String(count)).replace("{query}", trimmedQuery);
     }
 
     const template = count === 1 ? t.transactions.totalFound : t.transactions.totalFoundPlural;
+
     return template.replace("{count}", String(count));
   }, [transactions, filteredTransactions.length, searchQuery, t]);
 
-  const isFiltered = hasActiveFilters || searchQuery.length > 0;
+  const isFiltered = hasActiveFilters || hasSearchQuery;
   const isUpdating = isFetching && !isLoading;
 
   const handleResetAll = () => {
@@ -214,11 +219,7 @@ function TransactionsContent() {
         />
       )}
 
-      <TransactionFormModal
-        isOpen={isTransactionModalOpen}
-        onClose={closeTransactionModal}
-        onSuccess={() => refetch()}
-      />
+      <TransactionFormModal isOpen={isTransactionModalOpen} onClose={closeTransactionModal} />
     </div>
   );
 }

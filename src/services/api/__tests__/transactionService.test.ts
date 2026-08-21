@@ -1,4 +1,6 @@
+import type { GetDashboardDataResponseSchema } from "@/schemas/api.schema";
 import { telemetryService } from "@/services/telemetry";
+import type { Transaction } from "@/types";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { transactionService } from "../transactionService";
 
@@ -10,10 +12,13 @@ describe("transactionService", () => {
           id: "tx-1",
           description: "Salário",
           amount: 5000,
+          currency: "BRL",
           type: "income",
           category: "salary",
           date: "2026-08-01",
           createdAt: "2026-08-01T00:00:00Z",
+          normalizedAmount: 5000,
+          normalizedCurrency: "BRL",
         },
       ],
       summary: {
@@ -41,7 +46,7 @@ describe("transactionService", () => {
       totalCount: 1,
       period: "current-month",
     },
-  };
+  } satisfies GetDashboardDataResponseSchema;
 
   beforeEach(() => {
     vi.stubGlobal("fetch", vi.fn());
@@ -155,12 +160,13 @@ describe("transactionService", () => {
   describe("createTransaction", () => {
     it("sends POST request with serialized payload and returns validated created transaction", async () => {
       const payload = {
-        description: "Aluguel",
-        amount: 2500,
-        type: "expense" as const,
-        category: "housing" as const,
-        date: "2026-08-14",
-      };
+        description: "Monthly Rent",
+        amount: 2200,
+        currency: "BRL",
+        type: "expense",
+        category: "housing",
+        date: "2026-08-05",
+      } satisfies Omit<Transaction, "id" | "createdAt">;
 
       const mockCreated = { id: "tx-new", ...payload, createdAt: "2026-08-14T00:00:00Z" };
 
@@ -189,6 +195,7 @@ describe("transactionService", () => {
         transactionService.createTransaction({
           description: "Inválido",
           amount: 0,
+          currency: "BRL",
           type: "expense",
           category: "food",
           date: "2026-08-14",
@@ -206,6 +213,7 @@ describe("transactionService", () => {
         transactionService.createTransaction({
           description: "Mercado",
           amount: 100,
+          currency: "BRL",
           type: "expense",
           category: "food",
           date: "2026-08-14",

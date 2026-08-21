@@ -1,6 +1,6 @@
 import { LocaleProvider } from "@/contexts/LocaleContext";
 import { MotionProvider } from "@/providers/MotionProvider";
-import { mockCategories, mockTransactions } from "@/test/utils";
+import { mockCategories, normalizedTransactions } from "@/test/utils";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
@@ -8,8 +8,9 @@ import { FinancialChart } from "../FinancialChart";
 
 function renderFinancialChart(props = {}) {
   const defaultProps = {
-    transactions: mockTransactions,
+    transactions: normalizedTransactions,
     categories: mockCategories,
+    currency: "BRL" as const,
     ...props,
   };
 

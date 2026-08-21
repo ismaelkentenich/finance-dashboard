@@ -1,3 +1,4 @@
+import { SUPPORTED_CURRENCIES } from "@/constants/currency.constants";
 import { VALID_PERIODS } from "@/constants/filter.constants";
 import { ALL_CATEGORIES } from "@/constants/transaction.constants";
 import type { PeriodFilter, TransactionCategory, TransactionType } from "@/types";
@@ -17,6 +18,7 @@ export const transactionSchema = z.object({
   id: z.string().min(1),
   description: z.string(),
   amount: z.number(),
+  currency: z.enum(SUPPORTED_CURRENCIES),
   type: z.enum(TRANSACTION_TYPES),
   category: z.enum(TRANSACTION_CATEGORIES),
   date: z.string(),
@@ -45,8 +47,13 @@ export const categorySummarySchema = z.object({
   transactionCount: z.number(),
 });
 
+export const normalizedTransactionSchema = transactionSchema.extend({
+  normalizedAmount: z.number(),
+  normalizedCurrency: z.enum(SUPPORTED_CURRENCIES),
+});
+
 export const dashboardDataSchema = z.object({
-  transactions: z.array(transactionSchema),
+  transactions: z.array(normalizedTransactionSchema),
   summary: financialSummarySchema,
   categories: z.array(categorySummarySchema),
 });
@@ -65,5 +72,6 @@ export const createTransactionResponseSchema = z.object({
   data: transactionSchema,
 });
 
+export type NormalizedTransactionSchema = z.infer<typeof normalizedTransactionSchema>;
 export type GetDashboardDataResponseSchema = z.infer<typeof getDashboardDataResponseSchema>;
 export type CreateTransactionResponseSchema = z.infer<typeof createTransactionResponseSchema>;

@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-3xs);
+  gap: var(--spacing-xs);
   position: relative;
 }
 
@@ -10,7 +10,7 @@
 }
 
 .label {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-neutral-500);
   text-transform: uppercase;
@@ -30,7 +30,7 @@
   border: var(--border-width-thin, 1px) solid var(--border-color);
   background-color: var(--color-neutral-100);
   color: var(--color-neutral-900);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
   font-weight: 500;
   outline: none;
   cursor: pointer;
@@ -112,7 +112,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--color-neutral-800);
   border-radius: var(--border-radius-sm);
@@ -158,13 +158,15 @@
 }
 
 .errorMessage {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-xl);
   color: var(--color-status-error-200);
   font-weight: 500;
 }
 
 .helperText {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-xl);
   color: var(--color-neutral-500);
 }
 
