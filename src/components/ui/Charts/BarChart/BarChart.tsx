@@ -59,7 +59,7 @@ export function BarChart<T extends Record<string, unknown>>({
               <XAxis dataKey={xAxisKey} stroke="var(--color-neutral-500)" fontSize={12} />
 
               <YAxis
-                width={90}
+                width="auto"
                 stroke="var(--color-neutral-500)"
                 fontSize={12}
                 tickFormatter={valueFormatter}

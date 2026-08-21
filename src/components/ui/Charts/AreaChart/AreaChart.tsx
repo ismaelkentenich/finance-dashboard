@@ -51,11 +51,12 @@ export function AreaChart<T extends Record<string, unknown>>({
 
           <XAxis dataKey={xAxisKey} stroke="var(--color-neutral-500)" fontSize={12} />
           <YAxis
-            width={90}
+            width="auto"
             stroke="var(--color-neutral-500)"
             fontSize={12}
             tickFormatter={valueFormatter}
           />
+
           <Tooltip formatter={valueFormatter} />
           {series.length > 1 && <Legend />}
 
